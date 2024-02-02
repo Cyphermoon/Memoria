@@ -2,10 +2,12 @@ import { View, Text as RNText, TextProps } from 'react-native'
 import React from 'react'
 import { useFonts } from 'expo-font'
 
+
 interface Props extends TextProps {
     children: React.ReactNode
 }
 
+// Custom text component with default styles
 const Text = ({ className, children, ...rest }: Props) => {
     const [fontsLoaded] = useFonts({
         "Inter": require("../../../assets/fonts/Inter-VariableFont_slnt,wght.ttf")
