@@ -27,3 +27,7 @@ export function getGreetings(): string {
         return "Good evening";
     }
 }
+
+export function plural(count: number, word:string){
+    return count === 1 ? word : word + 's';
+}

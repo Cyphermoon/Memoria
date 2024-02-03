@@ -5,6 +5,7 @@ import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AuthScreen from './src/screens/AuthScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -18,17 +19,19 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 export default function App() {
   return (
     <GestureHandlerRootView className='flex-grow'>
-      <NavigationContainer >
-        {/* Creating a navigation stack */}
-        <Stack.Navigator initialRouteName="Splash" screenOptions={{
-          headerShown: false
-        }}>
-          <Stack.Screen name="Splash" component={SplashScreen} />
-          <Stack.Screen name="onBoarding" component={OnBoardingScreen} />
-          <Stack.Screen name="Auth" component={AuthScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <BottomSheetModalProvider>
+        <NavigationContainer >
+          {/* Creating a navigation stack */}
+          <Stack.Navigator initialRouteName="Splash" screenOptions={{
+            headerShown: false
+          }}>
+            <Stack.Screen name="Splash" component={SplashScreen} />
+            <Stack.Screen name="onBoarding" component={OnBoardingScreen} />
+            <Stack.Screen name="Auth" component={AuthScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }

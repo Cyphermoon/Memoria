@@ -55,7 +55,7 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSea
 
     return (
         <View className='flex-row items-center space-x-3'>
-            <Animated.View style={animatedStyles} className={`py-1 px-3 border-2 border-secondary rounded-full flex-row space-x-3 items-center`}>
+            <Animated.View style={animatedStyles} className={`py-1 px-3 border-2 border-secondary rounded-xl flex-row space-x-3 items-center`}>
                 <Ionicons name="search-outline" size={26} color={'#F9FAFB'} />
 
                 <TextInput
