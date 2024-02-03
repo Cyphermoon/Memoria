@@ -1,13 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions, } from 'react-native'
+import { interpolate } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { RootStackParamList } from '../../App'
-import { blurHash } from '../../settings'
 import Text from '../components/common/Text'
-import { interpolate } from 'react-native-reanimated'
-import Container from '../components/common/Container'
+import { useIsFocused } from '@react-navigation/native'
 
 // Onboarding slides
 const _slides = [
@@ -45,9 +44,12 @@ const OnBoardingScreen = ({ navigation }: Props) => {
     const ref = useRef<ICarouselInstance>(null)
     const [currentIdx, setCurrentIdx] = useState(0)
     const windowWidth = useWindowDimensions().width;
+    const isFocused = useIsFocused();
 
     function moveToNextSlide() {
         if (!ref.current) return
+
+        if (currentIdx === _slides.length - 1) return moveToAuthScreen();
 
         ref.current.scrollTo({ count: 1, animated: true })
     }
@@ -57,10 +59,12 @@ const OnBoardingScreen = ({ navigation }: Props) => {
     }
 
     function handleSnapToItem(index: number) {
+        if (!isFocused) return
+
         setCurrentIdx(index);
         if (index === _slides.length - 1) {
             setTimeout(() => {
-                // moveToAuthScreen();
+                moveToAuthScreen();
             }, 3000);
         }
     }

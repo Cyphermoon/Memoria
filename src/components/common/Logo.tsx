@@ -20,17 +20,17 @@ const Logo = ({ size = "sm", withName }: Props) => {
         ...styles.logo,
         ...(size === "lg" && { fontSize: 120, fontWeight: "400" }),
         ...(size === "md" && { fontSize: 48, fontWeight: "400" }),
-        ...(size === "sm" && { fontSize: 50, fontWeight: "400" }),
+        ...(size === "sm" && { fontSize: 25, fontWeight: "400" }),
     }
 
     const nameStyle: TextProps["style"] = {
         ...(size === "lg" && { fontSize: 40, fontWeight: "700" }),
         ...(size === "md" && { fontSize: 36, fontWeight: "600" }),
-        ...(size === "sm" && { fontSize: 27, fontWeight: "300" }),
+        ...(size === "sm" && { fontSize: 16, fontWeight: "300" }),
     }
 
     return (
-        <View className='flex flex-row items-center justify-center space-x-2'>
+        <View className={`flex flex-row items-center justify-center ${size === "sm" ? "space-x-1" : "space-x-2"}`}>
             <Text style={logoStyle}>M</Text>
             {withName && <Text style={nameStyle}>Memoria</Text>}
         </View>

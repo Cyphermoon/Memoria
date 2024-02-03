@@ -5,8 +5,13 @@ import Logo from '../components/common/Logo'
 import Text from '../components/common/Text'
 import SocialButton from '../components/Auth/SocialButton'
 import Checkbox from '../components/common/Checkbox'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../App'
 
-const AuthScreen = () => {
+
+type Props = NativeStackScreenProps<RootStackParamList, "Auth">
+
+const AuthScreen = ({ navigation }: Props) => {
     const [isChecked, setIsChecked] = useState(false);
 
     function handleCheck() {
@@ -19,6 +24,7 @@ const AuthScreen = () => {
             if (!isChecked) {
                 Alert.alert('Terms and Conditions', 'You need to agree to our terms and conditions to continue')
             } else {
+                navigation.navigate('Home')
                 signInHandler()
             }
         };
