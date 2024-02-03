@@ -11,3 +11,19 @@ export function getInitials(username: string): string {
     // Combine the first and second initials and return the result
     return fInitial + lInitial;
 }
+
+
+export function getGreetings(): string {
+    const hour = new Date().getHours();
+    
+    if (hour < 12) {
+        // Return "Good morning" if the hour is before 12
+        return "Good morning";
+    } else if (hour < 18) {
+        // Return "Good afternoon" if the hour is between 12 and 18
+        return "Good afternoon";
+    } else {
+        // Return "Good evening" if the hour is after 18
+        return "Good evening";
+    }
+}

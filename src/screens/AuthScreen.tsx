@@ -62,13 +62,13 @@ const AuthScreen = ({ navigation }: Props) => {
                     <SocialButton
                         icon="twitter"
                         text="Sign up with Twitter"
-                        color="bg-blue-400"
+                        color="bg-[#1D9BF0]"
                         onPress={handleSignIn(handleTwitterSignIn)}
                     />
                     <SocialButton
                         icon="linkedin"
                         text="Sign up with LinkedIn"
-                        color="bg-blue-700"
+                        color="bg-[#0A66C2]"
                         onPress={handleSignIn(handleLinkedinSignIn)}
                     />
 

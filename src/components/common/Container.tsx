@@ -7,7 +7,7 @@ interface Props {
 
 const Container = ({ children }: Props) => {
     return (
-        <View className={`p-3 flex-grow`}>
+        <View className={`px-4 flex-grow`}>
             {children}
         </View>
     )
