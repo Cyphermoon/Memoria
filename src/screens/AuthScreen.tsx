@@ -7,18 +7,19 @@ import SocialButton from '../components/Auth/SocialButton'
 import Checkbox from '../components/common/Checkbox'
 
 const AuthScreen = () => {
-    const [isChecked, setIsChecked] = useState(true);
+    const [isChecked, setIsChecked] = useState(false);
 
-    const handleCheck = () => {
+    function handleCheck() {
         setIsChecked(!isChecked);
-    };
+    }
+
     function handleSignIn(signInHandler: () => void) {
         // Higher order function using currying to handle sign in
         return () => {
             if (!isChecked) {
-                Alert.alert('Terms and Conditions', 'You need to agree to our terms and conditions to continue');
+                Alert.alert('Terms and Conditions', 'You need to agree to our terms and conditions to continue')
             } else {
-                signInHandler();
+                signInHandler()
             }
         };
     }

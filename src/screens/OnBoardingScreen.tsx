@@ -13,23 +13,24 @@ import Container from '../components/common/Container'
 const _slides = [
     {
         title: 'Always Remember What You Need To Do!',
-        description: 'Memoria allows you to easily remember any plans and/or goals you have set for the day.',
+        description: 'With Memoria, never forget your daily plans or goals. Keep track of your tasks with ease.',
         uri: require('../../assets/images/onboard-1.png'),
-        alt: 'Onboarding 1'
+        alt: 'Onboarding 1: A 3d representation of a pencil tick tasks of a book'
     },
     {
         title: 'Memoria wakes you up with a purpose',
-        description: 'Memoria allows you to easily remember any plans and/or goals you have set for the day.',
+        description: 'Start your day with a clear purpose. Memoria helps you recall your plans and goals as soon as you wake up.',
         uri: require('../../assets/images/onboard-2.png'),
-        alt: 'Onboarding 2'
+        alt: 'Onboarding 2: A 3d representation of a man sitting on a chair with his laptop on his lap'
     },
     {
         title: 'Search for perfect images to match plans with!',
-        description: 'Memoria allows you to easily remember any plans and/or goals you have set for the day.',
+        description: 'Visualize your plans with Memoria. Find the perfect images to match your plans and make them more memorable.',
         uri: require('../../assets/images/onboard-3.png'),
-        alt: 'Onboarding 3'
+        alt: 'Onboarding 3: A 3d representation of a hand holding a magnifying glass'
     },
-]
+];
+
 
 
 interface RenderSlidesProps {
@@ -53,6 +54,15 @@ const OnBoardingScreen = ({ navigation }: Props) => {
 
     function moveToAuthScreen() {
         navigation.navigate('Auth')
+    }
+
+    function handleSnapToItem(index: number) {
+        setCurrentIdx(index);
+        if (index === _slides.length - 1) {
+            setTimeout(() => {
+                // moveToAuthScreen();
+            }, 3000);
+        }
     }
 
     const animationStyle = React.useCallback(
@@ -90,14 +100,7 @@ const OnBoardingScreen = ({ navigation }: Props) => {
                 autoPlayInterval={3000}
                 data={_slides}
                 customAnimation={animationStyle}
-                onSnapToItem={index => {
-                    setCurrentIdx(index)
-                    if (index === _slides.length - 1) {
-                        setTimeout(() => {
-                            moveToAuthScreen()
-                        }, 3000)
-                    }
-                }}
+                onSnapToItem={handleSnapToItem}
                 renderItem={({ item, index }: { item: typeof _slides[0], index: number }) => (
                     <Slide item={item} index={index} />
                 )} />
@@ -111,8 +114,8 @@ const OnBoardingScreen = ({ navigation }: Props) => {
 
 
 
-            <TouchableOpacity className='self-end mr-4 bg-secondary px-5 py-2.5 rounded-lg' onPress={moveToNextSlide}>
-                <Text className='text-primary'>Next</Text>
+            <TouchableOpacity className='bg-secondary p-3 rounded-lg mx-4' onPress={moveToNextSlide}>
+                <Text className='text-primary text-base text-center'>Next</Text>
             </TouchableOpacity>
         </SafeAreaView>
     )
@@ -127,7 +130,6 @@ const Slide = ({ item, index }: RenderSlidesProps) => {
             <Image
                 source={item.uri}
                 alt={item.title}
-                placeholder={blurHash}
                 contentFit={"contain"}
                 className='w-80 h-80 self-center'
                 transition={1000}
