@@ -18,7 +18,7 @@ const SplashScreen = ({ navigation }: Props) => {
 
     return (
         <SafeAreaView className='bg-primary h-screen w-screen flex flex-col justify-center items-center space-y-4'>
-            <Logo />
+            <Logo size='lg' />
             <Text className='text-secondary text-lg font-normal'>Memoria</Text>
         </SafeAreaView>
     )

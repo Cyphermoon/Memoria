@@ -7,6 +7,7 @@ import { RootStackParamList } from '../../App'
 import { blurHash } from '../../settings'
 import Text from '../components/common/Text'
 import { interpolate } from 'react-native-reanimated'
+import Container from '../components/common/Container'
 
 // Onboarding slides
 const _slides = [
@@ -73,7 +74,8 @@ const OnBoardingScreen = ({ navigation }: Props) => {
 
 
     return (
-        <SafeAreaView className="flex-grow bg-primary flex flex-col justify-between">
+        <SafeAreaView className="flex-grow flex flex-col justify-between bg-primary">
+
             <TouchableOpacity className='self-end mr-4' onPress={moveToAuthScreen}>
                 <Text>Skip</Text>
             </TouchableOpacity>
@@ -88,7 +90,14 @@ const OnBoardingScreen = ({ navigation }: Props) => {
                 autoPlayInterval={3000}
                 data={_slides}
                 customAnimation={animationStyle}
-                onSnapToItem={index => setCurrentIdx(index)}
+                onSnapToItem={index => {
+                    setCurrentIdx(index)
+                    if (index === _slides.length - 1) {
+                        setTimeout(() => {
+                            moveToAuthScreen()
+                        }, 3000)
+                    }
+                }}
                 renderItem={({ item, index }: { item: typeof _slides[0], index: number }) => (
                     <Slide item={item} index={index} />
                 )} />
@@ -105,7 +114,6 @@ const OnBoardingScreen = ({ navigation }: Props) => {
             <TouchableOpacity className='self-end mr-4 bg-secondary px-5 py-2.5 rounded-lg' onPress={moveToNextSlide}>
                 <Text className='text-primary'>Next</Text>
             </TouchableOpacity>
-
         </SafeAreaView>
     )
 }
@@ -127,7 +135,7 @@ const Slide = ({ item, index }: RenderSlidesProps) => {
 
             <View className='space-y-2.5'>
                 <Text className='text-center font-bold text-2xl leading-tight'> {item.title}</Text>
-                <Text className='text-center text-gray-300'>
+                <Text className='text-center text-gray-300 mx-0.5'>
                     {item.description}
                 </Text>
             </View>
