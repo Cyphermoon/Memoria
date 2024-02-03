@@ -20,7 +20,7 @@ const HomeScreen = () => {
 
     function handleSearchSubmit() {
         console.log("Search submitted! ", searchQuery)
-        setSearchQuery('');
+
     }
 
     return (
