@@ -15,7 +15,7 @@ const Goal = ({ className = "", onPress, text, active, items }: Props) => {
   return (
     <View className={`w-[185] h-36 relative rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}>
       <TouchableOpacity className='flex-grow justify-center items-center' onPress={onPress}>
-        <Text className={`absolute top-1.5 right-2 text-sm ${active ? 'text-accent' : 'text-gray-400'}`}>
+        <Text className={`absolute bottom-1.5 left-2 text-sm ${active ? 'text-accent' : 'text-gray-400'}`}>
           {items} {plural(items, "item")}
         </Text>
 

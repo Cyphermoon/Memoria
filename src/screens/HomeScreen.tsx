@@ -57,7 +57,7 @@ const HomeScreen = () => {
                     <UserAvatar username='Cypher_Moon' />
                 </View>
 
-                <Text className='font-semibold text-4xl text-secondary  mb-10'>
+                <Text className='font-semibold text-4xl text-secondary  mb-8'>
                     {getGreetings()}, Cypher
                 </Text>
 

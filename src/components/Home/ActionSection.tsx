@@ -36,7 +36,7 @@ const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubm
                 setSearchQuery={handleSearchQueryChanged}
                 handleSearchSubmit={handleSearchSubmit} />
 
-            <View className='mt-8'>
+            <View className='mt-6'>
                 <Text className='font-bold text-[11px] text-gray-200 uppercase mb-1.5'>Sort</Text>
                 <TouchableOpacity className='flex-row items-center space-x-2 ' onPress={handleOpenPress}>
                     <Text className='text-lg text-secondary'>By Date</Text>
