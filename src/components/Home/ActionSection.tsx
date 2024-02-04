@@ -18,7 +18,7 @@ interface Props {
 
 const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubmit, handleSortPress: _handleSortPress }: Props) => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const snapPoints = useMemo(() => ['25%', '25%'], []);
+    const snapPoints = useMemo(() => ['10%', '25%'], []);
 
 
     const handleOpenPress = () => bottomSheetModalRef.current?.present();
@@ -45,7 +45,7 @@ const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubm
             </View>
 
             {/* Bottom Sheet Modal To Display Sort Options */}
-            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={0} >
+            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} >
                 <View className="flex-1 justify-start items-start bg-primary-300 px-4">
                     <Text className='font-bold text-[13px] text-gray-400 uppercase mb-4'>Sort Goals/Tasks By</Text>
                     <FlatList

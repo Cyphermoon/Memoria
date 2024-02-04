@@ -48,7 +48,6 @@ const AddCollectionModal = () => {
                                 value={isActive}
                                 onValueChange={toggleSwitch} />
                         </View>
-
                     </View>
 
                     <Touchable onPress={addCollection} disabled={folderName === ""}>

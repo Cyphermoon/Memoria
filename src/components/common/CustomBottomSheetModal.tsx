@@ -24,6 +24,7 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ snapPoints
             snapPoints={snapPoints}
             backgroundStyle={{ backgroundColor: '#0F1728' }}
             handleIndicatorStyle={{ backgroundColor: '#D9D9D9', display: 'none' }}
+            enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
         >
             {children}
