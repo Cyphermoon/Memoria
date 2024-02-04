@@ -8,6 +8,7 @@ import Logo from '../components/common/Logo'
 import Text from '../components/common/Text'
 import UserAvatar from '../components/common/UserAvatar'
 import { getGreetings } from '../util'
+import NewGoal from '../components/Home/NewGoal'
 
 const goals = [
     { text: 'Goal 1', active: true, items: 5 },
@@ -75,7 +76,7 @@ const HomeScreen = () => {
                         contentContainerStyle={styles.container}
                         columnWrapperStyle={styles.columnWrapper}
                         numColumns={2}
-                        ListFooterComponent={() => <View className='h-20' />}
+                        ListFooterComponent={() => <View className='h-28' />}
                         renderItem={({ item }) => (
                             <View style={styles.item}>
                                 <Goal
@@ -88,6 +89,8 @@ const HomeScreen = () => {
                         )}
                     />
                 </View>
+
+                <NewGoal />
 
             </Container>
         </SafeAreaView>

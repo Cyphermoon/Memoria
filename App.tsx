@@ -6,15 +6,17 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AuthScreen from './src/screens/AuthScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import AddCollectionModal from './src/modals/AddCollectionModal';
 
 export type RootStackParamList = {
   onBoarding: undefined
   Splash: undefined
   Auth: undefined
   Home: undefined
+  AddCollection: undefined
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>()
+const RootStack = createNativeStackNavigator<RootStackParamList>()
 
 export default function App() {
   return (
@@ -22,14 +24,18 @@ export default function App() {
       <BottomSheetModalProvider>
         <NavigationContainer >
           {/* Creating a navigation stack */}
-          <Stack.Navigator initialRouteName="Splash" screenOptions={{
-            headerShown: false
-          }}>
-            <Stack.Screen name="Splash" component={SplashScreen} />
-            <Stack.Screen name="onBoarding" component={OnBoardingScreen} />
-            <Stack.Screen name="Auth" component={AuthScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-          </Stack.Navigator>
+          <RootStack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+            <RootStack.Group>
+              <RootStack.Screen name="Splash" component={SplashScreen} />
+              <RootStack.Screen name="onBoarding" component={OnBoardingScreen} />
+              <RootStack.Screen name="Auth" component={AuthScreen} />
+              <RootStack.Screen name="Home" component={HomeScreen} />
+            </RootStack.Group>
+
+            <RootStack.Group screenOptions={{ presentation: 'modal' }}>
+              <RootStack.Screen name="AddCollection" component={AddCollectionModal} />
+            </RootStack.Group>
+          </RootStack.Navigator>
         </NavigationContainer>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
