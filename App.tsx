@@ -7,6 +7,8 @@ import AuthScreen from './src/screens/AuthScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import AddCollectionModal from './src/modals/AddCollectionModal';
+import GoalScreen from './src/screens/GoalScreen';
+import { SelectedGoalProps } from './src/components/Home/type';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -14,6 +16,7 @@ export type RootStackParamList = {
   Auth: undefined
   Home: undefined
   AddCollection: undefined
+  Goal: SelectedGoalProps
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -30,6 +33,7 @@ export default function App() {
               <RootStack.Screen name="onBoarding" component={OnBoardingScreen} />
               <RootStack.Screen name="Auth" component={AuthScreen} />
               <RootStack.Screen name="Home" component={HomeScreen} />
+              <RootStack.Screen name="Goal" component={GoalScreen} />
             </RootStack.Group>
 
             <RootStack.Group screenOptions={{ presentation: 'modal' }}>

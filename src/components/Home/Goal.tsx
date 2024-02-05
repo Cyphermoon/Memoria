@@ -9,7 +9,7 @@ import { SelectedGoalProps } from './type';
 interface Props {
   id: string
   className?: string
-  onPress: () => void
+  onPress: (goal: SelectedGoalProps) => void
   onMoreDetailsPress: (goal: SelectedGoalProps) => void
   text: string
   active: boolean
@@ -17,13 +17,14 @@ interface Props {
 }
 
 const Goal = ({ className = "", onPress, text, active, items, id, onMoreDetailsPress }: Props) => {
+  const goal = { id, name: text }
   return (
     <View className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}>
-      <TouchableOpacity className='absolute top-2 right-2' onPress={() => onMoreDetailsPress({ id, name: text })}>
+      <TouchableOpacity className='absolute top-2 right-2' onPress={() => onMoreDetailsPress(goal)}>
         <Entypo name="dots-three-horizontal" size={20} color={colors.gray[500]} />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={onPress} onLongPress={() => onMoreDetailsPress({ id, name: text })}>
+      <TouchableOpacity onPress={() => onPress(goal)} onLongPress={() => onMoreDetailsPress(goal)}>
         <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
           {text}
         </Text>

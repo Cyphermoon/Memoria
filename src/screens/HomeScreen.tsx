@@ -13,6 +13,8 @@ import Logo from '../components/common/Logo'
 import Text from '../components/common/Text'
 import UserAvatar from '../components/common/UserAvatar'
 import { getGreetings } from '../util'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../App'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -36,9 +38,10 @@ const goals = [
     // More goals...
 ];
 
+type Props = NativeStackScreenProps<RootStackParamList, "Home">
 
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
@@ -81,6 +84,11 @@ const HomeScreen = () => {
     }
 
 
+    function handleGoalPress(goal: SelectedGoalProps) {
+        navigation.navigate('Goal', goal)
+    }
+
+
     return (
         <SafeAreaView className='flex-grow bg-primary'>
             <Container>
@@ -89,7 +97,7 @@ const HomeScreen = () => {
                     <UserAvatar username='Cypher_Moon' />
                 </View>
 
-                <Text className='font-semibold text-4xl text-secondary  mb-8'>
+                <Text className='font-semibold text-4xl text-secondary mb-8'>
                     {getGreetings()}, Cypher
                 </Text>
 
@@ -112,7 +120,7 @@ const HomeScreen = () => {
                             <View style={styles.item}>
                                 <Goal
                                     id={item.id.toString()}
-                                    onPress={() => { }}
+                                    onPress={handleGoalPress}
                                     onMoreDetailsPress={handleMoreDetailsPress}
                                     text={item.text}
                                     active={item.active}

@@ -11,6 +11,7 @@ export interface CustomButtonProps extends TouchableOpacityProps {
     disableZoomOutEffect?: boolean;
     disabled?: boolean;
     onPress?: () => void;
+    isText?: boolean
 }
 
 const Touchable = ({
@@ -20,11 +21,12 @@ const Touchable = ({
     className,
     disableZoomOutEffect,
     disabled,
+    isText,
     onPress,
     ...rest
 }: CustomButtonProps) => {
     // Generate dynamic class names based on variant and fullWidth
-    const buttonClass = `px-5 inline-block py-4 rounded-lg transition capitalize text-base cursor-pointer 
+    const buttonClass = `px-3 inline-block py-4 rounded-lg transition capitalize text-base cursor-pointer 
     ${variant === 'normal' ? 'bg-accent' : ''}
     ${variant === 'inverse' ? 'bg-primary text-accent' : ''}
     ${variant === 'outline' ? 'border-2 border-accent text-accent bg-transparent' : ''}
@@ -42,7 +44,10 @@ const Touchable = ({
             disabled={disabled}
             {...rest}
         >
-            <Text className='text-center text-primary'>{children}</Text>
+            {isText ?
+                <Text className='text-center text-primary'>{children}</Text> :
+                children
+            }
         </TouchableOpacity>
     );
 };

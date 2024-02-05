@@ -2,7 +2,6 @@ import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { blurHash } from '../../../settings';
 
 interface Props {
     icon: "twitter" | "google" | "linkedin";
