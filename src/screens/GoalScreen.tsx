@@ -1,20 +1,45 @@
-import React from 'react'
-import { SafeAreaView, View } from 'react-native'
-import Text from '../components/common/Text'
+import { FontAwesome6 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../App'
-import Touchable from '../components/common/Touchable'
-import { FontAwesome6 } from '@expo/vector-icons';
+import React, { useState } from 'react'
+import { SafeAreaView, TouchableOpacity, View } from 'react-native'
 import colors from 'tailwindcss/colors'
+import { RootStackParamList } from '../../App'
 import Container from '../components/common/Container'
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Text from '../components/common/Text'
+import Touchable from '../components/common/Touchable'
+import { Ionicons } from '@expo/vector-icons'
+import ActionSection from '../components/Home/ActionSection'
 
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
 
-const GoalScreen = ({ route }: Props) => {
+const GoalScreen = ({ navigation, route }: Props) => {
+    const [searchQuery, setSearchQuery] = useState('');
+
+
+
+    const handleSearchQueryChanged = (query: string) => {
+        setSearchQuery(query);
+        // Add any additional logic for handling search query changes here
+    };
+
+    function handleSearchSubmit() {
+        console.log("Search submitted! ", searchQuery)
+    }
+
+    function handleSortPress(id: string) {
+        console.log("Sort Pressed: ", id)
+    }
+
     return (
         <SafeAreaView className='bg-primary flex-grow'>
             <Container>
+                <View className='mb-8'>
+                    <TouchableOpacity className='flex-row pb-1 space-x-1 items-start justify-start border-b border-secondary bg-red-500' onPress={() => navigation.goBack()}>
+                        <Ionicons name="chevron-back" size={16} color={colors.gray[300]} />
+                        <Text>{route.params.name}</Text>
+                    </TouchableOpacity>
+                </View>
+                {/* Header Section */}
                 <View className='flex flex-row justify-between items-center'>
                     <Text className='text-4xl font-semibold'>{route.params.name}</Text>
 
@@ -32,6 +57,15 @@ const GoalScreen = ({ route }: Props) => {
                             </Text>
                         </Touchable>
                     </View>
+
+                    {/* Action Section */}
+
+                    <ActionSection
+                        searchQuery={searchQuery}
+                        handleSearchQueryChanged={handleSearchQueryChanged}
+                        handleSearchSubmit={handleSearchSubmit}
+                        handleSortPress={handleSortPress}
+                    />
                 </View>
             </Container>
         </SafeAreaView>
