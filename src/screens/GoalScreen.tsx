@@ -1,22 +1,30 @@
 import { FontAwesome6 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState } from 'react'
-import { SafeAreaView, TouchableOpacity, View } from 'react-native'
+import { FlatList, SafeAreaView, View } from 'react-native'
 import colors from 'tailwindcss/colors'
 import { RootStackParamList } from '../../App'
-import Container from '../components/common/Container'
+import GoalItem from '../components/Goal/GoalItem'
+import ActionSection from '../components/Home/ActionSection'
 import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
-import { Ionicons } from '@expo/vector-icons'
-import ActionSection from '../components/Home/ActionSection'
-import { Image } from 'expo-image'
-import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
+
+const goalItems = [
+    { id: '1', name: 'Make 50 coffees', url: 'https://picsum.photos/id/63/200/300' },
+    { id: '2', name: 'Read 5 books', url: 'https://picsum.photos/id/64/200/300' },
+    { id: '3', name: 'Run 10 miles', url: 'https://picsum.photos/id/65/200/300' },
+    { id: '4', name: 'Write 3 blog posts', url: 'https://picsum.photos/id/66/200/300' },
+    { id: '5', name: 'Visit 2 new cities', url: 'https://picsum.photos/id/67/200/300' },
+    { id: '6', name: 'Learn a new programming language', url: 'https://picsum.photos/id/68/200/300' },
+    { id: '7', name: 'Cook a new recipe', url: 'https://picsum.photos/id/69/200/300' },
+];
 
 const GoalScreen = ({ navigation, route }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
 
+    //* Search Actions
     const handleSearchQueryChanged = (query: string) => {
         setSearchQuery(query);
         // Add any additional logic for handling search query changes here
@@ -30,11 +38,22 @@ const GoalScreen = ({ navigation, route }: Props) => {
         console.log("Sort Pressed: ", id)
     }
 
+    //* Goal Items Actions
+    function handleDelete() {
+        console.log('Delete button pressed');
+        // Add your delete logic here
+    };
+
+    function handleFullscreen() {
+        console.log('Fullscreen button pressed');
+        // Add your fullscreen logic here
+    };
+
     return (
         <SafeAreaView className='bg-primary flex-grow'>
-            <Container>
+            <View className='px-1 flex-grow'>
                 {/* Header Section */}
-                <View className='flex-row justify-between items-start mb-8 mt-6'>
+                <View className='flex-row justify-between items-center mb-8 mt-6'>
                     <Text className='text-4xl font-semibold'>{route.params.name}</Text>
 
                     <View className='flex-row items-center'>
@@ -66,14 +85,19 @@ const GoalScreen = ({ navigation, route }: Props) => {
 
 
                 {/* Goals List */}
-                <View className='relative'>
-                    <Image source={"https://picsum.photos/id/237/200/300"} className="w-60 h-40" />
-                    <View className='bg-black bg-opacity-30 bottom-0 left-0 w-full flex-row justify-end space-x-3'>
-                        <MaterialIcons name="fullscreen" size={24} color="white" />
-                        <MaterialIcons name="delete" size={24} color="white" />
-                    </View>
+                <View className='flex-grow h-96'>
+                    <FlatList
+                        data={goalItems}
+                        keyExtractor={item => item.id}
+                        ListFooterComponent={() => <View className='h-10' />}
+                        renderItem={({ item }) => (
+                            <View className='relative w-full h-56 rounded-2xl'>
+                                <GoalItem id={item.id} name={item.name} url={item.url} onDelete={handleDelete} onFullscreen={handleFullscreen} />
+                            </View>
+                        )}
+                    />
                 </View>
-            </Container>
+            </View>
         </SafeAreaView>
     )
 }

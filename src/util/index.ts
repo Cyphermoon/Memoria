@@ -31,3 +31,14 @@ export function getGreetings(): string {
 export function plural(count: number, word:string){
     return count === 1 ? word : word + 's';
 }
+
+export function truncateText (text: string, maxLength: number = 20) {
+    // Check if the length of the text is greater than the maximum length
+    if (text.length > maxLength) {
+        // If so, truncate the text to the maximum length and append an ellipsis
+        return text.substring(0, maxLength) + '...';
+    }
+
+    // If the text is shorter than or equal to the maximum length, return the original text
+    return text;
+}
