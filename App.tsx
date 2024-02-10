@@ -1,14 +1,15 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SplashScreen from './src/screens/SplashScreen';
-import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import AuthScreen from './src/screens/AuthScreen';
-import HomeScreen from './src/screens/HomeScreen';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import AddCollectionModal from './src/modals/AddCollectionModal';
-import GoalScreen from './src/screens/GoalScreen';
+import { GoalBackButton } from './src/components/Goal/GoalBackButton';
 import { SelectedGoalProps } from './src/components/Home/type';
+import AddCollectionModal from './src/modals/AddCollectionModal';
+import AuthScreen from './src/screens/AuthScreen';
+import GoalScreen from './src/screens/GoalScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import OnBoardingScreen from './src/screens/OnBoardingScreen';
+import SplashScreen from './src/screens/SplashScreen';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -33,7 +34,15 @@ export default function App() {
               <RootStack.Screen name="onBoarding" component={OnBoardingScreen} />
               <RootStack.Screen name="Auth" component={AuthScreen} />
               <RootStack.Screen name="Home" component={HomeScreen} />
-              <RootStack.Screen name="Goal" component={GoalScreen} />
+              <RootStack.Screen
+                name="Goal"
+                component={GoalScreen}
+                options={{
+                  headerShown: true,
+                  headerTitle: '',
+                  headerStyle: { backgroundColor: '#030712' },
+                  headerLeft: () => <GoalBackButton />
+                }} />
             </RootStack.Group>
 
             <RootStack.Group screenOptions={{ presentation: 'modal' }}>

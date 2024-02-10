@@ -9,13 +9,13 @@ import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
 import { Ionicons } from '@expo/vector-icons'
 import ActionSection from '../components/Home/ActionSection'
+import { Image } from 'expo-image'
+import { MaterialIcons } from '@expo/vector-icons';
 
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
 
 const GoalScreen = ({ navigation, route }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
-
-
 
     const handleSearchQueryChanged = (query: string) => {
         setSearchQuery(query);
@@ -33,14 +33,8 @@ const GoalScreen = ({ navigation, route }: Props) => {
     return (
         <SafeAreaView className='bg-primary flex-grow'>
             <Container>
-                <View className='mb-8'>
-                    <TouchableOpacity className='flex-row pb-1 space-x-1 items-start justify-start border-b border-secondary bg-red-500' onPress={() => navigation.goBack()}>
-                        <Ionicons name="chevron-back" size={16} color={colors.gray[300]} />
-                        <Text>{route.params.name}</Text>
-                    </TouchableOpacity>
-                </View>
                 {/* Header Section */}
-                <View className='flex flex-row justify-between items-center'>
+                <View className='flex-row justify-between items-start mb-8 mt-6'>
                     <Text className='text-4xl font-semibold'>{route.params.name}</Text>
 
                     <View className='flex-row items-center'>
@@ -57,15 +51,27 @@ const GoalScreen = ({ navigation, route }: Props) => {
                             </Text>
                         </Touchable>
                     </View>
+                </View>
 
-                    {/* Action Section */}
 
+                {/* Action Section */}
+                <View className='mb-10'>
                     <ActionSection
                         searchQuery={searchQuery}
                         handleSearchQueryChanged={handleSearchQueryChanged}
                         handleSearchSubmit={handleSearchSubmit}
                         handleSortPress={handleSortPress}
                     />
+                </View>
+
+
+                {/* Goals List */}
+                <View className='relative'>
+                    <Image source={"https://picsum.photos/id/237/200/300"} className="w-60 h-40" />
+                    <View className='bg-black bg-opacity-30 bottom-0 left-0 w-full flex-row justify-end space-x-3'>
+                        <MaterialIcons name="fullscreen" size={24} color="white" />
+                        <MaterialIcons name="delete" size={24} color="white" />
+                    </View>
                 </View>
             </Container>
         </SafeAreaView>
