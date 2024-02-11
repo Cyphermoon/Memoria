@@ -10,17 +10,20 @@ import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
 import { Alert } from 'react-native';
 
+const goalItems = [
+    { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
+    { id: '2', description: 'Read 5 books', imageUrl: 'https://picsum.photos/id/64/200/300' },
+    { id: '3', description: 'Run 10 miles', imageUrl: 'https://picsum.photos/id/65/200/300' },
+    { id: '4', description: 'Write 3 blog posts', imageUrl: 'https://picsum.photos/id/66/200/300' },
+    { id: '5', description: 'Visit 2 new cities', imageUrl: 'https://picsum.photos/id/67/200/300' },
+    { id: '6', description: 'Learn a new programming language', imageUrl: 'https://picsum.photos/id/68/200/300' },
+    { id: '7', description: 'Cook a new recipe', imageUrl: 'https://picsum.photos/id/69/200/300' },
+];
+
+
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
 
-const goalItems = [
-    { id: '1', name: 'Make 50 coffees', url: 'https://picsum.photos/id/63/200/300' },
-    { id: '2', name: 'Read 5 books', url: 'https://picsum.photos/id/64/200/300' },
-    { id: '3', name: 'Run 10 miles', url: 'https://picsum.photos/id/65/200/300' },
-    { id: '4', name: 'Write 3 blog posts', url: 'https://picsum.photos/id/66/200/300' },
-    { id: '5', name: 'Visit 2 new cities', url: 'https://picsum.photos/id/67/200/300' },
-    { id: '6', name: 'Learn a new programming language', url: 'https://picsum.photos/id/68/200/300' },
-    { id: '7', name: 'Cook a new recipe', url: 'https://picsum.photos/id/69/200/300' },
-];
+
 
 const GoalScreen = ({ route, navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +49,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
         // If the goal item was found, use its name in the alert message
         const message = goalItem
-            ? `Are you sure you want to delete "${goalItem.name}"?`
+            ? `Are you sure you want to delete "${goalItem.description}"?`
             : "Are you sure you want to delete this goal item?";
 
         Alert.alert(
@@ -71,7 +74,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
     };
 
     function handleFullscreen(id: string) {
-        navigation.navigate('GoalSlideShow', { id });
+        navigation.navigate('GoalSlideShow', { currentId: id, goals: goalItems });
 
     };
 
@@ -118,7 +121,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                         ListFooterComponent={() => <View className='h-10' />}
                         renderItem={({ item }) => (
                             <View className='relative w-full h-56 rounded-2xl'>
-                                <GoalItem id={item.id} name={item.name} url={item.url} onDelete={handleDelete} onFullscreen={handleFullscreen} />
+                                <GoalItem id={item.id} name={item.description} url={item.imageUrl} onDelete={handleDelete} onFullscreen={handleFullscreen} />
                             </View>
                         )}
                     />

@@ -12,6 +12,7 @@ import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GoalItemProps } from './src/components/Goal/type';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -20,7 +21,7 @@ export type RootStackParamList = {
   Home: undefined
   AddCollection: undefined
   Goal: SelectedGoalProps
-  GoalSlideShow: { id: string }
+  GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
