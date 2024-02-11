@@ -8,6 +8,7 @@ import GoalItem from '../components/Goal/GoalItem'
 import ActionSection from '../components/Home/ActionSection'
 import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
+import { Alert } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
 
@@ -21,7 +22,7 @@ const goalItems = [
     { id: '7', name: 'Cook a new recipe', url: 'https://picsum.photos/id/69/200/300' },
 ];
 
-const GoalScreen = ({ navigation, route }: Props) => {
+const GoalScreen = ({ route, navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
 
     //* Search Actions
@@ -39,14 +40,39 @@ const GoalScreen = ({ navigation, route }: Props) => {
     }
 
     //* Goal Items Actions
-    function handleDelete() {
-        console.log('Delete button pressed');
-        // Add your delete logic here
+    function handleDelete(id: string) {
+        // Find the goal item by its id
+        const goalItem = goalItems.find(item => item.id === id);
+
+        // If the goal item was found, use its name in the alert message
+        const message = goalItem
+            ? `Are you sure you want to delete "${goalItem.name}"?`
+            : "Are you sure you want to delete this goal item?";
+
+        Alert.alert(
+            "Delete Goal Item", // Alert title
+            message, // Alert message
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: () => {
+                        console.log('Delete button pressed');
+                        // Add your delete logic here
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
     };
 
-    function handleFullscreen() {
-        console.log('Fullscreen button pressed');
-        // Add your fullscreen logic here
+    function handleFullscreen(id: string) {
+        navigation.navigate('GoalSlideShow', { id });
+
     };
 
     return (

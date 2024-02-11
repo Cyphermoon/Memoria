@@ -50,7 +50,7 @@ const AddCollectionModal = () => {
                         </View>
                     </View>
 
-                    <Touchable onPress={addCollection} disabled={folderName === ""}>
+                    <Touchable isText onPress={addCollection} disabled={folderName === ""}>
                         Add Collection
                     </Touchable>
                 </View>

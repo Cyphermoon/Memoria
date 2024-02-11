@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity, Text } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import colors from 'tailwindcss/colors';
+import Text from './Text';
 
 interface Props {
     title: string;
@@ -9,9 +10,9 @@ interface Props {
 
 export const BackButton = ({ title, goBack }: Props) => {
     return (
-        <TouchableOpacity className='flex-row pb-1 space-x-.5 items-start justify-start ' onPress={goBack}>
-            <Ionicons name="chevron-back" size={16} color={colors.gray[300]} />
-            <Text className='text-secondary'>{title}</Text>
+        <TouchableOpacity className='flex-row pb-1 space-x-.5 items-center justify-start ' onPress={goBack}>
+            <Ionicons name="chevron-back" size={20} color={colors.gray[300]} />
+            <Text className='text-secondary text-base'>{title}</Text>
         </TouchableOpacity>
     );
 };

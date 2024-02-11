@@ -10,6 +10,7 @@ import GoalScreen from './src/screens/GoalScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
+import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -18,6 +19,7 @@ export type RootStackParamList = {
   Home: undefined
   AddCollection: undefined
   Goal: SelectedGoalProps
+  GoalSlideShow: { id: string }
 };
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -45,8 +47,19 @@ export default function App() {
                 }} />
             </RootStack.Group>
 
-            <RootStack.Group screenOptions={{ presentation: 'modal' }}>
-              <RootStack.Screen name="AddCollection" component={AddCollectionModal} />
+            <RootStack.Group >
+              <RootStack.Screen
+                name="AddCollection"
+                component={AddCollectionModal}
+                options={{ presentation: 'modal' }} />
+
+              <RootStack.Screen
+                name="GoalSlideShow"
+                component={GoalSlideShowModal}
+                options={{
+                  presentation: 'card',
+                  animation: "fade",
+                }} />
             </RootStack.Group>
           </RootStack.Navigator>
         </NavigationContainer>
