@@ -1,28 +1,44 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
-import Carousel from 'react-native-reanimated-carousel'
+import Animated, { SharedValue, interpolate, useAnimatedStyle } from 'react-native-reanimated'
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import colors from 'tailwindcss/colors'
 import { RootStackParamList } from '../../App'
 import { GoalItemProps } from '../components/Goal/type'
 import Text from '../components/common/Text'
+import { parallaxLayout } from '../components/common/util/parallax'
+
 
 // Types
 type Props = NativeStackScreenProps<RootStackParamList, "GoalSlideShow">
 
 interface SlideProps extends GoalItemProps {
+    animationValue: SharedValue<number>
 }
 
 // Constants
 const GUTTER = 32
 const IMAGE_WIDTH = Dimensions.get('window').width - GUTTER
 
+
 const GoalSlideShowModal = ({ navigation, route }: Props) => {
-    const insets = useSafeAreaInsets()
     const [currentIdx, setCurrentIdx] = useState(0)
+    const ref = useRef<ICarouselInstance>(null)
+    const insets = useSafeAreaInsets()
+
+    useEffect(() => {
+        // Set the current item to the Id provided
+        if (route.params.currentId) {
+            const initialIdx = route.params.goals.findIndex(goal => goal.id === route.params.currentId)
+            setCurrentIdx(initialIdx)
+            ref.current?.scrollTo({ index: initialIdx, animated: false })
+        }
+    }, [])
+
 
     return (
         <View style={{
@@ -39,11 +55,28 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
             </Text>
 
             <Carousel
+                ref={ref}
                 width={IMAGE_WIDTH + GUTTER}
                 scrollAnimationDuration={1000}
                 onSnapToItem={setCurrentIdx}
                 data={route.params.goals}
-                renderItem={({ item }) => <Slide imageUrl={item.imageUrl} description={item.description} id={item.id} />} />
+                renderItem={({ item, animationValue }) => {
+                    return (
+                        <Slide imageUrl={item.imageUrl} description={item.description} id={item.id} animationValue={animationValue} />
+                    )
+                }
+                }
+                customAnimation={parallaxLayout(
+                    {
+                        size: IMAGE_WIDTH,
+                        vertical: false,
+                    },
+                    {
+                        parallaxScrollingScale: 1,
+                        parallaxAdjacentItemScale: 0.5,
+                        parallaxScrollingOffset: 40,
+                    },
+                )} />
 
         </View>
     )
@@ -52,9 +85,22 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
 export default GoalSlideShowModal
 
 // Child component
-const Slide = ({ description, imageUrl, id }: SlideProps) => {
+const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
+    const opacityStyle = useAnimatedStyle(() => {
+        const opacity = interpolate(
+            animationValue.value,
+            [-1, 0, 1],
+            [0, 1, 0],
+        )
+
+        return {
+            opacity,
+        }
+    }, [animationValue])
+
+
     return (
-        <View className='flex-grow items-center'>
+        <Animated.View className='flex-grow items-center' style={[opacityStyle]}>
             <Image
                 style={styles.imageSlide}
                 source={imageUrl}
@@ -62,7 +108,7 @@ const Slide = ({ description, imageUrl, id }: SlideProps) => {
                 className='rounded-xl mb-10' />
 
             <Text className='text-base text-center mb-10'>{description}</Text>
-        </View>
+        </Animated.View>
     )
 }
 
