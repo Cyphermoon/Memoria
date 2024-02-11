@@ -11,6 +11,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -24,46 +25,56 @@ export type RootStackParamList = {
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
 
+const RootStackNavigation = () => {
+  return (
+    <RootStack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+      <RootStack.Group>
+        <RootStack.Screen name="Splash" component={SplashScreen} />
+        <RootStack.Screen name="onBoarding" component={OnBoardingScreen} />
+        <RootStack.Screen name="Auth" component={AuthScreen} />
+        <RootStack.Screen name="Home" component={HomeScreen} />
+        <RootStack.Screen
+          name="Goal"
+          component={GoalScreen}
+          options={{
+            headerShown: true,
+            headerTitle: '',
+            headerStyle: { backgroundColor: '#030712' },
+            headerLeft: () => <GoalBackButton />
+          }} />
+      </RootStack.Group>
+
+      <RootStack.Group >
+        <RootStack.Screen
+          name="AddCollection"
+          component={AddCollectionModal}
+          options={{ presentation: 'modal' }} />
+
+        <RootStack.Screen
+          name="GoalSlideShow"
+          component={GoalSlideShowModal}
+          options={{
+            presentation: 'card',
+            headerShown: false,
+            animation: "fade",
+          }} />
+      </RootStack.Group>
+    </RootStack.Navigator>
+  )
+
+}
+
 export default function App() {
   return (
-    <GestureHandlerRootView className='flex-grow'>
-      <BottomSheetModalProvider>
-        <NavigationContainer >
-          {/* Creating a navigation stack */}
-          <RootStack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
-            <RootStack.Group>
-              <RootStack.Screen name="Splash" component={SplashScreen} />
-              <RootStack.Screen name="onBoarding" component={OnBoardingScreen} />
-              <RootStack.Screen name="Auth" component={AuthScreen} />
-              <RootStack.Screen name="Home" component={HomeScreen} />
-              <RootStack.Screen
-                name="Goal"
-                component={GoalScreen}
-                options={{
-                  headerShown: true,
-                  headerTitle: '',
-                  headerStyle: { backgroundColor: '#030712' },
-                  headerLeft: () => <GoalBackButton />
-                }} />
-            </RootStack.Group>
-
-            <RootStack.Group >
-              <RootStack.Screen
-                name="AddCollection"
-                component={AddCollectionModal}
-                options={{ presentation: 'modal' }} />
-
-              <RootStack.Screen
-                name="GoalSlideShow"
-                component={GoalSlideShowModal}
-                options={{
-                  presentation: 'card',
-                  animation: "fade",
-                }} />
-            </RootStack.Group>
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView className='flex-grow'>
+        <BottomSheetModalProvider>
+          <NavigationContainer >
+            {/* Creating a navigation stack */}
+            <RootStackNavigation />
+          </NavigationContainer>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
