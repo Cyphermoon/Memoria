@@ -27,6 +27,8 @@ const IMAGE_WIDTH = Dimensions.get('window').width - GUTTER
 
 const GoalSlideShowModal = ({ navigation, route }: Props) => {
     const [currentIdx, setCurrentIdx] = useState(0)
+    const [currentId, setCurrentId] = useState(route.params.currentId)
+
     const ref = useRef<ICarouselInstance>(null)
     const insets = useSafeAreaInsets()
 
@@ -35,19 +37,21 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
         if (route.params.currentId) {
             const initialIdx = route.params.goals.findIndex(goal => goal.id === route.params.currentId)
             setCurrentIdx(initialIdx)
+            setCurrentId(route.params.goals[initialIdx].id)
             ref.current?.scrollTo({ index: initialIdx, animated: false })
         }
     }, [])
 
 
     return (
-        <View style={{
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom,
-        }}
+        <View
+            style={{
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom,
+            }}
             className='bg-primary flex-grow flex-col items-center px-4'>
             <TouchableOpacity className='self-end mt-3 mb-12' onPress={() => navigation.goBack()} >
-                <FontAwesome5 name="times" size={24} color={colors.gray[200]} />
+                <FontAwesome5 name="times" size={32} color={colors.gray[200]} />
             </TouchableOpacity>
 
             <Text className='font-semibold mb-6 text-base'>
@@ -62,10 +66,13 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
                 data={route.params.goals}
                 renderItem={({ item, animationValue }) => {
                     return (
-                        <Slide imageUrl={item.imageUrl} description={item.description} id={item.id} animationValue={animationValue} />
+                        <Slide
+                            imageUrl={item.imageUrl}
+                            description={item.description}
+                            id={item.id}
+                            animationValue={animationValue} />
                     )
-                }
-                }
+                }}
                 customAnimation={parallaxLayout(
                     {
                         size: IMAGE_WIDTH,
@@ -84,8 +91,10 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
 
 export default GoalSlideShowModal
 
+
 // Child component
 const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
+    // Opacity Animation
     const opacityStyle = useAnimatedStyle(() => {
         const opacity = interpolate(
             animationValue.value,
@@ -100,7 +109,7 @@ const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
 
 
     return (
-        <Animated.View className='flex-grow items-center' style={[opacityStyle]}>
+        <Animated.View className='flex-grow items-center' style={[opacityStyle]} sharedTransitionTag={id}>
             <Image
                 style={styles.imageSlide}
                 source={imageUrl}
@@ -112,6 +121,7 @@ const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
     )
 }
 
+// Styles
 const styles = StyleSheet.create({
     imageSlide: {
         width: IMAGE_WIDTH,

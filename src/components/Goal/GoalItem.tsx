@@ -1,9 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Text from '../common/Text';
+import { TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { truncateText } from '../../util';
+import Text from '../common/Text';
 
 // Define the properties for the GoalItem component
 interface Props {
@@ -20,7 +21,7 @@ interface Props {
 const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
     return (
         // The main container for the GoalItem
-        <View className='relative w-full h-48 rounded-2xl'>
+        <Animated.View className='relative w-full h-48 rounded-2xl' sharedTransitionTag={id}>
 
             <Image source={url} className="w-full h-full rounded-2xl" contentFit='cover' />
 
@@ -45,7 +46,7 @@ const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 };
 
