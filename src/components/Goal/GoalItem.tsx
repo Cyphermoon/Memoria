@@ -1,6 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { truncateText } from '../../util';
@@ -19,10 +19,10 @@ interface Props {
 
 // Define the GoalItem component
 const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
+
     return (
         // The main container for the GoalItem
-        <Animated.View className='relative w-full h-48 rounded-2xl' sharedTransitionTag={id}>
-
+        <Animated.View className='relative w-full h-48 rounded-2xl'>
             <Image source={url} className="w-full h-full rounded-2xl" contentFit='cover' />
 
 

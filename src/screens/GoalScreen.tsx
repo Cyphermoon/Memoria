@@ -9,6 +9,7 @@ import ActionSection from '../components/Home/ActionSection'
 import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
 import { Alert } from 'react-native';
+import Animated from 'react-native-reanimated'
 
 const goalItems = [
     { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
@@ -115,6 +116,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
                 {/* Goals List */}
                 <View className='flex-grow h-96'>
+
                     <FlatList
                         data={goalItems}
                         keyExtractor={item => item.id}

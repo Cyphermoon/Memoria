@@ -109,7 +109,7 @@ const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
 
 
     return (
-        <Animated.View className='flex-grow items-center' style={[opacityStyle]} sharedTransitionTag={id}>
+        <Animated.View className='flex-grow items-center' style={[opacityStyle]}>
             <Image
                 style={styles.imageSlide}
                 source={imageUrl}
