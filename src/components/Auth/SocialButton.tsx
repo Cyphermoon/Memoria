@@ -1,7 +1,9 @@
-import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import React from 'react';
+import { Text, TouchableOpacity } from 'react-native';
+import colors from '../../../colors';
+
 
 interface Props {
     icon: "twitter" | "google" | "linkedin";
@@ -21,7 +23,7 @@ const SocialButton = ({ icon, text, disabled, textClass, color, onPress }: Props
                         source={require("../../../assets/images/google.svg")}
                         className='w-[26] h-[26]'
                     /> :
-                    <MaterialCommunityIcons name={icon} size={26} color={"white"} />
+                    <MaterialCommunityIcons name={icon} size={26} color={colors.secondary} />
             }
             <Text className={`text-white font-medium ml-2 ${textClass}`}>{text}</Text>
         </TouchableOpacity>

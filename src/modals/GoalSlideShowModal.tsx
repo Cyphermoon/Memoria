@@ -1,17 +1,17 @@
 import { FontAwesome5 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { SharedValue, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import colors from 'tailwindcss/colors'
 import { RootStackParamList } from '../../App'
 import { GoalItemProps } from '../components/Goal/type'
 import Text from '../components/common/Text'
 import { parallaxLayout } from '../components/common/util/parallax'
 import { useSlidePosition } from '../context/SlidePositionProvider'
+import colors from '../../colors'
 
 
 // Types
@@ -49,7 +49,7 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
             }}
             className='bg-primary flex-grow flex-col items-center px-4'>
             <TouchableOpacity className='self-end mt-3 mb-12' onPress={() => navigation.goBack()} >
-                <FontAwesome5 name="times" size={32} color={colors.gray[200]} />
+                <FontAwesome5 name="times" size={32} color={colors.secondary} />
             </TouchableOpacity>
 
             <Text className='font-semibold mb-6 text-base'>

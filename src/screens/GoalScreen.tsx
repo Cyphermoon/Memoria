@@ -9,6 +9,7 @@ import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
 import { useSlidePosition } from '../context/SlidePositionProvider'
 import SearchBar from '../components/common/SearchBar'
+import customColors from '../../colors'
 
 const goalItems = [
     { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
@@ -95,7 +96,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
                     <View className='flex-row items-center'>
                         <Touchable className='flex-row py-3.5' variant='outline'>
-                            <FontAwesome6 name="user-clock" size={16} color="#FFAEDC" />
+                            <FontAwesome6 name="user-clock" size={16} color={customColors.accent} />
                             <Text className='text-accent ml-2'>
                                 Daily
                             </Text>

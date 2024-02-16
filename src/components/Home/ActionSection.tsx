@@ -6,6 +6,7 @@ import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import SortItem from '../common/SortItem';
 import { sortOptions } from '../../../settings';
+import colors from '../../../colors';
 
 interface Props {
     handleSearchQueryChanged: (query: string) => void
@@ -39,7 +40,7 @@ const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubm
                 <Text className='font-bold text-[11px] text-gray-200 uppercase mb-1.5'>Sort</Text>
                 <TouchableOpacity className='flex-row items-center justify-start space-x-2 w-[100]' onPress={handleOpenPress}>
                     <Text className='text-lg text-secondary'>By Name</Text>
-                    <AntDesign name="caretdown" size={12} color="white" />
+                    <AntDesign name="caretdown" size={12} color={colors.secondary} />
                 </TouchableOpacity>
             </View>
 

@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, View } from 'react-native';
+import colors from '../../../colors';
 
 interface Props {
     isChecked: boolean;
@@ -12,7 +13,7 @@ const Checkbox = ({ isChecked, onCheck, children }: Props) => {
         <View className='flex-row items-center' >
             <Pressable onPress={onCheck}>
                 <View className="w-7 h-7 border border-gray-300 rounded-md items-center justify-center" >
-                    {isChecked && <Ionicons name="checkmark" size={22} color="white" />}
+                    {isChecked && <Ionicons name="checkmark" size={22} color={colors.secondary} />}
                 </View>
             </Pressable>
 

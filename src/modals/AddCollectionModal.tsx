@@ -3,6 +3,7 @@ import { KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, View }
 import Text from '../components/common/Text';
 import Touchable from '../components/common/Touchable';
 import colors from 'tailwindcss/colors'
+import customColors from '../../colors'
 
 const AddCollectionModal = () => {
     const [folderName, setFolderName] = useState('')
@@ -42,9 +43,9 @@ const AddCollectionModal = () => {
                             <Text>Active</Text>
 
                             <Switch
-                                trackColor={{ false: '#0F1728', true: '#FFAEDC' }}
-                                thumbColor={isActive ? '#030712' : colors.gray[300]}
-                                ios_backgroundColor={'#0F1728'}
+                                trackColor={{ false: customColors.primary["300"], true: '#FFAEDC' }}
+                                thumbColor={isActive ? customColors.primary.DEFAULT : colors.gray[300]}
+                                ios_backgroundColor={customColors.primary["300"]}
                                 value={isActive}
                                 onValueChange={toggleSwitch} />
                         </View>

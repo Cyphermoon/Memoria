@@ -5,6 +5,7 @@ import { TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { truncateText } from '../../util';
 import Text from '../common/Text';
+import colors from '../../../colors';
 
 // Define the properties for the GoalItem component
 interface Props {
@@ -37,12 +38,12 @@ const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
                 <View className='flex-row space-x-3'>
 
                     <TouchableOpacity onPress={() => onFullscreen(id)}>
-                        <MaterialIcons name="fullscreen" size={26} color="white" />
+                        <MaterialIcons name="fullscreen" size={26} color={colors.secondary} />
                     </TouchableOpacity>
 
 
                     <TouchableOpacity onPress={() => onDelete(id)}>
-                        <MaterialIcons name="delete" size={26} color="white" />
+                        <MaterialIcons name="delete" size={26} color={colors.secondary} />
                     </TouchableOpacity>
                 </View>
             </View>
