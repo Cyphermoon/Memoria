@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Text from './src/components/common/Text';
+import AddGoalItemModal from './src/modals/AddGoalItemModal';
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -56,6 +57,14 @@ const RootStackNavigation = () => {
             presentation: 'card',
             headerShown: false,
             animation: "fade",
+          }} />
+
+        <RootStack.Screen
+          name='NewGoalItem'
+          component={AddGoalItemModal}
+          options={{
+            presentation: 'card',
+            headerShown: false
           }} />
       </RootStack.Group>
     </RootStack.Navigator>

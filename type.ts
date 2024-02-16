@@ -9,4 +9,5 @@ export type RootStackParamList = {
     AddCollection: undefined
     Goal: SelectedGoalProps
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
+    NewGoalItem: {goalFolderId: string}
   };

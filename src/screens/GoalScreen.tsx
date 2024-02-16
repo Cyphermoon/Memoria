@@ -30,6 +30,10 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const ref = useRef<FlatList<any> | null>(null)
     const { position } = useSlidePosition()
 
+    function movetoNewGoalItem() {
+        navigation.navigate('NewGoalItem', { goalFolderId: route.params.id })
+    }
+
     //* Search Actions
     const handleSearchQueryChanged = (query: string) => {
         setSearchQuery(query);
@@ -90,6 +94,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
     return (
         <SafeAreaView className='bg-primary flex-grow'>
             <View className='px-1 flex-grow'>
+
                 {/* Header Section */}
                 <View className='flex-row justify-between items-center mb-8 mt-6'>
                     <Text className='text-4xl font-semibold'>{route.params.name}</Text>
@@ -100,8 +105,9 @@ const GoalScreen = ({ route, navigation }: Props) => {
                             <Text className='text-accent ml-2'>
                                 Daily
                             </Text>
+
                         </Touchable>
-                        <Touchable className='flex-row ml-4'>
+                        <Touchable className='flex-row ml-4' onPress={movetoNewGoalItem}>
                             <FontAwesome6 name="add" size={16} color={colors.gray[800]} />
                             <Text className='text-primary ml-2'>
                                 New
@@ -111,7 +117,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                 </View>
 
 
-
+                {/* Search Bar */}
                 <View className='mb-10'>
                     <SearchBar
                         searchQuery={searchQuery}
