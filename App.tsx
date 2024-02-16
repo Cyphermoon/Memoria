@@ -13,6 +13,7 @@ import SplashScreen from './src/screens/SplashScreen';
 import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GoalItemProps } from './src/components/Goal/type';
+import SlidePositionProvider from './src/context/SlidePositionProvider';
 
 export type RootStackParamList = {
   onBoarding: undefined
@@ -69,12 +70,14 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView className='flex-grow'>
-        <BottomSheetModalProvider>
-          <NavigationContainer >
-            {/* Creating a navigation stack */}
-            <RootStackNavigation />
-          </NavigationContainer>
-        </BottomSheetModalProvider>
+        <SlidePositionProvider>
+          <BottomSheetModalProvider>
+            <NavigationContainer >
+              {/* Creating a navigation stack */}
+              <RootStackNavigation />
+            </NavigationContainer>
+          </BottomSheetModalProvider>
+        </SlidePositionProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

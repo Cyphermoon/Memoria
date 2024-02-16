@@ -11,6 +11,7 @@ import { RootStackParamList } from '../../App'
 import { GoalItemProps } from '../components/Goal/type'
 import Text from '../components/common/Text'
 import { parallaxLayout } from '../components/common/util/parallax'
+import { useSlidePosition } from '../context/SlidePositionProvider'
 
 
 // Types
@@ -24,10 +25,8 @@ interface SlideProps extends GoalItemProps {
 const GUTTER = 32
 const IMAGE_WIDTH = Dimensions.get('window').width - GUTTER
 
-
 const GoalSlideShowModal = ({ navigation, route }: Props) => {
-    const [currentIdx, setCurrentIdx] = useState(0)
-    const [currentId, setCurrentId] = useState(route.params.currentId)
+    const { position, setPosition } = useSlidePosition()
 
     const ref = useRef<ICarouselInstance>(null)
     const insets = useSafeAreaInsets()
@@ -36,8 +35,7 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
         // Set the current item to the Id provided
         if (route.params.currentId) {
             const initialIdx = route.params.goals.findIndex(goal => goal.id === route.params.currentId)
-            setCurrentIdx(initialIdx)
-            setCurrentId(route.params.goals[initialIdx].id)
+            setPosition(initialIdx)
             ref.current?.scrollTo({ index: initialIdx, animated: false })
         }
     }, [])
@@ -55,14 +53,14 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
             </TouchableOpacity>
 
             <Text className='font-semibold mb-6 text-base'>
-                {currentIdx + 1} of {route.params.goals.length}
+                {position + 1} of {route.params.goals.length}
             </Text>
 
             <Carousel
                 ref={ref}
                 width={IMAGE_WIDTH + GUTTER}
                 scrollAnimationDuration={1000}
-                onSnapToItem={setCurrentIdx}
+                onSnapToItem={(index) => setPosition(index)}
                 data={route.params.goals}
                 renderItem={({ item, animationValue }) => {
                     return (

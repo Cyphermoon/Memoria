@@ -1,7 +1,7 @@
 import { FontAwesome6 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useState } from 'react'
-import { FlatList, SafeAreaView, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { FlatList, FlatListProps, SafeAreaView, View } from 'react-native'
 import colors from 'tailwindcss/colors'
 import { RootStackParamList } from '../../App'
 import GoalItem from '../components/Goal/GoalItem'
@@ -10,6 +10,7 @@ import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
 import { Alert } from 'react-native';
 import Animated from 'react-native-reanimated'
+import { useSlidePosition } from '../context/SlidePositionProvider'
 
 const goalItems = [
     { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
@@ -25,9 +26,10 @@ const goalItems = [
 type Props = NativeStackScreenProps<RootStackParamList, "Goal">
 
 
-
 const GoalScreen = ({ route, navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
+    const ref = useRef<FlatList<any> | null>(null)
+    const { position } = useSlidePosition()
 
     //* Search Actions
     const handleSearchQueryChanged = (query: string) => {
@@ -79,6 +81,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
     };
 
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollToIndex({ index: position, animated: true })
+        }
+
+    }, [position])
+
     return (
         <SafeAreaView className='bg-primary flex-grow'>
             <View className='px-1 flex-grow'>
@@ -118,6 +127,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                 <View className='flex-grow h-96'>
 
                     <FlatList
+                        ref={ref}
                         data={goalItems}
                         keyExtractor={item => item.id}
                         ListFooterComponent={() => <View className='h-10' />}
