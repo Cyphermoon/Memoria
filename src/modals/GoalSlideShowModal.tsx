@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RootStackParamList } from '../../App'
 import { GoalItemProps } from '../components/Goal/type'
 import Text from '../components/common/Text'
-import { parallaxLayout } from '../components/common/util/parallax'
+import { parallaxLayout } from '../util/parallax'
 import { useSlidePosition } from '../context/SlidePositionProvider'
 import colors from '../../colors'
 
