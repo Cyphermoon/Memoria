@@ -1,16 +1,14 @@
 import { FontAwesome6 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useRef, useState } from 'react'
-import { FlatList, FlatListProps, SafeAreaView, View } from 'react-native'
+import { Alert, FlatList, SafeAreaView, View } from 'react-native'
 import colors from 'tailwindcss/colors'
 import { RootStackParamList } from '../../App'
 import GoalItem from '../components/Goal/GoalItem'
-import ActionSection from '../components/Home/ActionSection'
 import Text from '../components/common/Text'
 import Touchable from '../components/common/Touchable'
-import { Alert } from 'react-native';
-import Animated from 'react-native-reanimated'
 import { useSlidePosition } from '../context/SlidePositionProvider'
+import SearchBar from '../components/common/SearchBar'
 
 const goalItems = [
     { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
@@ -112,14 +110,12 @@ const GoalScreen = ({ route, navigation }: Props) => {
                 </View>
 
 
-                {/* Action Section */}
+
                 <View className='mb-10'>
-                    <ActionSection
+                    <SearchBar
                         searchQuery={searchQuery}
-                        handleSearchQueryChanged={handleSearchQueryChanged}
-                        handleSearchSubmit={handleSearchSubmit}
-                        handleSortPress={handleSortPress}
-                    />
+                        setSearchQuery={handleSearchQueryChanged}
+                        handleSearchSubmit={handleSearchSubmit} />
                 </View>
 
 

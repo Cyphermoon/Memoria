@@ -1,12 +1,15 @@
 import { BottomSheetBackdrop, BottomSheetBackdropProps, BottomSheetModal, BottomSheetModalProps } from '@gorhom/bottom-sheet';
 import React, { forwardRef, useCallback } from 'react';
+import { View } from 'react-native';
+import Text from './Text';
 
 interface Props extends BottomSheetModalProps {
     snapPoints: string[];
     children: React.ReactNode;
+    text: string
 }
 
-const CustomBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ snapPoints, children, ...rest }, ref) => {
+const CustomBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ snapPoints, children, text, ...rest }, ref) => {
     const renderBackdrop = useCallback(
         (props: BottomSheetBackdropProps) => (
             <BottomSheetBackdrop
@@ -27,7 +30,11 @@ const CustomBottomSheetModal = forwardRef<BottomSheetModal, Props>(({ snapPoints
             enablePanDownToClose={true}
             backdropComponent={renderBackdrop}
         >
-            {children}
+            <View className="flex-1 justify-start items-start bg-primary-300 px-4">
+                <Text className='font-bold text-[13px] text-gray-400 uppercase mb-4'>{text}</Text>
+                {children}
+            </View>
+
         </BottomSheetModal >
     );
 });
