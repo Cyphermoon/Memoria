@@ -2,30 +2,27 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GoalBackButton } from './src/components/Goal/GoalBackButton';
-import { SelectedGoalProps } from './src/components/Home/type';
+import SlidePositionProvider from './src/context/SlidePositionProvider';
 import AddCollectionModal from './src/modals/AddCollectionModal';
+import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
 import AuthScreen from './src/screens/AuthScreen';
 import GoalScreen from './src/screens/GoalScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
-import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { GoalItemProps } from './src/components/Goal/type';
-import SlidePositionProvider from './src/context/SlidePositionProvider';
+import { RootStackParamList } from './type';
+import { useEffect, useState } from 'react';
+import { Linking, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Text from './src/components/common/Text';
 
-export type RootStackParamList = {
-  onBoarding: undefined
-  Splash: undefined
-  Auth: undefined
-  Home: undefined
-  AddCollection: undefined
-  Goal: SelectedGoalProps
-  GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
-};
-
+// Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
+
+// Define persistence key
+const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 const RootStackNavigation = () => {
   return (
@@ -67,12 +64,55 @@ const RootStackNavigation = () => {
 }
 
 export default function App() {
+  const [isReady, setIsReady] = useState(__DEV__ ? false : true);
+  const [initialState, setInitialState] = useState()
+
+  useEffect(() => {
+
+    const restoreState = async () => {
+      try {
+        const linkingUrl = await Linking.getInitialURL()
+
+        // Do not restore state when there is a deep link
+        if (linkingUrl !== null) return
+
+        // retrieve the state from async storage
+        const savedState = await AsyncStorage.getItem(PERSISTENCE_KEY)
+        const state = savedState ? JSON.parse(savedState) : undefined
+
+        // update initial state if the Asyncstorage has a state
+        if (state) {
+          setInitialState(state)
+        }
+
+      } catch (e: any) {
+        console.error('Encountered an error while trying to restore state', e.message)
+      }
+      finally {
+        // make the app ready irrespective of the outcome
+        setIsReady(true)
+      }
+    }
+
+    if (!isReady) {
+      restoreState()
+    }
+  }, [isReady])
+
+  if (!isReady) {
+    <Text>App is loading</Text>
+  }
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView className='flex-grow'>
         <SlidePositionProvider>
           <BottomSheetModalProvider>
-            <NavigationContainer >
+            <NavigationContainer
+              initialState={initialState}
+              onStateChange={(state) => {
+                AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+              }}>
               {/* Creating a navigation stack */}
               <RootStackNavigation />
             </NavigationContainer>
