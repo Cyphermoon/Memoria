@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import SelectImageGenerationMethodOption from './SelectImageGenerationMethodOption';
 import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
 import colors from 'tailwindcss/colors';
 import { ImageGenerationMethodOptionProps } from './type';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { imageGenerationModes } from '../../modals/AddGoalItemModal';
+import { imageGenerationModes } from '../../../settings';
+import Text from '../common/Text';
+
 
 
 interface ImageGenerationSelectorProps {
@@ -37,7 +39,7 @@ const ImageGenerationSelector: React.FC<ImageGenerationSelectorProps> = ({
     }
 
     return (
-        <View className='space-y-3'>
+        <View className='space-y-3 mb-8'>
             <Text className="font-medium">Select image generation method</Text>
 
             <TouchableOpacity
