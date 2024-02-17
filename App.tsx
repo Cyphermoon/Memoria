@@ -18,6 +18,9 @@ import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
+import Touchable from './src/components/common/Touchable';
+import HeaderCancelButton from './src/components/AddGoalItem/HeaderCancelButton';
+import colors from './colors';
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -39,7 +42,8 @@ const RootStackNavigation = () => {
           options={{
             headerShown: true,
             headerTitle: '',
-            headerStyle: { backgroundColor: '#030712' },
+            headerShadowVisible: false,
+            headerStyle: { backgroundColor: colors.primary.DEFAULT },
             headerLeft: () => <GoalBackButton />
           }} />
       </RootStack.Group>
@@ -63,7 +67,13 @@ const RootStackNavigation = () => {
           name='NewGoalItem'
           component={AddGoalItemModal}
           options={{
-            headerShown: false
+            headerTitle: () => <Text className='text-xl text-secondary font-medium'>Add Goal</Text>,
+            headerBackVisible: false,
+            headerShown: true,
+            headerShadowVisible: false,
+            headerStyle: { backgroundColor: colors.primary.DEFAULT },
+            contentStyle: { flexDirection: 'row', alignItems: 'center' },
+            headerRight: () => <HeaderCancelButton />
           }} />
       </RootStack.Group>
     </RootStack.Navigator>
