@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, TouchableOpacity, View } from 'react-native';
 import Text from '../components/common/Text';
 import Touchable from '../components/common/Touchable';
 import colors from 'tailwindcss/colors'
 import customColors from '../../colors'
+import { RootStackParamList } from '../../type';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FontAwesome } from '@expo/vector-icons';
 
-const AddCollectionModal = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'AddCollection'>;
+
+const AddCollectionModal = ({ navigation }: Props) => {
     const [folderName, setFolderName] = useState('')
     const [isActive, setIsActive] = useState(false)
 
@@ -14,8 +19,8 @@ const AddCollectionModal = () => {
     }
 
     function addCollection() {
-        console.log('Your new folder name is: ', folderName);
         setFolderName('')
+        navigation.canGoBack() && navigation.goBack()
     }
 
     return (
@@ -27,7 +32,15 @@ const AddCollectionModal = () => {
             >
                 <View className='p-4 justify-between flex-grow'>
                     <View>
-                        <Text className='text-center font-medium text-2xl mb-14 text-gray-300'>New Folder</Text>
+                        <View className='flex-row items-center justify-between mb-14'>
+                            <Text className='text-center font-medium flex-grow text-2xl  text-gray-300'>
+                                New Folder
+                            </Text>
+
+                            <TouchableOpacity onPress={() => navigation.goBack()}>
+                                <FontAwesome name="times" size={29} color={customColors.secondary} />
+                            </TouchableOpacity>
+                        </View>
 
                         <View className='mb-14'>
                             <Text className='mb-2'>Name</Text>

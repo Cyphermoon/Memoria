@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import colors from './colors';
+import HeaderCancelButton from './src/components/AddGoalItem/HeaderCancelButton';
 import { GoalBackButton } from './src/components/Goal/GoalBackButton';
 import Text from './src/components/common/Text';
 import SlidePositionProvider from './src/context/SlidePositionProvider';
@@ -18,9 +20,6 @@ import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
-import Touchable from './src/components/common/Touchable';
-import HeaderCancelButton from './src/components/AddGoalItem/HeaderCancelButton';
-import colors from './colors';
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
