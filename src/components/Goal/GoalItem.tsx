@@ -6,20 +6,21 @@ import Animated from 'react-native-reanimated';
 import { truncateText } from '../../util';
 import Text from '../common/Text';
 import colors from '../../../colors';
+import { Entypo } from '@expo/vector-icons';
+import { GoalItemProps } from './type';
 
 // Define the properties for the GoalItem component
 interface Props {
     url: string,
     name: string,
     id: string,
-    // onDelete is a function that takes a string id as a parameter
     onDelete: (id: string) => void,
-    // onFullscreen is a function that takes a string id as a parameter
     onFullscreen: (id: string) => void
+    onEdit: (item: GoalItemProps) => void
 }
 
 // Define the GoalItem component
-const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
+const GoalItem = ({ url, name, id, onDelete, onFullscreen, onEdit }: Props) => {
 
     return (
         // The main container for the GoalItem
@@ -36,11 +37,13 @@ const GoalItem = ({ url, onDelete, onFullscreen, name, id }: Props) => {
 
 
                 <View className='flex-row space-x-3'>
+                    <TouchableOpacity onPress={() => onEdit({ id, description: name, imageUrl: url })}>
+                        <Entypo name="edit" size={26} color={colors.secondary} />
+                    </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => onFullscreen(id)}>
                         <MaterialIcons name="fullscreen" size={26} color={colors.secondary} />
                     </TouchableOpacity>
-
 
                     <TouchableOpacity onPress={() => onDelete(id)}>
                         <MaterialIcons name="delete" size={26} color={colors.secondary} />

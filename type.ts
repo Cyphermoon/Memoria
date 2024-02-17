@@ -1,4 +1,4 @@
-import { GoalItemProps } from "./src/components/Goal/type";
+import {  GoalItemProps } from "./src/components/Goal/type";
 import { SelectedGoalProps } from "./src/components/Home/type";
 
 export type RootStackParamList = {
@@ -10,4 +10,5 @@ export type RootStackParamList = {
     Goal: SelectedGoalProps
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
     NewGoalItem: {goalFolderId: string}
+    EditGoalItem: {goalItem: GoalItemProps}
   };

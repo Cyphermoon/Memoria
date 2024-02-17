@@ -14,3 +14,9 @@ export interface ImageGeneratedProps {
     url: string
     generationMethod: string
 }
+
+// export type GoalItemEditorProps = {
+//     id: string,
+//     url: string,
+//     name: string,
+// }

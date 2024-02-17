@@ -20,6 +20,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
+import EditGoalItem from './src/screens/EditGoalItem';
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -44,6 +45,12 @@ const RootStackNavigation = () => {
             headerShadowVisible: false,
             headerStyle: { backgroundColor: colors.primary.DEFAULT },
             headerLeft: () => <GoalBackButton />
+          }} />
+        <RootStack.Screen
+          name="EditGoalItem"
+          component={EditGoalItem}
+          options={{
+            headerShown: false,
           }} />
       </RootStack.Group>
 

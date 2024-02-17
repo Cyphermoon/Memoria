@@ -56,6 +56,11 @@ const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
                     className='w-full flex-grow rounded-lg'
                 />
             }
+
+            {!imageGenerated?.url &&
+                <Text className='text-gray-400 text-center'>No image selected</Text>
+            }
+
             {/* Button to pick another image */}
             <Touchable
                 onPress={pickImage}

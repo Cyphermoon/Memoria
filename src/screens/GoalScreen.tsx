@@ -10,6 +10,8 @@ import { useSlidePosition } from '../context/SlidePositionProvider'
 import SearchBar from '../components/common/SearchBar'
 import customColors from '../../colors'
 import { RootStackParamList } from '../../type'
+import { GoalItemProps } from '../components/Goal/type'
+
 
 const goalItems = [
     { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
@@ -81,8 +83,11 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
     function handleFullscreen(id: string) {
         navigation.navigate('GoalSlideShow', { currentId: id, goals: goalItems });
-
     };
+
+    function handleEdit(goalItem: GoalItemProps) {
+        navigation.navigate('EditGoalItem', { goalItem });
+    }
 
     useEffect(() => {
         if (ref.current) {
@@ -136,7 +141,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
                         ListFooterComponent={() => <View className='h-10' />}
                         renderItem={({ item }) => (
                             <View className='relative w-full h-56 rounded-2xl'>
-                                <GoalItem id={item.id} name={item.description} url={item.imageUrl} onDelete={handleDelete} onFullscreen={handleFullscreen} />
+                                <GoalItem
+                                    id={item.id}
+                                    name={item.description}
+                                    url={item.imageUrl}
+                                    onDelete={handleDelete}
+                                    onFullscreen={handleFullscreen}
+                                    onEdit={handleEdit} />
                             </View>
                         )}
                     />
