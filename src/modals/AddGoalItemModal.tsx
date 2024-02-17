@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import customColors from '../../colors'
 import DescriptionInput from '../components/Goal/DescriptionInput'
@@ -11,72 +11,85 @@ import { imageGenerationModes } from '../../settings'
 import AIImageOption from '../components/Goal/AIImageOption'
 import GalleryOption from '../components/Goal/GalleryOption'
 import UnSplashOption from '../components/Goal/UnSplashOption'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../type'
+import HeaderCancelButton from '../components/AddGoalItem/HeaderCancelButton'
 
 
-const AddGoalItemModal = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'NewGoalItem'>
+
+
+const AddGoalItemModal = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()
 
     const [description, setDescription] = useState('')
-    const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(imageGenerationModes[0])
+    const [descriptionFocused, setDescriptionFocused] = useState(false)
+
+    const [selectedMode, setSelectedMode] =
+        useState<ImageGenerationMethodOptionProps | null>(imageGenerationModes[0])
     const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
 
     function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
         setSelectedMode(mode)
     }
 
+    useEffect(() => {
+        // Add functionality to the header right button
+        navigation.setOptions({
+            headerRight: () => <HeaderCancelButton onPress={() => navigation.goBack()} />
+        })
+
+    }, [navigation])
+
     return (
-        <View
-            className='px-4 flex-grow bg-primary'
-            style={{
-                paddingTop: insets.top,
-                paddingBottom: insets.bottom,
-            }}>
-            <Text className='text-2xl text-secondary text-center font-semibold my-4'>Add Goal</Text>
+        <TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
+            <View
+                className='px-4 pt-6 flex-grow bg-primary '
+                style={{
+                    paddingBottom: insets.bottom,
+                }}>
 
-            <View className='space-y-10 mb-6 flex-grow'>
-                <ImageGenerationSelector
-                    handleImageSelected={handleImageSelected}
-                    selectedMode={selectedMode} />
+                <View className='space-y-10 mb-6 flex-grow'>
+                    <ImageGenerationSelector
+                        handleImageSelected={handleImageSelected}
+                        selectedMode={selectedMode} />
 
-                <DescriptionInput description={description} setDescription={setDescription} />
+                    <DescriptionInput
+                        description={description}
+                        focused={descriptionFocused}
+                        setDescription={setDescription}
+                        setFocused={setDescriptionFocused}
+                    />
 
-                <View className='border-2 border-gray-700 rounded-lg p-4 flex-grow'>
-                    {selectedMode?.value === 'ai' && (
-                        <AIImageOption
-                            description={description}
-                            ImageGenerated={imageGenerated}
-                            setImageGenerated={setImageGenerated}
-                        />
-                    )}
-                    {selectedMode?.value === 'gallery' && (
-                        <GalleryOption
-                            imageGenerated={imageGenerated}
-                            setImageGenerated={setImageGenerated} />
-                    )}
-                    {selectedMode?.value === 'unsplash' && (
-                        <UnSplashOption
-                            imageGenerated={imageGenerated}
-                            setImageGenerated={setImageGenerated}
-                        />
-                    )}
+                    <View className='border-2 border-gray-700 rounded-lg p-4 flex-grow'>
+                        {selectedMode?.value === 'ai' && (
+                            <AIImageOption
+                                description={description}
+                                ImageGenerated={imageGenerated}
+                                setImageGenerated={setImageGenerated}
+                            />
+                        )}
+
+                        {selectedMode?.value === 'gallery' && (
+                            <GalleryOption
+                                imageGenerated={imageGenerated}
+                                setImageGenerated={setImageGenerated} />
+                        )}
+
+                        {selectedMode?.value === 'unsplash' && (
+                            <UnSplashOption
+                                imageGenerated={imageGenerated}
+                                setImageGenerated={setImageGenerated}
+                            />
+                        )}
+                    </View>
                 </View>
+
+                <Touchable isText>Create</Touchable>
+
             </View>
-
-            <Touchable isText>Create</Touchable>
-
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
 
 export default AddGoalItemModal
-
-
-const styles = StyleSheet.create({
-    picker: {
-        height: 50,
-        width: '100%',
-        color: 'white',
-        // backgroundColor: 'red',
-        borderRadius: 10
-    }
-})
