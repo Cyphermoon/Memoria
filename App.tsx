@@ -1,11 +1,16 @@
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useEffect, useState } from 'react';
+import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GoalBackButton } from './src/components/Goal/GoalBackButton';
+import Text from './src/components/common/Text';
 import SlidePositionProvider from './src/context/SlidePositionProvider';
 import AddCollectionModal from './src/modals/AddCollectionModal';
+import AddGoalItemModal from './src/modals/AddGoalItemModal';
 import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
 import AuthScreen from './src/screens/AuthScreen';
 import GoalScreen from './src/screens/GoalScreen';
@@ -13,11 +18,6 @@ import HomeScreen from './src/screens/HomeScreen';
 import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
-import { useEffect, useState } from 'react';
-import { Linking, Platform } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Text from './src/components/common/Text';
-import AddGoalItemModal from './src/modals/AddGoalItemModal';
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -63,7 +63,6 @@ const RootStackNavigation = () => {
           name='NewGoalItem'
           component={AddGoalItemModal}
           options={{
-            presentation: 'card',
             headerShown: false
           }} />
       </RootStack.Group>

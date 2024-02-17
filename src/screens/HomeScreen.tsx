@@ -14,7 +14,7 @@ import Text from '../components/common/Text'
 import UserAvatar from '../components/common/UserAvatar'
 import { getGreetings } from '../util'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../App'
+import { RootStackParamList } from '../../type'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -135,20 +135,14 @@ const HomeScreen = ({ navigation }: Props) => {
             </Container>
 
             {/* Goal Bottom Sheet */}
-            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} >
-                <View className="flex-1 justify-start items-start bg-primary-300 px-4">
-                    <Text className='font-bold text-[13px] text-gray-400 uppercase mb-4'>Goal Actions</Text>
+            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Goal Actions' >
+                {selectedGoal &&
 
-                    {selectedGoal &&
-
-                        <View>
-                            <GoalActionItem onPress={handleGoalEdit} icon='edit' text='Edit' id={selectedGoal.id} />
-                            <GoalActionItem onPress={handleGoalDelete} icon='delete' text='Delete' id={selectedGoal.id} danger />
-                        </View>
-                    }
-
-
-                </View>
+                    <View>
+                        <GoalActionItem onPress={handleGoalEdit} icon='edit' text='Edit' id={selectedGoal.id} />
+                        <GoalActionItem onPress={handleGoalDelete} icon='delete' text='Delete' id={selectedGoal.id} danger />
+                    </View>
+                }
             </CustomBottomSheetModal>
         </SafeAreaView>
     )
