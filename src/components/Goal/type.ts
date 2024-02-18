@@ -15,6 +15,12 @@ export interface ImageGeneratedProps {
     generationMethod: string
 }
 
+export interface IntervalOptionProps {
+    label: string;
+    value: string;
+    icon: string;
+}
+
 // export type GoalItemEditorProps = {
 //     id: string,
 //     url: string,

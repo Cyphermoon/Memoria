@@ -11,9 +11,8 @@ import HeaderCancelButton from './src/components/AddGoalItem/HeaderCancelButton'
 import { GoalBackButton } from './src/components/Goal/GoalBackButton';
 import Text from './src/components/common/Text';
 import SlidePositionProvider from './src/context/SlidePositionProvider';
-import AddCollectionModal from './src/modals/AddCollectionModal';
-import AddGoalItemModal from './src/modals/AddGoalItemModal';
-import GoalSlideShowModal from './src/modals/GoalSlideShowModal';
+import AddGoalItemModal from './src/screens/GoalScreen/Modals/AddGoalItemModal';
+import GoalSlideShowModal from './src/screens/GoalScreen/Modals/GoalSlideShowModal';
 import AuthScreen from './src/screens/AuthScreen';
 import GoalScreen from './src/screens/GoalScreen';
 import HomeScreen from './src/screens/HomeScreen';
@@ -21,6 +20,8 @@ import OnBoardingScreen from './src/screens/OnBoardingScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
 import EditGoalItem from './src/screens/EditGoalItem';
+import AddCollectionModal from './src/screens/HomeScreen/Modals/AddCollectionModal';
+
 
 // Creating a navigation stack
 const RootStack = createNativeStackNavigator<RootStackParamList>()

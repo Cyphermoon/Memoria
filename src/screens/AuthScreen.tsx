@@ -6,7 +6,7 @@ import Text from '../components/common/Text'
 import SocialButton from '../components/Auth/SocialButton'
 import Checkbox from '../components/common/Checkbox'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../App'
+import { RootStackParamList } from '../../type'
 
 
 type Props = NativeStackScreenProps<RootStackParamList, "Auth">
