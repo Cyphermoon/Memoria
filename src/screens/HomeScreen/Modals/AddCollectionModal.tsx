@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, TouchableOpacity, View } from 'react-native';
-import Text from '../components/common/Text';
-import Touchable from '../components/common/Touchable';
+import Text from '../../../components/common/Text';
+import Touchable from '../../../components/common/Touchable';
 import colors from 'tailwindcss/colors'
-import customColors from '../../colors'
-import { RootStackParamList } from '../../type';
+import customColors from '../../../../colors'
+import { RootStackParamList } from '../../../../type';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
 

@@ -6,12 +6,14 @@ import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { SharedValue, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { RootStackParamList } from '../../App'
-import { GoalItemProps } from '../components/Goal/type'
-import Text from '../components/common/Text'
-import { parallaxLayout } from '../util/parallax'
-import { useSlidePosition } from '../context/SlidePositionProvider'
-import colors from '../../colors'
+
+import colors from '../../../../colors'
+import { RootStackParamList } from '../../../../type'
+import { GoalItemProps } from '../../../components/Goal/type'
+
+import { useSlidePosition } from '../../../context/SlidePositionProvider'
+import { parallaxLayout } from '../../../util/parallax'
+import Text from '@components/common/Text'
 
 
 // Types

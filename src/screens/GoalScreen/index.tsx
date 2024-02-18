@@ -3,14 +3,16 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, FlatList, SafeAreaView, View } from 'react-native'
 import colors from 'tailwindcss/colors'
-import GoalItem from '../components/Goal/GoalItem'
-import Text from '../components/common/Text'
-import Touchable from '../components/common/Touchable'
-import { useSlidePosition } from '../context/SlidePositionProvider'
-import SearchBar from '../components/common/SearchBar'
-import customColors from '../../colors'
-import { RootStackParamList } from '../../type'
-import { GoalItemProps } from '../components/Goal/type'
+import GoalItem from '../../components/Goal/GoalItem'
+import Text from '../../components/common/Text'
+import Touchable from '../../components/common/Touchable'
+import { useSlidePosition } from '../../context/SlidePositionProvider'
+import SearchBar from '../../components/common/SearchBar'
+import customColors from '../../../colors'
+import { RootStackParamList } from '../../../type'
+import { GoalItemProps, IntervalOptionProps } from '../../components/Goal/type'
+import IntervalSelector from '../../components/Goal/IntervalSelector'
+import { intervalOptions } from 'settings'
 
 
 const goalItems = [
@@ -31,6 +33,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
     const ref = useRef<FlatList<any> | null>(null)
     const { position } = useSlidePosition()
+
+    const [selectedInterval, setSelectedInterval] = useState<IntervalOptionProps>(intervalOptions[0]);
+
+    const handleIntervalSelected = (interval: IntervalOptionProps) => {
+        setSelectedInterval(interval);
+        // You can add more logic here if needed
+    };
 
     function movetoNewGoalItem() {
         navigation.navigate('NewGoalItem', { goalFolderId: route.params.id })
@@ -105,13 +114,11 @@ const GoalScreen = ({ route, navigation }: Props) => {
                     <Text className='text-4xl font-semibold'>{route.params.name}</Text>
 
                     <View className='flex-row items-center'>
-                        <Touchable className='flex-row py-3.5' variant='outline'>
-                            <FontAwesome6 name="user-clock" size={16} color={customColors.accent} />
-                            <Text className='text-accent ml-2'>
-                                Daily
-                            </Text>
+                        <IntervalSelector
+                            selectedInterval={selectedInterval}
+                            handleIntervalSelected={handleIntervalSelected}
+                        />
 
-                        </Touchable>
                         <Touchable className='flex-row ml-4' onPress={movetoNewGoalItem}>
                             <FontAwesome6 name="add" size={16} color={colors.gray[800]} />
                             <Text className='text-primary ml-2'>
