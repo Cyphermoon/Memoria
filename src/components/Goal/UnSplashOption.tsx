@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native'
 import { AddGoalItemModalNavigationProps, AddGoalItemModalRouteProps } from '@screens/GoalScreen/Modals/AddGoalItemModal'
 import React, { useEffect } from 'react'
 import { Text, View } from 'react-native'
@@ -15,6 +15,7 @@ interface Props {
 const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
     const route = useRoute<AddGoalItemModalRouteProps>()
     const navigation = useNavigation<AddGoalItemModalNavigationProps>()
+    const isFocused = useIsFocused()
 
     const openUnSplashModal = () => {
         navigation.navigate('UnSplashModal')
@@ -28,6 +29,8 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
     }, [])
 
     useEffect(() => {
+        if (!isFocused) return
+
         const unsubscribe = navigation.addListener('focus', () => {
             // Check if there's any new data passed from the UnSplashModal screen
             if (!route.params?.unsplashImage) return
@@ -39,8 +42,14 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 
         });
 
-        return unsubscribe;
-    }, [navigation, route.params]);
+        return () => {
+            unsubscribe()
+            setImageGenerated({
+                url: '',
+                generationMethod: '',
+            })
+        };
+    }, [navigation, route.params, isFocused]);
 
     return (
         <View className='flex-grow justify-between items-center space-y-5'>

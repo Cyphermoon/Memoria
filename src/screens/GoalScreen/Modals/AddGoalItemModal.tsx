@@ -67,7 +67,7 @@ const AddGoalItemModal = ({ navigation }: Props) => {
                         {selectedMode?.value === 'ai' && (
                             <AIImageOption
                                 description={description}
-                                ImageGenerated={imageGenerated}
+                                imageGenerated={imageGenerated}
                                 setImageGenerated={setImageGenerated}
                             />
                         )}
