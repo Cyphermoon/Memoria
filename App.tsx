@@ -21,6 +21,7 @@ import SplashScreen from './src/screens/SplashScreen';
 import { RootStackParamList } from './type';
 import EditGoalItem from './src/screens/EditGoalItem';
 import AddCollectionModal from './src/screens/HomeScreen/Modals/AddCollectionModal';
+import UnSplashModal from '@screens/GoalScreen/Modals/UnSplashModal';
 
 
 // Creating a navigation stack
@@ -68,6 +69,14 @@ const RootStackNavigation = () => {
             presentation: 'card',
             headerShown: false,
             animation: "fade",
+          }} />
+
+        <RootStack.Screen
+          name="UnSplashModal"
+          component={UnSplashModal}
+          options={{
+            presentation: 'modal',
+            headerShown: false,
           }} />
 
         <RootStack.Screen

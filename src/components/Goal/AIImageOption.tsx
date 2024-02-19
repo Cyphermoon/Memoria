@@ -12,14 +12,20 @@ interface Props {
 
 const AIImageOption = ({ description, setImageGenerated }: Props) => {
     const [loading, setLoading] = useState(true)
+
     return (
         <View className='space-y-4 flex-grow justify-center items-center'>
-            {loading &&
-                <ActivityIndicator
-                    size="large"
-                    color={customColors.secondary} />}
+            {!description && <Text className='text-center'>Enter a goal, inspiration or anything you to visualize and we generate an image for you</Text>}
+            {description && loading &&
+                <>
+                    <ActivityIndicator
+                        size="large"
+                        color={customColors.secondary} />
+                    <Text>Generating Image...</Text>
 
-            <Text>Generating Image...</Text>
+                </>
+            }
+
         </View>
     )
 }

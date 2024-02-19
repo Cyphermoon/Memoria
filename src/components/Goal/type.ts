@@ -1,3 +1,4 @@
+
 export type GoalItemProps = {
     id: string,
     description: string,
@@ -20,6 +21,8 @@ export interface IntervalOptionProps {
     value: string;
     icon: string;
 }
+
+
 
 // export type GoalItemEditorProps = {
 //     id: string,

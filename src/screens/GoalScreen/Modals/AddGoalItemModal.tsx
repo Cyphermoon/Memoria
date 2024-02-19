@@ -12,13 +12,18 @@ import ImageGenerationSelector from '../../../components/Goal/ImageGenerationSel
 import UnSplashOption from '../../../components/Goal/UnSplashOption'
 import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from '../../../components/Goal/type'
 import Touchable from '../../../components/common/Touchable'
+import { NavigationProp, RouteProp } from '@react-navigation/native'
 
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NewGoalItem'>
+export type AddGoalItemModalRouteProps = RouteProp<RootStackParamList, 'NewGoalItem'>
+export type AddGoalItemModalNavigationProps = NavigationProp<RootStackParamList, 'NewGoalItem'>
 
 
-const AddGoalItemModal = ({ navigation }: Props) => {
+
+
+const AddGoalItemModal = ({ navigation, route }: Props) => {
     const insets = useSafeAreaInsets()
 
     const [description, setDescription] = useState('')

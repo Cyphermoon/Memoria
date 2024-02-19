@@ -9,6 +9,7 @@ export type RootStackParamList = {
     AddCollection: undefined
     Goal: SelectedGoalProps
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
-    NewGoalItem: {goalFolderId: string}
+    NewGoalItem: {goalFolderId: string, unsplash?: {uri: string, id: string}}
     EditGoalItem: {goalItem: GoalItemProps}
+    UnSplashModal: undefined
   };
