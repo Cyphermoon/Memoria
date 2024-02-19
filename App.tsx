@@ -99,7 +99,7 @@ export default function App() {
         const linkingUrl = await Linking.getInitialURL()
 
         // Do not restore state when there is a deep link
-        if (linkingUrl !== null) return
+        // if (linkingUrl !== null) return
 
         // retrieve the state from async storage
         const savedState = await AsyncStorage.getItem(PERSISTENCE_KEY)
