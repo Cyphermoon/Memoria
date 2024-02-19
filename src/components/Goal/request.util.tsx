@@ -29,7 +29,5 @@ export async function getUnsplashPhotos(_url: string, options: UnSplashOtherOpti
 
     const data = await res.json()
 
-    console.log(data)
-
     return data
 }

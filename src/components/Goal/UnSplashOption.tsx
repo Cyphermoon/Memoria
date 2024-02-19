@@ -3,6 +3,8 @@ import { AddGoalItemModalNavigationProps, AddGoalItemModalRouteProps } from '@sc
 import React, { useEffect } from 'react'
 import { Text, View } from 'react-native'
 import { ImageGeneratedProps } from './type'
+import Touchable from '@components/common/Touchable'
+import { Image } from 'expo-image'
 
 
 interface Props {
@@ -23,22 +25,42 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
         if (imageGenerated?.url && imageGenerated?.generationMethod === 'unsplash') return
 
         openUnSplashModal()
-    })
+    }, [])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             // Check if there's any new data passed from the UnSplashModal screen
-            if (route.params?.unsplash?.uri) {
-                // Do something with the selected image
-                console.log(route.params.unsplash.uri);
-            }
+            if (!route.params?.unsplashImage) return
+
+            setImageGenerated({
+                url: route?.params.unsplashImage?.urls?.full,
+                generationMethod: 'unsplash'
+            })
+
         });
 
         return unsubscribe;
     }, [navigation, route.params]);
+
     return (
-        <View>
-            <Text>UnSplashOption</Text>
+        <View className='flex-grow justify-between items-center space-y-5'>
+            {imageGenerated?.url &&
+                <Image
+                    source={imageGenerated.url}
+                    contentFit="cover"
+                    className='w-full flex-grow rounded-lg'
+                />
+            }
+
+            {!imageGenerated?.url &&
+                <Text className='text-gray-400 text-center'>No image selected</Text>
+            }
+            <Touchable
+                onPress={openUnSplashModal}
+                variant='muted'
+                className='w-full bg-primary-300 flex-row justify-center items-center'>
+                <Text className='text-gray-400'>Choose Another</Text>
+            </Touchable>
         </View>
     )
 }

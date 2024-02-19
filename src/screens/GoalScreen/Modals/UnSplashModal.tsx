@@ -1,18 +1,15 @@
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import SearchBar from '@components/common/SearchBar'
+import { getUnsplashPhotos } from '@components/Goal/request.util';
+import SearchBar from '@components/common/SearchBar';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Image } from 'expo-image';
+import React, { useEffect, useState } from 'react';
+import { FlatList, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { blurHash } from 'settings';
 import { useDebounce } from 'src/util/debounce.hook';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from 'type';
-import { getUnsplashPhotos } from '@components/Goal/request.util';
-
-
 
 type Props = NativeStackScreenProps<RootStackParamList, "NewGoalItem">
-
 
 const UnSplashModal = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()
@@ -23,16 +20,14 @@ const UnSplashModal = ({ navigation }: Props) => {
     //* Search Actions
     const handleSearchQueryChanged = (query: string) => {
         setSearchQuery(query);
-        // Add any additional logic for handling search query changes here
-    };
+    }
 
     function handleSearchSubmit() {
-        console.log("Search submitted! ", searchQuery)
+        setSearchQuery(searchQuery)
     }
 
     function handleImagePressed(unsplashImage: UnsplashResult) {
-        navigation.setParams({ unsplashImage })
-        navigation.goBack()
+        navigation.navigate("NewGoalItem", { unsplashImage })
     }
 
     useEffect(() => {
@@ -46,6 +41,7 @@ const UnSplashModal = ({ navigation }: Props) => {
             })
             .catch(err => console.log(err))
 
+        // This makes the request run after the searchQuery has been debounced for some time
     }, [debouncedSearchQuery])
 
     return (
