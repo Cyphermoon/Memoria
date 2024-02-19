@@ -3,16 +3,19 @@ import React, { useState } from 'react';
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { DefaultStyle } from 'react-native-reanimated/lib/typescript/reanimated2/hook/commonTypes';
-import colors from '../../../colors';
+import customColor from '../../../colors';
+import colors from 'tailwindcss/colors'
+import clsx from 'clsx';
 
 interface Props {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
     handleSearchSubmit: () => void;
+    variant?: 'outline' | 'filled'
 }
 
 
-const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSearchSubmit }: Props) => {
+const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSearchSubmit, variant = 'outline' }: Props) => {
     const [isFocused, setIsFocused] = useState(false);
     const DEFAULT_WIDTH = '100%'
     const searchBarWidth = useSharedValue(DEFAULT_WIDTH);
@@ -56,18 +59,26 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSea
         setSearchQuery('');
     }
 
+    // Search Bar style
+    const SEARCH_BAR_STYLE = clsx('py-1 px-3 rounded-xl flex-row space-x-3 items-center', {
+        'bg-primary-300': variant === 'filled',
+        'border-secondary border-2': variant === 'outline',
+    })
+
+    const THEME_COLOR = variant === "outline" ? customColor.secondary : colors.gray[400]
+
     return (
         <View className='flex-row items-center space-x-3'>
             {/* Responsive Search bar */}
-            <Animated.View style={animatedStyles} className={`py-1 px-3 border-2 border-secondary rounded-xl flex-row space-x-3 items-center`}>
-                <Ionicons name="search-outline" size={26} color={colors.secondary} />
+            <Animated.View style={animatedStyles} className={SEARCH_BAR_STYLE}>
+                <Ionicons name="search-outline" size={26} color={THEME_COLOR} />
 
                 <TextInput
                     className="flex-grow py-2 text-base text-secondary w-10"
                     value={searchQuery}
                     onChangeText={handleSearchChange}
                     placeholder="Search...."
-                    placeholderTextColor={colors.secondary}
+                    placeholderTextColor={THEME_COLOR}
                     onSubmitEditing={handleSearchSubmit}
                     onFocus={() => handleFocus(true)}
                     onBlur={() => handleFocus(false)}
