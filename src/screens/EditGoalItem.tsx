@@ -8,6 +8,8 @@ import Slider, { SliderProps } from '@react-native-community/slider';
 import colors from "colors";
 
 
+
+
 const shaders = Shaders.create({
     imageEffect: {
         frag: GLSL`
@@ -42,6 +44,19 @@ const shaders = Shaders.create({
         }
         `,
     },
+    funky: {
+        frag: GLSL`
+    precision highp float;
+    varying vec2 uv;
+    uniform sampler2D t;
+    void main() {
+      gl_FragColor = texture2D(t, uv) * vec4(
+        0.5 + 0.5 * cos(uv.x * 30.0),
+        0.5 + 0.5 * sin(uv.y * 20.0),
+        0.7 + 0.3 * sin(uv.y * 8.0),
+        1.0);
+    }`,
+    },
 });
 
 const sliderProps: SliderProps = {
@@ -56,6 +71,7 @@ const sliderProps: SliderProps = {
 const EditGoalItem = () => {
     const insets = useSafeAreaInsets()
     const screenWidth = Dimensions.get('window').width
+
 
     // Editor state
     const [hue, setHue] = useState(0);
@@ -72,7 +88,6 @@ const EditGoalItem = () => {
         maximumTrackTintColor: colors.primary[300],
         tapToSeek: true,
     }
-
 
     return (
         <ScrollView
@@ -95,18 +110,6 @@ const EditGoalItem = () => {
                         contrast,
                     }}
                 />
-                <Text
-                    style={{
-                        position: 'absolute',
-                        zIndex: 10,
-                        color: 'white',
-                        fontSize: 24,
-                        left: 50,
-                        top: 50,
-                    }}
-                >
-                    Your text here
-                </Text>
             </Surface>
 
             <View className="flex-grow w-full pb-10">
