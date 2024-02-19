@@ -23,7 +23,7 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
         if (imageGenerated?.url && imageGenerated?.generationMethod === 'unsplash') return
 
         openUnSplashModal()
-    }, [])
+    })
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

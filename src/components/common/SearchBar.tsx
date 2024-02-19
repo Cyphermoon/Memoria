@@ -74,8 +74,9 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSea
                 <Ionicons name="search-outline" size={26} color={THEME_COLOR} />
 
                 <TextInput
-                    className="flex-grow py-2 text-base text-secondary w-10"
+                    className="flex-grow py-2 text-base text-secondary w-10 h-10"
                     value={searchQuery}
+                    style={{ lineHeight: 20 }}
                     onChangeText={handleSearchChange}
                     placeholder="Search...."
                     placeholderTextColor={THEME_COLOR}
