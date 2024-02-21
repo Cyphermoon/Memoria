@@ -38,7 +38,7 @@ const goals = [
     // More goals...
 ];
 
-type Props = NativeStackScreenProps<HomeStackParamList, "Home">
+type Props = NativeStackScreenProps<HomeStackParamList, "HomeScreen">
 
 
 const HomeScreen = ({ navigation }: Props) => {

@@ -6,7 +6,7 @@ export type HomeStackParamList = {
     onBoarding: undefined
     Splash: undefined
     Auth: undefined
-    Home: undefined
+    HomeScreen: undefined
     AddCollection: undefined
     Goal: SelectedGoalProps
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }

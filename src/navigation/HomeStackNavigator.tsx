@@ -2,7 +2,6 @@ import HeaderCancelButton from "@components/AddGoalItem/HeaderCancelButton"
 import { GoalBackButton } from "@components/Goal/GoalBackButton"
 import Text from "@components/common/Text"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import AuthScreen from "@screens/AuthScreen"
 import EditGoalItem from "@screens/EditGoalItem"
 import GoalScreen from "@screens/GoalScreen"
 import AddGoalItemModal from "@screens/GoalScreen/Modals/AddGoalItemModal"
@@ -10,8 +9,6 @@ import GoalSlideShowModal from "@screens/GoalScreen/Modals/GoalSlideShowModal"
 import UnSplashModal from "@screens/GoalScreen/Modals/UnSplashModal"
 import HomeScreen from "@screens/HomeScreen"
 import AddCollectionModal from "@screens/HomeScreen/Modals/AddCollectionModal"
-import OnBoardingScreen from "@screens/OnBoardingScreen"
-import SplashScreen from "@screens/SplashScreen"
 import colors from "colors"
 import { HomeStackParamList } from "type"
 
@@ -20,11 +17,9 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 // Define persistence key
 const HomeStackNavigator = () => {
     return (
-        <HomeStack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+        <HomeStack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
             <HomeStack.Group>
-                <HomeStack.Screen name="onBoarding" component={OnBoardingScreen} />
-                <HomeStack.Screen name="Auth" component={AuthScreen} />
-                <HomeStack.Screen name="Home" component={HomeScreen} />
+                <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
                 <HomeStack.Screen
                     name="Goal"
                     component={GoalScreen}
