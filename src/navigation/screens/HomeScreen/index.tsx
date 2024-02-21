@@ -108,14 +108,14 @@ const HomeScreen = ({ navigation }: Props) => {
                     handleSortPress={handleSortPress}
                 />
 
-                <View className='mt-8 flex-grow h-96'>
+                <View className='mt-8 flex-grow h-[500]'>
                     <FlatList
                         data={goals}
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item) => item.id.toString()}
                         contentContainerStyle={styles.container}
                         columnWrapperStyle={styles.columnWrapper}
                         numColumns={2}
-                        ListFooterComponent={() => <View className='h-28' />}
+                        ListFooterComponent={() => <View className='h-20' />}
                         renderItem={({ item }) => (
                             <View style={styles.item}>
                                 <Goal
