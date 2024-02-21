@@ -7,9 +7,9 @@ import { FlatList, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { blurHash } from 'settings';
 import { useDebounce } from 'src/util/debounce.hook';
-import { RootStackParamList } from 'type';
+import { HomeStackParamList } from 'type';
 
-type Props = NativeStackScreenProps<RootStackParamList, "NewGoalItem">
+type Props = NativeStackScreenProps<HomeStackParamList, "UnSplashModal">
 
 const UnSplashModal = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()

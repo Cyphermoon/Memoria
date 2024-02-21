@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native'
-import { RootStackParamList } from '../../App'
-import Logo from '../components/common/Logo'
-import Text from '../components/common/Text'
+import { RootStackParamList } from '../../../App'
+import Logo from '../../components/common/Logo'
+import Text from '../../components/common/Text'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Splash'>
 

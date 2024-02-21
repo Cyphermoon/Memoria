@@ -1,5 +1,5 @@
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native'
-import { AddGoalItemModalNavigationProps, AddGoalItemModalRouteProps } from '@screens/GoalScreen/Modals/AddGoalItemModal'
+import { AddGoalItemModalNavigationProps, AddGoalItemModalRouteProps } from 'src/navigation/screens/GoalScreen/Modals/AddGoalItemModal'
 import React, { useEffect } from 'react'
 import { Text, View } from 'react-native'
 import { ImageGeneratedProps } from './type'

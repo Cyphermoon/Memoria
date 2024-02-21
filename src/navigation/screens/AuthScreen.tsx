@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { Alert, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Logo from '../components/common/Logo'
-import Text from '../components/common/Text'
-import SocialButton from '../components/Auth/SocialButton'
-import Checkbox from '../components/common/Checkbox'
+import Logo from '../../components/common/Logo'
+import Text from '../../components/common/Text'
+import SocialButton from '../../components/Auth/SocialButton'
+import Checkbox from '../../components/common/Checkbox'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../type'
+import { HomeStackParamList } from '../../../type'
 
 
-type Props = NativeStackScreenProps<RootStackParamList, "Auth">
+type Props = NativeStackScreenProps<HomeStackParamList, "Auth">
 
 const AuthScreen = ({ navigation }: Props) => {
     const [isChecked, setIsChecked] = useState(false);

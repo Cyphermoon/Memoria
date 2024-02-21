@@ -2,19 +2,19 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import ActionSection from '../../components/Home/ActionSection'
-import Goal from '../../components/Home/Goal'
-import GoalActionItem from '../../components/Home/GoalActionItem'
-import NewGoal from '../../components/Home/NewGoal'
-import { SelectedGoalProps } from '../../components/Home/type'
-import Container from '../../components/common/Container'
-import CustomBottomSheetModal from '../../components/common/CustomBottomSheetModal'
-import Logo from '../../components/common/Logo'
-import Text from '../../components/common/Text'
-import UserAvatar from '../../components/common/UserAvatar'
-import { getGreetings } from '../../util'
+import ActionSection from '../../../components/Home/ActionSection'
+import Goal from '../../../components/Home/Goal'
+import GoalActionItem from '../../../components/Home/GoalActionItem'
+import NewGoal from '../../../components/Home/NewGoal'
+import { SelectedGoalProps } from '../../../components/Home/type'
+import Container from '../../../components/common/Container'
+import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
+import Logo from '../../../components/common/Logo'
+import Text from '../../../components/common/Text'
+import UserAvatar from '../../../components/common/UserAvatar'
+import { getGreetings } from '../../../util'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../../type'
+import { HomeStackParamList } from '../../../../type'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -38,7 +38,7 @@ const goals = [
     // More goals...
 ];
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">
+type Props = NativeStackScreenProps<HomeStackParamList, "Home">
 
 
 const HomeScreen = ({ navigation }: Props) => {

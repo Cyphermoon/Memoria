@@ -1,7 +1,8 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {  GoalItemProps } from "./src/components/Goal/type";
 import { SelectedGoalProps } from "./src/components/Home/type";
 
-export type RootStackParamList = {
+export type HomeStackParamList = {
     onBoarding: undefined
     Splash: undefined
     Auth: undefined
@@ -13,3 +14,15 @@ export type RootStackParamList = {
     EditGoalItem: {goalItem: GoalItemProps}
     UnSplashModal: undefined
   };
+
+  export type AuthStackParamList = {
+    onBoarding: undefined
+    Splash: undefined
+    Auth: undefined
+}
+
+export type RootStackParamList = {
+  HomeNavigator: NativeStackNavigationProp<HomeStackParamList>;
+  AuthNavigator: NativeStackNavigationProp<AuthStackParamList>;
+}
+

@@ -2,22 +2,22 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import { Keyboard, TouchableWithoutFeedback, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { imageGenerationModes } from '../../../../settings'
-import { RootStackParamList } from '../../../../type'
-import HeaderCancelButton from '../../../components/AddGoalItem/HeaderCancelButton'
-import AIImageOption from '../../../components/Goal/AIImageOption'
-import DescriptionInput from '../../../components/Goal/DescriptionInput'
-import GalleryOption from '../../../components/Goal/GalleryOption'
-import ImageGenerationSelector from '../../../components/Goal/ImageGenerationSelector'
-import UnSplashOption from '../../../components/Goal/UnSplashOption'
-import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from '../../../components/Goal/type'
-import Touchable from '../../../components/common/Touchable'
+import { imageGenerationModes } from '../../../../../settings'
+import { HomeStackParamList } from '../../../../../type'
+import HeaderCancelButton from '../../../../components/AddGoalItem/HeaderCancelButton'
+import AIImageOption from '../../../../components/Goal/AIImageOption'
+import DescriptionInput from '../../../../components/Goal/DescriptionInput'
+import GalleryOption from '../../../../components/Goal/GalleryOption'
+import ImageGenerationSelector from '../../../../components/Goal/ImageGenerationSelector'
+import UnSplashOption from '../../../../components/Goal/UnSplashOption'
+import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from '../../../../components/Goal/type'
+import Touchable from '../../../../components/common/Touchable'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
 
 
-type Props = NativeStackScreenProps<RootStackParamList, 'NewGoalItem'>
-export type AddGoalItemModalRouteProps = RouteProp<RootStackParamList, 'NewGoalItem'>
-export type AddGoalItemModalNavigationProps = NavigationProp<RootStackParamList, 'NewGoalItem'>
+type Props = NativeStackScreenProps<HomeStackParamList, 'NewGoalItem'>
+export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, 'NewGoalItem'>
+export type AddGoalItemModalNavigationProps = NavigationProp<HomeStackParamList, 'NewGoalItem'>
 
 
 

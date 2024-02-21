@@ -3,15 +3,15 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, FlatList, SafeAreaView, View } from 'react-native'
 import colors from 'tailwindcss/colors'
-import GoalItem from '../../components/Goal/GoalItem'
-import Text from '../../components/common/Text'
-import Touchable from '../../components/common/Touchable'
-import { useSlidePosition } from '../../context/SlidePositionProvider'
-import SearchBar from '../../components/common/SearchBar'
-import customColors from '../../../colors'
-import { RootStackParamList } from '../../../type'
-import { GoalItemProps, IntervalOptionProps } from '../../components/Goal/type'
-import IntervalSelector from '../../components/Goal/IntervalSelector'
+import GoalItem from '../../../components/Goal/GoalItem'
+import Text from '../../../components/common/Text'
+import Touchable from '../../../components/common/Touchable'
+import { useSlidePosition } from '../../../context/SlidePositionProvider'
+import SearchBar from '../../../components/common/SearchBar'
+import customColors from '../../../../colors'
+import { HomeStackParamList } from '../../../../type'
+import { GoalItemProps, IntervalOptionProps } from '../../../components/Goal/type'
+import IntervalSelector from '../../../components/Goal/IntervalSelector'
 import { intervalOptions } from 'settings'
 
 
@@ -26,7 +26,7 @@ const goalItems = [
 ];
 
 
-type Props = NativeStackScreenProps<RootStackParamList, "Goal">
+type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
 
 const GoalScreen = ({ route, navigation }: Props) => {

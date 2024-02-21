@@ -5,27 +5,27 @@ import React, { useRef, useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions, } from 'react-native'
 import { interpolate } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
-import { RootStackParamList } from '../../App'
-import Text from '../components/common/Text'
+import Text from '../../components/common/Text'
+import { HomeStackParamList } from 'type'
 
 // Onboarding slides
 const _slides = [
     {
         title: 'Always Remember What You Need To Do!',
         description: 'With Memoria, never forget your daily plans or goals. Keep track of your tasks with ease.',
-        uri: require('../../assets/images/onboard-1.png'),
+        uri: require('../../../assets/images/onboard-1.png'),
         alt: 'Onboarding 1: A 3d representation of a pencil tick tasks of a book'
     },
     {
         title: 'Memoria wakes you up with a purpose',
         description: 'Start your day with a clear purpose. Memoria helps you recall your plans and goals as soon as you wake up.',
-        uri: require('../../assets/images/onboard-2.png'),
+        uri: require('../../../assets/images/onboard-2.png'),
         alt: 'Onboarding 2: A 3d representation of a man sitting on a chair with his laptop on his lap'
     },
     {
         title: 'Search for perfect images to match plans with!',
         description: 'Visualize your plans with Memoria. Find the perfect images to match your plans and make them more memorable.',
-        uri: require('../../assets/images/onboard-3.png'),
+        uri: require('../../../assets/images/onboard-3.png'),
         alt: 'Onboarding 3: A 3d representation of a hand holding a magnifying glass'
     },
 ];
@@ -38,7 +38,7 @@ interface RenderSlidesProps {
 
 }
 
-type Props = NativeStackScreenProps<RootStackParamList, "onBoarding">
+type Props = NativeStackScreenProps<HomeStackParamList, "onBoarding">
 
 const OnBoardingScreen = ({ navigation }: Props) => {
     const ref = useRef<ICarouselInstance>(null)

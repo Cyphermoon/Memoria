@@ -18,13 +18,13 @@ export function getGreetings(): string {
     
     if (hour < 12) {
         // Return "Good morning" if the hour is before 12
-        return "Good morning";
+        return "Good Morning";
     } else if (hour < 18) {
         // Return "Good afternoon" if the hour is between 12 and 18
-        return "Good afternoon";
+        return "Good Afternoon";
     } else {
         // Return "Good evening" if the hour is after 18
-        return "Good evening";
+        return "Good Evening";
     }
 }
 

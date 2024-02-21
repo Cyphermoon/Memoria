@@ -7,17 +7,17 @@ import Animated, { SharedValue, interpolate, useAnimatedStyle } from 'react-nati
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import colors from '../../../../colors'
-import { RootStackParamList } from '../../../../type'
-import { GoalItemProps } from '../../../components/Goal/type'
+import colors from '../../../../../colors'
+import { HomeStackParamList } from '../../../../../type'
+import { GoalItemProps } from '../../../../components/Goal/type'
 
-import { useSlidePosition } from '../../../context/SlidePositionProvider'
-import { parallaxLayout } from '../../../util/parallax'
+import { useSlidePosition } from '../../../../context/SlidePositionProvider'
+import { parallaxLayout } from '../../../../util/parallax'
 import Text from '@components/common/Text'
 
 
 // Types
-type Props = NativeStackScreenProps<RootStackParamList, "GoalSlideShow">
+type Props = NativeStackScreenProps<HomeStackParamList, "GoalSlideShow">
 
 interface SlideProps extends GoalItemProps {
     animationValue: SharedValue<number>
