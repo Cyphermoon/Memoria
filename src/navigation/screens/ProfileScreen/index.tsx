@@ -1,6 +1,5 @@
 import ProfileItem from '@components/Profile/ProfileItem'
 import Text from '@components/common/Text'
-import Touchable from '@components/common/Touchable'
 import { Image } from 'expo-image'
 import React from 'react'
 import { Platform, ScrollView, TouchableOpacity, View } from 'react-native'
