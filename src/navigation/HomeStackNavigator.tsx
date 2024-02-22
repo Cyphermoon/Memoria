@@ -11,6 +11,7 @@ import HomeScreen from "@screens/HomeScreen"
 import AddCollectionModal from "@screens/HomeScreen/Modals/AddCollectionModal"
 import colors from "colors"
 import { HomeStackParamList } from "type"
+import HomeDrawer from "./HomeDrawer"
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
@@ -19,7 +20,7 @@ const HomeStackNavigator = () => {
     return (
         <HomeStack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
             <HomeStack.Group>
-                <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+                <HomeStack.Screen name="HomeScreen" component={HomeDrawer} />
                 <HomeStack.Screen
                     name="Goal"
                     component={GoalScreen}

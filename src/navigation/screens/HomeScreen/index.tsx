@@ -108,12 +108,6 @@ const HomeScreen = ({ navigation }: Props) => {
                     handleSortPress={handleSortPress}
                 />
 
-                <View className='flex-row justify-between border border-primary-300'>
-                    <Text className='text-base text-secondary mb-4'>Personal</Text>
-                    <Text className='text-base text-secondary mb-4'>Personal</Text>
-                    <Text className='text-base text-secondary mb-4'>Personal</Text>
-                </View>
-
                 <View className='mt-8 flex-grow h-[500]'>
                     <FlatList
                         data={goals}
