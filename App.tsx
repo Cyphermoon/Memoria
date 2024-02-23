@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import RootStackNavigator from 'src/navigation/RootStackNavigator';
+import RootStackNavigator from 'src/navigation/StackNavigator/RootStackNavigator';
 import Text from './src/components/common/Text';
 import SlidePositionProvider from './src/context/SlidePositionProvider';
 

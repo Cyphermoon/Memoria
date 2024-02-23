@@ -3,8 +3,8 @@ import { BottomTabScreenProps, createBottomTabNavigator } from '@react-navigatio
 import colors from 'colors';
 import React from 'react';
 import { HomeStackParamList } from 'type';
-import HomeStackNavigator from '../HomeStackNavigator';
-import ProfileStackNavigator from '../ProfileStackNavigator';
+import HomeStackNavigator from '../StackNavigator/HomeStackNavigator';
+import ProfileStackNavigator from '../StackNavigator/ProfileStackNavigator';
 
 
 type MainBottomTabNavigatorParamList = {

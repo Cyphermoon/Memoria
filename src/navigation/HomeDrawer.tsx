@@ -1,7 +1,7 @@
 import Logo from '@components/common/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from '@screens/HomeScreen';
+import HomeScreen from '@screens/HomeDrawer/HomeScreen';
 import colors from 'colors';
 import React from 'react';
 import { View } from 'react-native';

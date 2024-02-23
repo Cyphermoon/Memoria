@@ -7,11 +7,10 @@ import GoalScreen from "@screens/GoalScreen"
 import AddGoalItemModal from "@screens/GoalScreen/Modals/AddGoalItemModal"
 import GoalSlideShowModal from "@screens/GoalScreen/Modals/GoalSlideShowModal"
 import UnSplashModal from "@screens/GoalScreen/Modals/UnSplashModal"
-import HomeScreen from "@screens/HomeScreen"
-import AddCollectionModal from "@screens/HomeScreen/Modals/AddCollectionModal"
+import AddCollectionModal from "@screens/HomeDrawer/Modals/AddCollectionModal"
 import colors from "colors"
 import { HomeStackParamList } from "type"
-import HomeDrawer from "./HomeDrawer"
+import HomeDrawer from "../HomeDrawer"
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
