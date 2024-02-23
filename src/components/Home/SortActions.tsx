@@ -1,45 +1,42 @@
-import { View, Text, TouchableOpacity, FlatList } from 'react-native'
-import React, { useMemo, useRef } from 'react'
-import SearchBar from '../common/SearchBar'
 import { AntDesign } from '@expo/vector-icons';
-import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import SortItem from '../common/SortItem';
-import { sortOptions } from '../../../settings';
+import React, { useMemo, useRef } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../../../colors';
+import { sortOptions as defaultSortOptions } from '../../../settings';
+import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
+import SortItem from '../common/SortItem';
+import { SortOptionProp } from './type';
 
 interface Props {
-    handleSearchQueryChanged: (query: string) => void
-    searchQuery: string
-    handleSearchSubmit: () => void
-    handleSortPress: (id: string) => void
-
+    handleSortPress: (option: SortOptionProp) => void
+    extendSortOptions?: SortOptionProp[]
+    currentOption?: SortOptionProp
 }
 
 
-const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubmit, handleSortPress: _handleSortPress }: Props) => {
+const SortActions = ({ handleSortPress: _handleSortPress, extendSortOptions, currentOption: _currentOption }: Props) => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
+
+    const sortOptions = extendSortOptions ? [...defaultSortOptions, ...extendSortOptions] : defaultSortOptions
+    const currentOption = _currentOption || sortOptions[0]
 
     const handleOpenPress = () => bottomSheetModalRef.current?.present();
     const handleClosePress = () => bottomSheetModalRef.current?.dismiss();
 
-    function handleSortPress(id: string) {
-        _handleSortPress(id)
+    function handleSortPress(option: SortOptionProp) {
+        _handleSortPress(option)
         handleClosePress()
     }
 
     return (
         <>
-            <SearchBar
-                searchQuery={searchQuery}
-                setSearchQuery={handleSearchQueryChanged}
-                handleSearchSubmit={handleSearchSubmit} />
 
             <View className='mt-6'>
                 <Text className='font-bold text-[11px] text-gray-200 uppercase mb-1.5'>Sort</Text>
                 <TouchableOpacity className='flex-row items-center justify-start space-x-2 w-[100]' onPress={handleOpenPress}>
-                    <Text className='text-lg text-secondary'>By Name</Text>
+                    <Text className='text-lg text-secondary'>{currentOption.title}</Text>
                     <AntDesign name="caretdown" size={12} color={colors.secondary} />
                 </TouchableOpacity>
             </View>
@@ -53,7 +50,7 @@ const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubm
                         <SortItem
                             title={item.title}
                             id={item.id}
-                            current_id={'name_desc'}
+                            current_id={currentOption.id}
                             onPress={handleSortPress}
                         />
                     )}
@@ -64,4 +61,4 @@ const ActionSection = ({ searchQuery, handleSearchQueryChanged, handleSearchSubm
     )
 }
 
-export default ActionSection
+export default SortActions

@@ -4,11 +4,11 @@ import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
-import ActionSection from '../../../components/Home/ActionSection'
+import SortActions from '../../../components/Home/SortActions'
 import Goal from '../../../components/Home/Goal'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
-import { SelectedGoalProps } from '../../../components/Home/type'
+import { SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
 import Container from '../../../components/common/Container'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import Logo from '../../../components/common/Logo'
@@ -18,6 +18,8 @@ import { getGreetings } from '../../../util'
 import { HomeStackParamList } from 'type'
 import { DrawerScreenProps } from '@react-navigation/drawer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import HomeDrawerLayout from './HomeDrawerLayout'
+import { sortOptions } from 'settings'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -50,6 +52,7 @@ const HomeScreen = () => {
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
     const [selectedGoal, setSelectedGoal] = useState<SelectedGoalProps | null>(null)
+    const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
 
 
     function handleOpenPress() {
@@ -70,8 +73,8 @@ const HomeScreen = () => {
         console.log("Search submitted! ", searchQuery)
     }
 
-    function handleSortPress(id: string) {
-        console.log("Sort Pressed: ", id)
+    function handleSortPress(option: SortOptionProp) {
+        setCurrentSortOption(option)
     }
 
     function handleMoreDetailsPress(goal: SelectedGoalProps) {
@@ -94,49 +97,32 @@ const HomeScreen = () => {
 
 
     return (
-        <SafeAreaView className='flex-grow bg-primary'>
-            <Container>
-                <View className='flex-row justify-between items-center mb-8'>
-                    <Logo withName size='sm' />
-                    <UserAvatar username='Cypher_Moon' />
-                </View>
+        <HomeDrawerLayout navigationTitle='Personal' handleSortPress={handleSortPress} currentOption={currentSortOption}>
 
-                <Text className='font-semibold text-4xl text-secondary mb-8'>
-                    {getGreetings()}, Cypher
-                </Text>
-
-                <ActionSection
-                    searchQuery={searchQuery}
-                    handleSearchQueryChanged={handleSearchQueryChanged}
-                    handleSearchSubmit={handleSearchSubmit}
-                    handleSortPress={handleSortPress}
+            <View className='mt-8 flex-grow h-[500]'>
+                <FlatList
+                    data={goals}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={styles.container}
+                    columnWrapperStyle={styles.columnWrapper}
+                    numColumns={2}
+                    ListFooterComponent={() => <View className='h-20' />}
+                    renderItem={({ item }) => (
+                        <View style={styles.item}>
+                            <Goal
+                                id={item.id.toString()}
+                                onPress={handleGoalPress}
+                                onMoreDetailsPress={handleMoreDetailsPress}
+                                text={item.text}
+                                active={item.active}
+                                items={item.items}
+                            />
+                        </View>
+                    )}
                 />
+            </View>
 
-                <View className='mt-8 flex-grow h-[500]'>
-                    <FlatList
-                        data={goals}
-                        keyExtractor={(item) => item.id.toString()}
-                        contentContainerStyle={styles.container}
-                        columnWrapperStyle={styles.columnWrapper}
-                        numColumns={2}
-                        ListFooterComponent={() => <View className='h-20' />}
-                        renderItem={({ item }) => (
-                            <View style={styles.item}>
-                                <Goal
-                                    id={item.id.toString()}
-                                    onPress={handleGoalPress}
-                                    onMoreDetailsPress={handleMoreDetailsPress}
-                                    text={item.text}
-                                    active={item.active}
-                                    items={item.items}
-                                />
-                            </View>
-                        )}
-                    />
-                </View>
-
-                <NewGoal />
-            </Container>
+            <NewGoal />
 
             {/* Goal Bottom Sheet */}
             <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Goal Actions' >
@@ -148,7 +134,7 @@ const HomeScreen = () => {
                     </View>
                 }
             </CustomBottomSheetModal>
-        </SafeAreaView>
+        </HomeDrawerLayout>
     )
 }
 
