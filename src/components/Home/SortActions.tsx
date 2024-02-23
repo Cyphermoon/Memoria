@@ -33,8 +33,8 @@ const SortActions = ({ handleSortPress: _handleSortPress, extendSortOptions, cur
     return (
         <>
 
-            <View className='mt-6'>
-                <Text className='font-bold text-[11px] text-gray-200 uppercase mb-1.5'>Sort</Text>
+            <View className=''>
+                <Text className='font-bold text-[11px] text-gray-200 uppercase mb-1'>Sort</Text>
                 <TouchableOpacity className='flex-row items-center justify-start space-x-2 w-[100]' onPress={handleOpenPress}>
                     <Text className='text-lg text-secondary'>{currentOption.title}</Text>
                     <AntDesign name="caretdown" size={12} color={colors.secondary} />

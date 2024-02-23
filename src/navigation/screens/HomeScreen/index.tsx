@@ -54,7 +54,6 @@ const HomeScreen = () => {
     const [selectedGoal, setSelectedGoal] = useState<SelectedGoalProps | null>(null)
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
 
-
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
     }
@@ -62,15 +61,6 @@ const HomeScreen = () => {
 
     function handleClosePress() {
         bottomSheetModalRef.current?.dismiss()
-    }
-
-    const handleSearchQueryChanged = (query: string) => {
-        setSearchQuery(query);
-        // Add any additional logic for handling search query changes here
-    };
-
-    function handleSearchSubmit() {
-        console.log("Search submitted! ", searchQuery)
     }
 
     function handleSortPress(option: SortOptionProp) {
@@ -97,9 +87,9 @@ const HomeScreen = () => {
 
 
     return (
-        <HomeDrawerLayout navigationTitle='Personal' handleSortPress={handleSortPress} currentOption={currentSortOption}>
+        <HomeDrawerLayout navigationTitle='Personal Collection' handleSortPress={handleSortPress} currentOption={currentSortOption}>
 
-            <View className='mt-8 flex-grow h-[500]'>
+            <View className='mt-8 flex-grow h-[600]'>
                 <FlatList
                     data={goals}
                     keyExtractor={(item) => item.id.toString()}
@@ -120,9 +110,9 @@ const HomeScreen = () => {
                         </View>
                     )}
                 />
+                <NewGoal />
             </View>
 
-            <NewGoal />
 
             {/* Goal Bottom Sheet */}
             <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Goal Actions' >
