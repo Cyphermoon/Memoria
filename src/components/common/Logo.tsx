@@ -19,7 +19,7 @@ const Logo = ({ size = "sm", withName }: Props) => {
     const logoStyle: TextProps["style"] = {
         ...styles.logo,
         ...(size === "lg" && { fontSize: 120, fontWeight: "400" }),
-        ...(size === "md" && { fontSize: 48, fontWeight: "400" }),
+        ...(size === "md" && { fontSize: 40, fontWeight: "400" }),
         ...(size === "sm" && { fontSize: 25, fontWeight: "400" }),
     }
 

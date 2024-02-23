@@ -1,7 +1,9 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 import ActionSection from '../../../components/Home/ActionSection'
 import Goal from '../../../components/Home/Goal'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
@@ -13,8 +15,9 @@ import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
 import UserAvatar from '../../../components/common/UserAvatar'
 import { getGreetings } from '../../../util'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { HomeStackParamList } from '../../../../type'
+import { HomeStackParamList } from 'type'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -38,10 +41,11 @@ const goals = [
     // More goals...
 ];
 
-type Props = NativeStackScreenProps<HomeStackParamList, "HomeScreen">
+type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
 
 
-const HomeScreen = ({ navigation }: Props) => {
+const HomeScreen = () => {
+    const navigation = useNavigation<HomeScreenNavigationProp>()
     const [searchQuery, setSearchQuery] = useState('');
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
@@ -85,7 +89,7 @@ const HomeScreen = ({ navigation }: Props) => {
 
 
     function handleGoalPress(goal: SelectedGoalProps) {
-        navigation.navigate('Goal', goal)
+        navigation.navigate("Goal", goal)
     }
 
 

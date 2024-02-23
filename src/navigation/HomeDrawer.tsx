@@ -1,17 +1,18 @@
 import Logo from '@components/common/Logo';
-import Text from '@components/common/Text';
-import UserAvatar from '@components/common/UserAvatar';
-import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem, DrawerItemList, createDrawerNavigator } from '@react-navigation/drawer';
+import { Ionicons } from '@expo/vector-icons';
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '@screens/HomeScreen';
 import colors from 'colors';
 import React from 'react';
 import { View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import tailwindColors from 'tailwindcss/colors';
 
 // Define your screens here
 
-type HomeDrawerParamList = {
-    Personal: undefined;
+export type HomeDrawerParamList = {
+    Personal: undefined
+    Community: undefined
+    Categories: undefined
 }
 
 
@@ -24,9 +25,7 @@ const HomeDrawer = () => {
             initialRouteName='Personal'
             screenOptions={{
                 headerShown: false,
-                drawerStyle: {
-                    backgroundColor: colors.primary[300]
-                }
+                drawerStyle: { backgroundColor: colors.primary[300] },
             }}
             drawerContent={(props) => <CustomDrawerContent {...props} />
             }>
@@ -40,15 +39,48 @@ export default HomeDrawer;
 
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
+    const { state, navigation } = props;
+
+    const getIconName = (routeName: string) => {
+        switch (routeName) {
+            case 'Personal':
+                return 'folder';
+            // Add more cases as needed for each screen
+            case 'Community':
+                return 'folder-open-sharp';
+            case 'Categories':
+                return 'aperture-outline';
+            default:
+                return 'home';
+        }
+    }
+
     return (
         <DrawerContentScrollView {...props}>
             <View
-                className='flex-row justify-between items-center px-4 mb-6 mt-4'>
+                className='flex-row justify-between items-center px-[8] mb-6 mt-4'>
                 <Logo withName size='sm' />
             </View>
             <View>
-                <Text className='text-gray-500 text-xs uppercase px-4'>Collection</Text>
-                <DrawerItemList {...props} />
+                {state.routes.map((route, index) => {
+                    const focused = index === state.index;
+                    const iconName = getIconName(route.name);
+
+                    return (
+                        <DrawerItem
+                            key={route.key}
+                            label={route.name}
+                            focused={focused}
+                            onPress={() => navigation.navigate(route.name)}
+                            icon={({ size, color }) => (
+                                <Ionicons name={iconName} size={size} color={color} />
+                            )}
+                            activeTintColor={colors.accent}
+                            inactiveTintColor={tailwindColors.gray[300]}
+                            style={{ padding: 0, }}
+                        />
+                    );
+                })}
             </View>
         </DrawerContentScrollView>
     )

@@ -18,9 +18,9 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 // Define persistence key
 const HomeStackNavigator = () => {
     return (
-        <HomeStack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+        <HomeStack.Navigator initialRouteName="HomeDrawer" screenOptions={{ headerShown: false }}>
             <HomeStack.Group>
-                <HomeStack.Screen name="HomeScreen" component={HomeDrawer} />
+                <HomeStack.Screen name="HomeDrawer" component={HomeDrawer} />
                 <HomeStack.Screen
                     name="Goal"
                     component={GoalScreen}
