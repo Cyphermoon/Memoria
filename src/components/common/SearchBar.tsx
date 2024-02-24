@@ -10,12 +10,13 @@ import clsx from 'clsx';
 interface Props {
     searchQuery: string;
     setSearchQuery: (query: string) => void;
-    handleSearchSubmit: () => void;
+    handleSearchSubmit?: () => void;
     variant?: 'outline' | 'filled'
+    placeholder?: string
 }
 
 
-const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSearchSubmit, variant = 'outline' }: Props) => {
+const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSearchSubmit, placeholder, variant = 'outline' }: Props) => {
     const [isFocused, setIsFocused] = useState(false);
     const DEFAULT_WIDTH = '100%'
     const searchBarWidth = useSharedValue(DEFAULT_WIDTH);
@@ -45,7 +46,7 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSea
 
     function handleSearchSubmit() {
         handleCancelSearch()
-        _handleSearchSubmit()
+        _handleSearchSubmit && _handleSearchSubmit()
     }
 
     function handleClearSearch() {
@@ -78,8 +79,8 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearchSubmit: _handleSea
                     value={searchQuery}
                     style={{ lineHeight: 20 }}
                     onChangeText={handleSearchChange}
-                    placeholder="Search...."
-                    placeholderTextColor={THEME_COLOR}
+                    placeholder={placeholder ? placeholder : "Search...."}
+                    placeholderTextColor={colors.gray[500]}
                     onSubmitEditing={handleSearchSubmit}
                     onFocus={() => handleFocus(true)}
                     onBlur={() => handleFocus(false)}
