@@ -8,3 +8,8 @@ export type SortOptionProp = {
     id: string
 
 }
+
+
+export interface CommunitySelectedGoal extends SelectedGoalProps {
+    liked: boolean
+}

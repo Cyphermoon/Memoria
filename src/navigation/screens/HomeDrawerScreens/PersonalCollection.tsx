@@ -1,25 +1,15 @@
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
-import SortActions from '../../../components/Home/SortActions'
+import { sortOptions } from 'settings'
+import { HomeStackParamList } from 'type'
 import Goal from '../../../components/Home/Goal'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
 import { SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
-import Container from '../../../components/common/Container'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
-import Logo from '../../../components/common/Logo'
-import Text from '../../../components/common/Text'
-import UserAvatar from '../../../components/common/UserAvatar'
-import { getGreetings } from '../../../util'
-import { HomeStackParamList } from 'type'
-import { DrawerScreenProps } from '@react-navigation/drawer'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import HomeDrawerLayout from './HomeDrawerLayout'
-import { sortOptions } from 'settings'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -48,7 +38,6 @@ type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
 
 const HomeScreen = () => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
-    const [searchQuery, setSearchQuery] = useState('');
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
     const [selectedGoal, setSelectedGoal] = useState<SelectedGoalProps | null>(null)

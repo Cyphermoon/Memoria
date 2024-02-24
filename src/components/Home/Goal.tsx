@@ -4,6 +4,7 @@ import React from 'react'
 import Text from '../common/Text'
 import { plural } from '../../util'
 import colors from 'tailwindcss/colors';
+import customColors from 'colors';
 import { SelectedGoalProps } from './type';
 
 interface Props {
@@ -19,12 +20,18 @@ interface Props {
 const Goal = ({ className = "", onPress, text, active, items, id, onMoreDetailsPress }: Props) => {
   const goal = { id, name: text }
   return (
-    <View className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}>
-      <TouchableOpacity className='absolute top-2 right-2' onPress={() => onMoreDetailsPress(goal)}>
-        <Entypo name="dots-three-horizontal" size={20} color={colors.gray[500]} />
+    <View
+      className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
+    >
+      <TouchableOpacity
+        className='absolute top-2 right-2'
+        onPress={() => onMoreDetailsPress(goal)}>
+        <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => onPress(goal)} onLongPress={() => onMoreDetailsPress(goal)}>
+      <TouchableOpacity
+        onPress={() => onPress(goal)}
+        onLongPress={() => onMoreDetailsPress(goal)}>
         <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
           {text}
         </Text>
