@@ -21,7 +21,7 @@ export type HomeStackParamList = {
 }
 
 export type RootStackParamList = {
-  HomeNavigator: NativeStackNavigationProp<HomeStackParamList>;
+  HomeNavigator: undefined;
   AuthNavigator: NativeStackNavigationProp<AuthStackParamList>;
 }
 

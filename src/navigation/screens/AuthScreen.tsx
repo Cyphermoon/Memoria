@@ -1,15 +1,15 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState } from 'react'
 import { Alert, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import Logo from '../../components/common/Logo'
-import Text from '../../components/common/Text'
+import { RootStackParamList } from '../../../type'
 import SocialButton from '../../components/Auth/SocialButton'
 import Checkbox from '../../components/common/Checkbox'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { HomeStackParamList } from '../../../type'
+import Logo from '../../components/common/Logo'
+import Text from '../../components/common/Text'
 
 
-type Props = NativeStackScreenProps<HomeStackParamList, "Auth">
+type Props = NativeStackScreenProps<RootStackParamList, "AuthNavigator">
 
 const AuthScreen = ({ navigation }: Props) => {
     const [isChecked, setIsChecked] = useState(false);
@@ -24,7 +24,7 @@ const AuthScreen = ({ navigation }: Props) => {
             if (!isChecked) {
                 Alert.alert('Terms and Conditions', 'You need to agree to our terms and conditions to continue')
             } else {
-                navigation.navigate('Home')
+                navigation.navigate('HomeNavigator')
                 signInHandler()
             }
         };

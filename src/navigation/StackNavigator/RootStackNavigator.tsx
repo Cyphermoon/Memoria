@@ -1,8 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import MainBottomTabNavigator from 'src/navigation/StackNavigator/MainBottomTabStackNavigator';
 import { RootStackParamList } from 'type';
 import AuthStackNavigator from './AuthStackNavigator';
-import HomeStackNavigator from './HomeStackNavigator';
-import MainBottomTabNavigator from 'src/navigation/StackNavigator/MainBottomTabStackNavigator';
 
 
 // Create a Stack Navigator
