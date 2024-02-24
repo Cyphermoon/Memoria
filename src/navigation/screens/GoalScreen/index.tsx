@@ -58,7 +58,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
         console.log("Sort Pressed: ", id)
     }
 
-    //* Goal Items Actions
+    // Goal Items Actions
     function handleDelete(id: string) {
         // Find the goal item by its id
         const goalItem = goalItems.find(item => item.id === id);
@@ -96,6 +96,23 @@ const GoalScreen = ({ route, navigation }: Props) => {
     function handleEdit(goalItem: GoalItemProps) {
         navigation.navigate('EditGoalItem', { goalItem });
     }
+
+    // FlatList Methods
+    const getItemLayout = (data: ArrayLike<any> | null | undefined, index: number): {
+        length: number, offset: number, index: number
+    } => {
+        const GOAL_ITEM_HEIGHT = 192
+
+        return { length: GOAL_ITEM_HEIGHT, offset: GOAL_ITEM_HEIGHT * index, index }
+    };
+
+    const onScrollToIndexFailed = (info: { index: number, highestMeasuredFrameIndex: number, averageItemLength: number }) => {
+        const wait = new Promise(resolve => setTimeout(resolve, 500));
+        wait.then(() => {
+            ref.current?.scrollToIndex({ index: info.index, animated: true });
+        });
+    };
+
 
     useEffect(() => {
         if (ref.current) {
@@ -156,6 +173,8 @@ const GoalScreen = ({ route, navigation }: Props) => {
                                     onEdit={handleEdit} />
                             </View>
                         )}
+                        getItemLayout={getItemLayout}
+                        onScrollToIndexFailed={onScrollToIndexFailed}
                     />
                 </View>
             </View>
