@@ -14,6 +14,7 @@ import { GoalItemProps } from '../../../../components/Goal/type'
 import { useSlidePosition } from '../../../../context/SlidePositionProvider'
 import { parallaxLayout } from '../../../../util/parallax'
 import Text from '@components/common/Text'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 
 
 // Types
@@ -50,11 +51,11 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
                 paddingBottom: insets.bottom,
             }}
             className='bg-primary flex-grow flex-col items-center px-4'>
-            <TouchableOpacity className='self-end mt-3 mb-12' onPress={() => navigation.goBack()} >
+            <TouchableOpacity className='self-end mt-3 mb-4' onPress={() => navigation.goBack()} >
                 <FontAwesome5 name="times" size={32} color={colors.secondary} />
             </TouchableOpacity>
 
-            <Text className='font-semibold mb-6 text-base'>
+            <Text className='font-semibold mb-5 text-base'>
                 {position + 1} of {route.params.goals.length}
             </Text>
 
@@ -94,6 +95,8 @@ export default GoalSlideShowModal
 
 // Child component
 const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
+    const bottomTabBarHeight = useBottomTabBarHeight()
+
     // Opacity Animation
     const opacityStyle = useAnimatedStyle(() => {
         const opacity = interpolate(
@@ -114,9 +117,12 @@ const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
                 style={styles.imageSlide}
                 source={imageUrl}
                 contentFit='cover'
-                className='rounded-xl mb-10' />
+                className='rounded-xl mb-8' />
 
-            <Text className='text-base text-center mb-10'>{description}</Text>
+            <Text
+                className={`text-base text-center`}>
+                {description}
+            </Text>
         </Animated.View>
     )
 }
