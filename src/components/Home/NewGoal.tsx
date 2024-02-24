@@ -24,7 +24,7 @@ const NewGoal = ({ mode }: Props) => {
     return (
         <TouchableOpacity
             onPress={navigateToAddCollection}
-            className='bg-accent w-16 h-16 rounded-full justify-center items-center shadow-sm shadow-secondary absolute right-4 bottom-10'>
+            className='bg-accent w-16 h-16 rounded-full justify-center items-center shadow-sm shadow-secondary absolute right-4 bottom-8'>
             <FontAwesome6 name="add" size={30} color={colors.primary.DEFAULT} />
         </TouchableOpacity>
     )

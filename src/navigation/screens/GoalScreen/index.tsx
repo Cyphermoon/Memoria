@@ -161,6 +161,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                         ref={ref}
                         data={goalItems}
                         keyExtractor={item => item.id}
+                        showsVerticalScrollIndicator={false}
                         ListFooterComponent={() => <View className='h-10' />}
                         renderItem={({ item }) => (
                             <View className='relative w-full h-56 rounded-2xl'>

@@ -1,12 +1,11 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { Image } from 'expo-image';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import Animated from 'react-native-reanimated';
+import colors from '../../../colors';
 import { truncateText } from '../../util';
 import Text from '../common/Text';
-import colors from '../../../colors';
-import { Entypo } from '@expo/vector-icons';
 import { GoalItemProps } from './type';
 
 // Define the properties for the GoalItem component
@@ -24,12 +23,12 @@ const GoalItem = ({ url, name, id, onDelete, onFullscreen, onEdit }: Props) => {
 
     return (
         // The main container for the GoalItem
-        <Animated.View className='relative w-full h-48 rounded-2xl'>
+        <View className='relative w-full h-48 rounded-2xl'>
             <Image source={url} className="w-full h-full rounded-2xl" contentFit='cover' />
 
 
-            <View
-                style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
+            <BlurView intensity={30} tint='dark'
+                style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
                 className='rounded-b-2xl w-full flex-row items-center justify-between  py-3 px-2 absolute bottom-0 left-0'>
 
 
@@ -49,8 +48,9 @@ const GoalItem = ({ url, name, id, onDelete, onFullscreen, onEdit }: Props) => {
                         <MaterialIcons name="delete" size={26} color={colors.secondary} />
                     </TouchableOpacity>
                 </View>
-            </View>
-        </Animated.View>
+            </BlurView>
+
+        </View>
     );
 };
 

@@ -11,9 +11,11 @@ import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
 import { CommunitySelectedGoal, SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
-import HomeDrawerLayout from './HomeDrawerLayout'
+import HomeDrawerLayout, { HEADER_HEIGHT, Header } from './HomeDrawerLayout'
 import { DrawerScreenProps } from '@react-navigation/drawer'
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
+import HeaderContent from './HomeDrawerLayout'
 
 const _goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5, liked: true },
@@ -40,7 +42,6 @@ type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
 type Props = DrawerScreenProps<HomeDrawerParamList, "Personal">
 
 
-
 const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -48,6 +49,14 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const [selectedGoal, setSelectedGoal] = useState<CommunitySelectedGoal | null>(null)
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
     const [goals, setGoals] = useState(_goals);
+
+    const scrollY = useSharedValue(0)
+
+    const scrollHandler = useAnimatedScrollHandler({
+        onScroll: (event) => {
+            scrollY.value = event.contentOffset.y;
+        },
+    });
 
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
@@ -88,37 +97,48 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
 
     return (
-        <HomeDrawerLayout
-            openDrawer={() => drawerNavigation.openDrawer()}
-            navigationTitle='Community Collection'
-            handleSortPress={handleSortPress}
-            currentOption={currentSortOption}>
+        <View className='flex-grow bg-primary relative'>
 
-            <View className='mt-8 flex-grow h-[600]'>
-                <FlatList
-                    data={goals}
-                    keyExtractor={(item) => item.id.toString()}
-                    contentContainerStyle={styles.container}
-                    numColumns={1}
-                    ListFooterComponent={() => <View className='h-20' />}
-                    renderItem={({ item }) => (
-                        <View style={styles.item}>
-                            <CommunityGoal
-                                id={item.id.toString()}
-                                onPress={handleGoalPress}
-                                onMoreDetailsPress={handleMoreDetailsPress}
-                                text={item.text}
-                                active={item.active}
-                                items={item.items}
-                                liked={item.liked}
-                                handleLike={handleLikeCollection}
-                            />
-                        </View>
-                    )}
-                />
-                <NewGoal mode='community' />
-            </View>
+            <Header
+                navigationTitle='Community Collection'
+                scrollY={scrollY}
+                openDrawer={() => drawerNavigation.openDrawer()}
+            />
 
+            <Animated.FlatList
+                data={goals}
+                keyExtractor={(item) => item.id.toString()}
+
+                numColumns={1}
+                ListFooterComponent={() => <View className='h-20' />}
+                onScroll={scrollHandler}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={() => (
+                    <HeaderContent
+                        navigationTitle='Community Collection'
+                        handleSortPress={handleSortPress}
+                        currentSortOption={currentSortOption}
+                        marginBottom={36}
+                    />
+                )}
+                renderItem={({ item }) => (
+                    <View className='px-3 mb-7'>
+                        <CommunityGoal
+                            id={item.id.toString()}
+                            onPress={handleGoalPress}
+                            onMoreDetailsPress={handleMoreDetailsPress}
+                            text={item.text}
+                            active={item.active}
+                            items={item.items}
+                            liked={item.liked}
+                            handleLike={handleLikeCollection}
+                        />
+                    </View>
+                )}
+            />
+
+            <NewGoal mode="community" />
 
             {/* Goal Bottom Sheet */}
             <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Goal Actions' >
@@ -143,19 +163,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                     </View>
                 }
             </CustomBottomSheetModal>
-        </HomeDrawerLayout>
+        </View>
     )
 }
 
 export default CommunityCollectionScreen
-
-const styles = StyleSheet.create({
-    container: {
-        paddingHorizontal: 0,
-        marginBottom: 100
-    },
-
-    item: {
-        marginBottom: 25,
-    },
-});

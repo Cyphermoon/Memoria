@@ -35,7 +35,7 @@ const CommunityGoal = ({
     const goal = { id, name: text, liked }
 
     return (
-        <View className={` rounded-2xl space-y-2`}>
+        <View className={`rounded-2xl space-y-2`}>
             <View
                 className={`w-full py-1 px-2 flex-col h-36 relative items-center justify-between rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
             >
