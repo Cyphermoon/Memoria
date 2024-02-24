@@ -1,22 +1,15 @@
-import React, { useRef, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
-import colors from 'tailwindcss/colors';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { imageGenerationModes, publishModes } from '../../../settings';
+import React, { useRef, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import colors from 'tailwindcss/colors';
+import { publishModes } from '../../../settings';
+import CustomBottomSheetModal from '../common/CustomBottomSheetModal';
 import Text from '../common/Text';
-
-
-
-interface SelectedCollectionModeProps {
-    label: string
-    value: string
-}
+import { SelectedCollectionModeProps } from './type';
 
 interface Props {
     selectedMode: SelectedCollectionModeProps | null;
-
     handleImageSelected: (mode: SelectedCollectionModeProps) => void;
 }
 
@@ -24,21 +17,21 @@ const PublishCollectionModeSelector: React.FC<Props> = ({
     selectedMode,
     handleImageSelected: _handleImageSelected,
 }) => {
-    const [snapPoints, _] = useState(['10%', '25%'])
-    const ref = useRef<BottomSheetModal>(null)
+    const ref = useRef<BottomSheetModal>(null);
+    const [snapPoints] = useState(['10%', '25%']);
 
-    function openModal() {
-        ref.current?.present()
-    }
+    const openModal = () => {
+        ref.current?.present();
+    };
 
-    function closeModal() {
-        ref.current?.dismiss()
-    }
+    const closeModal = () => {
+        ref.current?.dismiss();
+    };
 
-    function handleImageSelected(mode: SelectedCollectionModeProps) {
-        _handleImageSelected(mode)
-        closeModal()
-    }
+    const handleImageSelected = (mode: SelectedCollectionModeProps) => {
+        _handleImageSelected(mode);
+        closeModal();
+    };
 
     return (
         <View className='space-y-3 mb-8'>
@@ -53,8 +46,11 @@ const PublishCollectionModeSelector: React.FC<Props> = ({
 
             <CustomBottomSheetModal ref={ref} snapPoints={snapPoints} index={1} text='Select Where to publish collection'>
                 <View className='space-y-5 z-[999]'>
-                    {publishModes.map((mode, index) => (
-                        <TouchableOpacity key={mode.value} className='md-8' onPress={(e) => handleImageSelected(mode)}>
+                    {publishModes.map((mode) => (
+                        <TouchableOpacity
+                            key={mode.value}
+                            className='md-8'
+                            onPress={() => handleImageSelected(mode as SelectedCollectionModeProps)}>
                             <Text className='text-sm'>{mode.label}</Text>
                         </TouchableOpacity>
                     ))}

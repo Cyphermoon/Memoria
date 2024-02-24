@@ -10,6 +10,8 @@ import NewGoal from '../../../components/Home/NewGoal'
 import { SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HomeDrawerLayout from './HomeDrawerLayout'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 
 const goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5 },
@@ -33,10 +35,12 @@ const goals = [
     // More goals...
 ];
 
+// Screen Types
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
+type Props = DrawerScreenProps<HomeDrawerParamList, "Personal">
 
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
@@ -76,8 +80,13 @@ const HomeScreen = () => {
 
 
     return (
-        <HomeDrawerLayout navigationTitle='Personal Collection' handleSortPress={handleSortPress} currentOption={currentSortOption}>
+        <HomeDrawerLayout
+            openDrawer={() => drawerNavigation.openDrawer()}
+            navigationTitle='Personal Collection'
+            handleSortPress={handleSortPress}
+            currentOption={currentSortOption}>
 
+            {/* Goals */}
             <View className='mt-8 flex-grow h-[600]'>
                 <FlatList
                     data={goals}

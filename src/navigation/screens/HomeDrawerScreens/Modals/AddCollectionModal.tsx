@@ -1,22 +1,22 @@
+import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
+import { FontAwesome } from '@expo/vector-icons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import colors from 'tailwindcss/colors';
+import customColors from '../../../../../colors';
+import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
-import colors from 'tailwindcss/colors'
-import customColors from '../../../../../colors'
-import { HomeStackParamList } from '../../../../../type';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FontAwesome } from '@expo/vector-icons';
-import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigationState } from '@react-navigation/native';
+import { SelectedCollectionModeProps } from '@components/Home/type';
 
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
 const AddCollectionModal = ({ navigation, route }: Props) => {
     const [folderName, setFolderName] = useState('')
-    const [selectedMode, setSelectedMode] = useState({ label: 'Personal', value: 'personal' })
+    const [selectedMode, setSelectedMode] = useState<SelectedCollectionModeProps>({ label: 'Personal', value: 'personal' })
     const [isActive, setIsActive] = useState(false)
     const insets = useSafeAreaInsets()
 

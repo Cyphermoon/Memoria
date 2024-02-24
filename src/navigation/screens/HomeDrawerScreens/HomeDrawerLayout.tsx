@@ -1,11 +1,12 @@
 import React from 'react'
-import { View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SortActions from '../../../components/Home/SortActions'
 import { SortOptionProp } from '../../../components/Home/type'
-import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
 import UserAvatar from '../../../components/common/UserAvatar'
+import { FontAwesome6 } from '@expo/vector-icons';
+import colors from 'colors'
 
 interface Props {
     navigationTitle: string,
@@ -13,22 +14,25 @@ interface Props {
     currentOption?: SortOptionProp
     extendedSortOptions?: SortOptionProp[]
     children: React.ReactNode
+    openDrawer: () => void
 }
 
 
-const HomeDrawerLayout = ({ navigationTitle, handleSortPress, currentOption, extendedSortOptions, children }: Props) => {
+const HomeDrawerLayout = ({ navigationTitle, openDrawer, handleSortPress, currentOption, extendedSortOptions, children }: Props) => {
     const insets = useSafeAreaInsets()
+
     return (
         <View
             className='flex-grow bg-primary px-3'
             style={{
                 paddingTop: insets.top,
                 paddingBottom: insets.bottom
-
             }}>
 
             <View className='flex-row justify-between items-center mb-4 mt-3'>
-                <Logo withName size='sm' />
+                <TouchableOpacity onPress={() => openDrawer()} className='rotate-180'>
+                    <FontAwesome6 name="bars-staggered" size={26} color={colors.secondary} />
+                </TouchableOpacity>
                 <UserAvatar username='Cypher_Moon' />
             </View>
 

@@ -1,20 +1,19 @@
+import CommunityGoal from '@components/Home/CommunityGoal'
+import { Fontisto, MaterialIcons } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import customColors from 'colors'
 import React, { useMemo, useRef, useState } from 'react'
 import { FlatList, StyleSheet, View } from 'react-native'
 import { sortOptions } from 'settings'
 import { HomeStackParamList } from 'type'
-import Goal from '../../../components/Home/Goal'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
 import { CommunitySelectedGoal, SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HomeDrawerLayout from './HomeDrawerLayout'
-import { MaterialIcons } from '@expo/vector-icons';
-import { Fontisto } from '@expo/vector-icons';
-import colors from 'tailwindcss/colors'
-import customColors from 'colors';
-import CommunityGoal from '@components/Home/CommunityGoal'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 
 const _goals = [
     { id: 1, text: 'Goal 1', active: true, items: 5, liked: true },
@@ -38,9 +37,11 @@ const _goals = [
 ];
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
+type Props = DrawerScreenProps<HomeDrawerParamList, "Personal">
 
 
-const CommunityCollectionScreen = () => {
+
+const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '25%'], []);
@@ -69,6 +70,7 @@ const CommunityCollectionScreen = () => {
     function handleUseCollection(id: string) {
         console.log("Delete Goal: ", id)
     }
+
     function handleLikeCollection(id: string) {
         setGoals(prevGoals => prevGoals.map(goal => {
             if (goal.id.toString() === id) {
@@ -77,10 +79,8 @@ const CommunityCollectionScreen = () => {
                 return goal;
             }
         }));
-
         handleClosePress()
     }
-
 
     function handleGoalPress(goal: SelectedGoalProps) {
         navigation.navigate("Goal", goal)
@@ -88,7 +88,11 @@ const CommunityCollectionScreen = () => {
 
 
     return (
-        <HomeDrawerLayout navigationTitle='Community Collection' handleSortPress={handleSortPress} currentOption={currentSortOption}>
+        <HomeDrawerLayout
+            openDrawer={() => drawerNavigation.openDrawer()}
+            navigationTitle='Community Collection'
+            handleSortPress={handleSortPress}
+            currentOption={currentSortOption}>
 
             <View className='mt-8 flex-grow h-[600]'>
                 <FlatList

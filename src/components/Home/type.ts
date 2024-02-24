@@ -15,3 +15,7 @@ export interface CommunitySelectedGoal extends SelectedGoalProps {
 
 export type CollectionOptionTypes = 'personal' | 'community'
 
+export type SelectedCollectionModeProps =
+    { label: "Personal", value: "personal" } |
+    { label: "Community", value: "community" }
+
