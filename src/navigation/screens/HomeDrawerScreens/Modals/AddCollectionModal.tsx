@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, KeyboardAvoidingView, Platform, SafeAreaView, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
 import colors from 'tailwindcss/colors'
@@ -7,12 +7,18 @@ import customColors from '../../../../../colors'
 import { HomeStackParamList } from '../../../../../type';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FontAwesome } from '@expo/vector-icons';
+import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigationState } from '@react-navigation/native';
+
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
-const AddCollectionModal = ({ navigation }: Props) => {
+const AddCollectionModal = ({ navigation, route }: Props) => {
     const [folderName, setFolderName] = useState('')
+    const [selectedMode, setSelectedMode] = useState({ label: 'Personal', value: 'personal' })
     const [isActive, setIsActive] = useState(false)
+    const insets = useSafeAreaInsets()
 
     function toggleSwitch() {
         setIsActive(active => !active)
@@ -23,18 +29,26 @@ const AddCollectionModal = ({ navigation }: Props) => {
         navigation.canGoBack() && navigation.goBack()
     }
 
+    useEffect(() => {
+        const mode = route.params.mode
+        if (!mode) return
+        if (mode === "personal") setSelectedMode({ label: 'Personal', value: 'personal' })
+        else if (mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
+    }, [])
+
     return (
-        <SafeAreaView className='bg-primary flex-grow'>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className='flex-grow'
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
-            >
+        <TouchableWithoutFeedback onPress={() => folderName && Keyboard.dismiss()}>
+            <View
+                className='flex-grow bg-primary'
+                style={{
+                    paddingTop: insets.top,
+                    paddingBottom: insets.bottom,
+                }}>
                 <View className='p-4 justify-between flex-grow'>
                     <View>
                         <View className='flex-row items-center justify-between mb-14'>
                             <Text className='text-center font-medium flex-grow text-2xl  text-gray-300'>
-                                New Folder
+                                New Collection
                             </Text>
 
                             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -52,6 +66,11 @@ const AddCollectionModal = ({ navigation }: Props) => {
                                 className='w-full bg-primary-300 px-2 py-4 text-secondary rounded-md' />
                         </View>
 
+                        <PublishCollectionModeSelector
+                            selectedMode={selectedMode}
+                            handleImageSelected={setSelectedMode} />
+
+
                         <View className='flex-col justify-center space-y-2'>
                             <Text>Active</Text>
 
@@ -68,8 +87,8 @@ const AddCollectionModal = ({ navigation }: Props) => {
                         Add Collection
                     </Touchable>
                 </View>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 

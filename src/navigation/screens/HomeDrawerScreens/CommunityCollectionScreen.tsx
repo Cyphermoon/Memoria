@@ -112,7 +112,7 @@ const CommunityCollectionScreen = () => {
                         </View>
                     )}
                 />
-                <NewGoal />
+                <NewGoal mode='community' />
             </View>
 
 

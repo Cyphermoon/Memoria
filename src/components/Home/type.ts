@@ -9,7 +9,9 @@ export type SortOptionProp = {
 
 }
 
-
 export interface CommunitySelectedGoal extends SelectedGoalProps {
     liked: boolean
 }
+
+export type CollectionOptionTypes = 'personal' | 'community'
+

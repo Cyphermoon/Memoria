@@ -2,17 +2,23 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { RootStackParamList } from '../../../App';
+
+import { HomeStackParamList } from 'type';
 import colors from '../../../colors';
+import { CollectionOptionTypes } from './type';
 
-type HomeScreenNavigationProps = NavigationProp<RootStackParamList, "Home">
+type HomeScreenNavigationProps = NavigationProp<HomeStackParamList, "HomeDrawer">
 
-const NewGoal = () => {
+interface Props {
+    mode: CollectionOptionTypes
+}
+
+const NewGoal = ({ mode }: Props) => {
 
     const navigation = useNavigation<HomeScreenNavigationProps>()
 
     function navigateToAddCollection() {
-        navigation.navigate('AddCollection')
+        navigation.navigate('AddCollection', { mode })
     }
 
     return (

@@ -99,7 +99,7 @@ const HomeScreen = () => {
                         </View>
                     )}
                 />
-                <NewGoal />
+                <NewGoal mode="personal" />
             </View>
 
 

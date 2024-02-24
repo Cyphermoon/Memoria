@@ -42,7 +42,7 @@ const HomeStackNavigator = () => {
                 <HomeStack.Screen
                     name="AddCollection"
                     component={AddCollectionModal}
-                    options={{ presentation: 'modal' }} />
+                    options={{ animation: "slide_from_bottom" }} />
 
                 <HomeStack.Screen
                     name="GoalSlideShow"

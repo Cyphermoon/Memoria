@@ -20,7 +20,6 @@ export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, 'NewGoalI
 export type AddGoalItemModalNavigationProps = NavigationProp<HomeStackParamList, 'NewGoalItem'>
 
 
-
 const AddGoalItemModal = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()
 
