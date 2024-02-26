@@ -6,6 +6,8 @@ import { HomeStackParamList } from 'type';
 import HomeStackNavigator from './HomeStackNavigator';
 import ProfileStackNavigator from './ProfileStackNavigator';
 import GlobalSearchScreen from '@screens/GlobalSearchScreen';
+import { StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
 
 
 type MainBottomTabNavigatorParamList = {
@@ -44,10 +46,20 @@ const MainBottomTabNavigator = () => {
             tabBarActiveTintColor: colors.accent,
             tabBarInactiveTintColor: 'gray',
             tabBarStyle: {
-                backgroundColor: colors.primary[300],
+                position: 'absolute',
                 borderTopWidth: 0,
             },
             headerShown: false,
+            tabBarBackground: () => (
+                <BlurView
+                    tint='dark'
+                    intensity={50}
+                    style={[
+                        StyleSheet.absoluteFill,
+                        { backgroundColor: '#03071299' }
+                    ]}
+                />
+            )
         })}>
             <Tab.Screen name="Home" component={HomeStackNavigator} />
             <Tab.Screen name="Search" component={GlobalSearchScreen} />

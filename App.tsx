@@ -3,7 +3,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { Linking } from 'react-native';
+import { Linking, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStackNavigator from 'src/navigation/StackNavigator/RootStackNavigator';
@@ -27,7 +27,7 @@ export default function App() {
         const linkingUrl = await Linking.getInitialURL()
 
         // Do not restore state when there is a deep link
-        // if (linkingUrl !== null) return
+        if (linkingUrl !== null) return
 
         // retrieve the state from async storage
         const savedState = await AsyncStorage.getItem(PERSISTENCE_KEY)
@@ -53,23 +53,23 @@ export default function App() {
   }, [isReady])
 
   if (!isReady) {
-    <Text>App is loading</Text>
+    return <View className='flex-grow bg-red-500'></View>
   }
 
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView className='flex-grow'>
-        <SlidePositionProvider>
-          <BottomSheetModalProvider>
-            <NavigationContainer
-              initialState={initialState}
-              onStateChange={(state) => {
-                AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-              }}>
+        <BottomSheetModalProvider>
+          <NavigationContainer
+            initialState={initialState}
+            onStateChange={(state) => {
+              AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+            }}>
+            <SlidePositionProvider>
               <RootStackNavigator />
-            </NavigationContainer>
-          </BottomSheetModalProvider>
-        </SlidePositionProvider>
+            </SlidePositionProvider>
+          </NavigationContainer>
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

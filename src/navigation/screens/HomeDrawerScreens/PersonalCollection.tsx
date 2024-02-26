@@ -10,12 +10,10 @@ import { SelectedGoalProps, SortOptionProp } from '../../../components/Home/type
 
 import Goal from '@components/Home/Goal'
 import GoalActionItem from '@components/Home/GoalActionItem'
-import SortActions from '@components/Home/SortActions'
+import NewGoal from '@components/Home/NewGoal'
 import CustomBottomSheetModal from '@components/common/CustomBottomSheetModal'
-import Text from '@components/common/Text'
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import HeaderContent, { Header } from './HomeDrawerLayout'
-import NewGoal from '@components/Home/NewGoal'
 
 
 // Screen Types
@@ -71,7 +69,8 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
 
 
     return (
-        <View className='flex-grow bg-primary relative'>
+        <View
+            className='flex-grow bg-primary relative'>
 
             <Header
                 navigationTitle='Personal Collection'

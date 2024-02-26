@@ -7,6 +7,7 @@ import { interpolate } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import Text from '../../components/common/Text'
 import { AuthStackParamList, HomeStackParamList } from 'type'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 // Onboarding slides
 const _slides = [
@@ -45,6 +46,7 @@ const OnBoardingScreen = ({ navigation }: Props) => {
     const [currentIdx, setCurrentIdx] = useState(0)
     const windowWidth = useWindowDimensions().width;
     const isFocused = useIsFocused();
+    const insets = useSafeAreaInsets();
 
     function moveToNextSlide() {
         if (!ref.current) return
@@ -88,7 +90,12 @@ const OnBoardingScreen = ({ navigation }: Props) => {
 
 
     return (
-        <SafeAreaView className="flex-grow flex flex-col justify-between bg-primary">
+        <View
+            style={{
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom
+            }}
+            className="flex-grow flex flex-col justify-between bg-primary">
 
             <TouchableOpacity className='self-end mr-4' onPress={moveToAuthScreen}>
                 <Text>Skip</Text>
@@ -121,7 +128,7 @@ const OnBoardingScreen = ({ navigation }: Props) => {
             <TouchableOpacity className='bg-secondary p-3 rounded-lg mx-4' onPress={moveToNextSlide}>
                 <Text className='text-primary text-base text-center'>Next</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     )
 }
 
