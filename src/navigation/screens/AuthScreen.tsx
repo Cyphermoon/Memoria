@@ -1,4 +1,4 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { Alert, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -9,10 +9,12 @@ import Logo from '../../components/common/Logo'
 import Text from '../../components/common/Text'
 
 
-type Props = NativeStackScreenProps<RootStackParamList, "AuthNavigator">
+type RootStackNavigationProp = NavigationProp<RootStackParamList, "AuthNavigator">
 
-const AuthScreen = ({ navigation }: Props) => {
+
+const AuthScreen = () => {
     const [isChecked, setIsChecked] = useState(false);
+    const navigation = useNavigation<RootStackNavigationProp>()
 
     function handleCheck() {
         setIsChecked(!isChecked);

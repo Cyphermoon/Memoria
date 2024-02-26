@@ -9,6 +9,7 @@ import { CollectionOptionTypes } from './type';
 
 type HomeScreenNavigationProps = NavigationProp<HomeStackParamList, "HomeDrawer">
 
+
 interface Props {
     mode: CollectionOptionTypes
 }

@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/native'
+import { NavigationProp, useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
 import React, { useRef, useState } from 'react'
@@ -6,7 +6,7 @@ import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions, 
 import { interpolate } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import Text from '../../components/common/Text'
-import { HomeStackParamList } from 'type'
+import { AuthStackParamList, HomeStackParamList } from 'type'
 
 // Onboarding slides
 const _slides = [
@@ -38,7 +38,7 @@ interface RenderSlidesProps {
 
 }
 
-type Props = NativeStackScreenProps<HomeStackParamList, "onBoarding">
+type Props = NativeStackScreenProps<AuthStackParamList, "onBoarding">
 
 const OnBoardingScreen = ({ navigation }: Props) => {
     const ref = useRef<ICarouselInstance>(null)
