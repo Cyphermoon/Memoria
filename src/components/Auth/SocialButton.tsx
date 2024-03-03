@@ -6,7 +6,7 @@ import colors from '../../../colors';
 
 
 interface Props {
-    icon: "twitter" | "google" | "linkedin";
+    icon: "twitter" | "google" | "github";
     text: string;
     textClass?: string
     disabled?: boolean
