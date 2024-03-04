@@ -1,33 +1,51 @@
-import { NavigationProp, useNavigation } from '@react-navigation/native'
-import React, { useState } from 'react'
-import { Alert, Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { RootStackParamList } from '../../../type'
-import SocialButton from '../../components/Auth/SocialButton'
-import Checkbox from '../../components/common/Checkbox'
-import Logo from '../../components/common/Logo'
-import Text from '../../components/common/Text'
-import { GithubAuthProvider, GoogleAuthProvider, OAuthProvider, TwitterAuthProvider, signInWithPopup } from "firebase/auth";
-import { firebaseAuth } from 'firebaseConfig'
-import { TextInput } from 'react-native-gesture-handler'
 import FormControl from '@components/common/FormControl'
 import Touchable from '@components/common/Touchable'
-import { TouchableWithoutFeedback } from 'react-native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { firebaseAuth } from 'firebaseConfig'
+import React, { useState } from 'react'
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { validateInputs } from 'src/util'
+import { AuthStackParamList } from '../../../../type'
+import Checkbox from '../../../components/common/Checkbox'
+import Logo from '../../../components/common/Logo'
+import Text from '../../../components/common/Text'
 
 
+type Prop = NativeStackScreenProps<AuthStackParamList, "Auth">
 
-
-type RootStackNavigationProp = NavigationProp<RootStackParamList, "AuthNavigator">
-
-
-const AuthScreen = () => {
+const RegisterScreen = ({ navigation }: Prop) => {
     const [isChecked, setIsChecked] = useState(false);
-    const navigation = useNavigation<RootStackNavigationProp>()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('')
 
     function handleCheck() {
         setIsChecked(!isChecked);
+    }
+
+    async function handleSubmit() {
+        // Validate the inputs
+        const errorMessage = validateInputs({ email, password, username });
+        if (errorMessage) {
+            Alert.alert(errorMessage);
+            return;
+        }
+
+        if (!isChecked) {
+            Alert.alert('Terms and Conditions', 'You need to agree to our terms and conditions to continue')
+            return;
+        }
+
+        // Get the Firebase auth instance
+        try {
+            // Register the user
+            const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+            // Signed in 
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     // function handleSignIn(signInHandler: () => void) {
@@ -115,7 +133,7 @@ const AuthScreen = () => {
                     <View className='w-full px-4'>
                         <View className='mb-6'>
                             <Logo withName size='md' />
-                            <Text className='text-xl font-medium text-center' >Continue Authentication</Text>
+                            <Text className='text-xl font-medium text-center' >Sign up</Text>
                         </View>
 
                         {/* <View className='w-full'>
@@ -150,6 +168,16 @@ const AuthScreen = () => {
                             <View className='mb-6'>
                                 <View className='mb-6'>
                                     <FormControl
+                                        label="Username"
+                                        type="username"
+                                        variant="outline"
+                                        value={username}
+                                        onChange={setUsername}
+                                    />
+
+                                </View>
+                                <View className='mb-6'>
+                                    <FormControl
                                         label="Email"
                                         type="email"
                                         variant="outline"
@@ -162,7 +190,7 @@ const AuthScreen = () => {
                                 <View className='mb-6'>
                                     <FormControl
                                         label="Password"
-                                        type="type"
+                                        type="password"
                                         variant="outline"
                                         value={password}
                                         onChange={setPassword}
@@ -177,7 +205,15 @@ const AuthScreen = () => {
                                 </Checkbox>
                             </View>
                             <View>
-                                <Touchable isText>Create Account</Touchable>
+                                <Touchable onPress={handleSubmit} isText>Create Account</Touchable>
+
+                                <View className='flex flex-row items-center justify-center mt-5'>
+                                    <Text className='text-gray-400'>Already have an Account? </Text>
+
+                                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                                        <Text className='underline'>Sign In</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -189,4 +225,4 @@ const AuthScreen = () => {
     )
 }
 
-export default AuthScreen
+export default RegisterScreen

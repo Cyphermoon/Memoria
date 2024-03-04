@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import AuthScreen from "@screens/AuthScreen"
+import LoginScreen from "@screens/Auth/LoginScreen"
+import RegisterScreen from "@screens/Auth/RegisterScreen"
 import OnBoardingScreen from "@screens/OnBoardingScreen"
 import { AuthStackParamList } from "type"
 
@@ -10,7 +11,8 @@ const AuthStackNavigator = () => {
     return (
         <AuthStack.Navigator initialRouteName="onBoarding" screenOptions={{ headerShown: false }}>
             <AuthStack.Screen name="onBoarding" component={OnBoardingScreen} />
-            <AuthStack.Screen name="Auth" component={AuthScreen} />
+            <AuthStack.Screen name="Auth" component={RegisterScreen} />
+            <AuthStack.Screen name="Login" component={LoginScreen} />
         </AuthStack.Navigator>
     )
 }

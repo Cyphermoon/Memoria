@@ -18,6 +18,7 @@ export type HomeStackParamList = {
     onBoarding: undefined
     Splash: undefined
     Auth: undefined
+    Login: undefined
 }
 
 export type RootStackParamList = {

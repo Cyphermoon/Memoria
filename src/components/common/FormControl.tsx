@@ -14,7 +14,7 @@ interface Props {
     onSubmit?: () => void
 }
 
-const FormControl = ({ label, variant, value, onChange: _onChange, onSubmit }: Props) => {
+const FormControl = ({ label, variant, type, value, onChange: _onChange, onSubmit }: Props) => {
     const [isFocused, setIsFocused] = useState(false);
 
     const handleFocus = (value: boolean) => {
@@ -48,6 +48,8 @@ const FormControl = ({ label, variant, value, onChange: _onChange, onSubmit }: P
                     placeholder={label ? label : "Enter text..."}
                     onFocus={() => handleFocus(true)}
                     onBlur={() => handleFocus(false)}
+                    secureTextEntry={type === 'password'}
+                    keyboardType={type === 'email' ? 'email-address' : 'default'}
                     onSubmitEditing={onSubmit}
                 />
                 {isFocused && value !== '' &&

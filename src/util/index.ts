@@ -42,3 +42,23 @@ export function truncateText (text: string, maxLength: number = 20) {
     // If the text is shorter than or equal to the maximum length, return the original text
     return text;
 }
+
+export const validateInputs = (fields: {[key: string]: string}) => {
+    // Check if all fields are filled
+    for (let key in fields) {
+        if (fields[key] === '') {
+            return `Please fill in the ${key}`;
+        }
+    }
+
+    // Check if email is in a valid format
+    if (fields.email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(fields.email)) {
+            return 'Please enter a valid email address';
+        }
+    }
+
+    // If all checks pass, return null
+    return null;
+}
