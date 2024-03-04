@@ -59,6 +59,11 @@ export const validateInputs = (fields: {[key: string]: string}) => {
         }
     }
 
+    // Check if password is at least 6 characters long
+    if (fields.password && fields.password.length < 6) {
+        return 'Password must be at least 6 characters long';
+    }
+
     // If all checks pass, return null
     return null;
 }

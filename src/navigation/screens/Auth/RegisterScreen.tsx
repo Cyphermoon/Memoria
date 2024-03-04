@@ -1,22 +1,31 @@
 import FormControl from '@components/common/FormControl'
 import Touchable from '@components/common/Touchable'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import colors from 'colors'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { firebaseAuth } from 'firebaseConfig'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import Toast from 'react-native-root-toast'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { validateInputs } from 'src/util'
-import { AuthStackParamList } from '../../../../type'
+import { createUser } from 'src/util/firebase.util'
+import tailwindColors from 'tailwindcss/colors'
+import { AuthStackParamList, RootStackParamList } from '../../../../type'
 import Checkbox from '../../../components/common/Checkbox'
 import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
+import { errorToast, successToast } from 'src/util/toast.util'
+import { FirebaseError } from 'firebase/app'
 
 
 type Prop = NativeStackScreenProps<AuthStackParamList, "Auth">
+type RegisterScreenNavigationProp = NavigationProp<RootStackParamList, "HomeNavigator">
 
 const RegisterScreen = ({ navigation }: Prop) => {
     const [isChecked, setIsChecked] = useState(false);
+    const rootNavigation = useNavigation<RegisterScreenNavigationProp>()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [username, setUsername] = useState('')
@@ -42,9 +51,40 @@ const RegisterScreen = ({ navigation }: Prop) => {
         try {
             // Register the user
             const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+
+            if (!userCredential.user) return;
+
+            // Create user profile
+            createUser({ username, email, uid: userCredential.user.uid })
+                .then((wasSuccessful) => {
+                    if (wasSuccessful) {
+                        // send toast
+                        successToast('Account created successful')
+
+                        // Clear the input
+                        setEmail('')
+                        setPassword('')
+                        setUsername('')
+                        setIsChecked(false)
+
+                        // navigation to home
+                        rootNavigation.navigate('HomeNavigator')
+                    }
+                })
+                .catch(() => errorToast('Account creation failed, Please try again'))
+                .finally(() => Keyboard.dismiss())
+
             // Signed in 
-        } catch (error) {
-            console.error(error)
+        } catch (error: any) {
+            Keyboard.dismiss()
+
+            if (error instanceof FirebaseError) {
+                if (error.code === 'auth/email-already-in-use') {
+                    errorToast('This email address already exists')
+                }
+            } else {
+                errorToast("An error occured, please try again later")
+            }
         }
     }
 
@@ -124,6 +164,7 @@ const RegisterScreen = ({ navigation }: Prop) => {
     //             // ...
     //         });
     // }
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <KeyboardAvoidingView

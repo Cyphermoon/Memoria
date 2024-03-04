@@ -7,8 +7,8 @@ import { Linking, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStackNavigator from 'src/navigation/StackNavigator/RootStackNavigator';
-import Text from './src/components/common/Text';
 import SlidePositionProvider from './src/context/SlidePositionProvider';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
 
 // Creating a navigation stack
@@ -58,19 +58,21 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView className='flex-grow'>
-        <BottomSheetModalProvider>
-          <NavigationContainer
-            initialState={initialState}
-            onStateChange={(state) => {
-              AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
-            }}>
-            <SlidePositionProvider>
-              <RootStackNavigator />
-            </SlidePositionProvider>
-          </NavigationContainer>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+      <RootSiblingParent>
+        <GestureHandlerRootView className='flex-grow'>
+          <BottomSheetModalProvider>
+            <NavigationContainer
+              initialState={initialState}
+              onStateChange={(state) => {
+                AsyncStorage.setItem(PERSISTENCE_KEY, JSON.stringify(state))
+              }}>
+              <SlidePositionProvider>
+                <RootStackNavigator />
+              </SlidePositionProvider>
+            </NavigationContainer>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </RootSiblingParent>
     </SafeAreaProvider>
   );
 }

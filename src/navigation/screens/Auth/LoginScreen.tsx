@@ -1,26 +1,30 @@
 import FormControl from '@components/common/FormControl'
 import Touchable from '@components/common/Touchable'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { FirebaseError } from 'firebase/app'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { firebaseAuth } from 'firebaseConfig'
 import React, { useState } from 'react'
 import { Alert, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { validateInputs } from 'src/util'
+import { errorToast, successToast } from 'src/util/toast.util'
 import { AuthStackParamList, RootStackParamList } from '../../../../type'
-import Checkbox from '../../../components/common/Checkbox'
 import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
-import { validateInputs } from 'src/util'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
-import { firebaseAuth } from 'firebaseConfig'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">
+type LoginScreenNavigationProp = NavigationProp<RootStackParamList, "AuthNavigator">
 
 
 const LoginScreen = ({ navigation }: Props) => {
     // form fields
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    const homeNavigation = useNavigation<LoginScreenNavigationProp>()
 
     async function handleSubmit() {
         // Validate the inputs
@@ -30,14 +34,35 @@ const LoginScreen = ({ navigation }: Props) => {
             return;
         }
 
-
         // Get the Firebase auth instance
         try {
             // Register the user
-            const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
-            // Signed in 
+            await signInWithEmailAndPassword(firebaseAuth, email, password);
+            Keyboard.dismiss()
+
+            successToast("Signed in successfully")
+
+            // Clear the form fields
+            setEmail('')
+            setPassword('')
+
+            // Navigate to the home screen
+            homeNavigation.navigate("HomeNavigator")
+
         } catch (error) {
-            console.error(error)
+            Keyboard.dismiss()
+
+            if (error instanceof FirebaseError) {
+                if (error.code === 'auth/invalid-credential') {
+                    errorToast("Email or Password is incorrect", "top")
+                }
+                else {
+                    errorToast(error.message)
+                }
+
+            } else {
+                errorToast("An error occured, please try again later", "top")
+            }
         }
     }
 
