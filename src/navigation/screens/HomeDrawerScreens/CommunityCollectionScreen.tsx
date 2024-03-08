@@ -9,7 +9,7 @@ import { sortOptions } from 'settings'
 import { HomeStackParamList } from 'type'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
-import { CommunitySelectedGoal, SelectedGoalProps, SortOptionProp } from '../../../components/Home/type'
+import { CommunitySelectedGoal, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HomeDrawerLayout, { HEADER_HEIGHT, Header } from './HomeDrawerLayout'
 import { DrawerScreenProps } from '@react-navigation/drawer'
@@ -91,7 +91,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         handleClosePress()
     }
 
-    function handleGoalPress(goal: SelectedGoalProps) {
+    function handleGoalPress(goal: SelectedFolderProps) {
         navigation.navigate("Goal", goal)
     }
 

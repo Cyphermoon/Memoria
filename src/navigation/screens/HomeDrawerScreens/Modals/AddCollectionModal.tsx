@@ -12,15 +12,20 @@ import Touchable from '../../../../components/common/Touchable';
 import { SelectedCollectionModeProps } from '@components/Home/type';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useAuthStore } from 'store/authStore';
-import { uploadFolder } from 'src/util/HomeDrawer/index.utll';
-
+import { editFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
+
+/*
+This component is used to both add and edit a collection. Although it's original intention was to add collection
+*/
 
 const AddCollectionModal = ({ navigation, route }: Props) => {
     const [folderName, setFolderName] = useState('')
     const [selectedMode, setSelectedMode] = useState<SelectedCollectionModeProps>({ label: 'Personal', value: 'personal' })
     const [isActive, setIsActive] = useState(false)
+
+    const isEditingMode = route.params.folder ? true : false
 
     const insets = useSafeAreaInsets()
     const bottomTabBarHeight = useBottomTabBarHeight()
@@ -35,15 +40,36 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 
         setFolderName('')
 
-        await uploadFolder(userId, { active: isActive, mode: selectedMode.value, name: folderName })
+        if (!route.params.folder) {
+            await uploadFolder(userId, { active: isActive, mode: selectedMode.value, name: folderName })
+        } else {
+            await editFolder(userId, route.params.folder.id, { active: isActive, mode: selectedMode.value, name: folderName })
+        }
+
         navigation.canGoBack() && navigation.goBack()
     }
 
     useEffect(() => {
+        // stop prepopulating mode field if editing
+        if (isEditingMode) return
+
         const mode = route.params.mode
         if (!mode) return
         if (mode === "personal") setSelectedMode({ label: 'Personal', value: 'personal' })
         else if (mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
+
+    }, [])
+
+
+    useEffect(() => {
+        // prepopulate fields if editing
+
+        if (route.params.folder) {
+            setFolderName(route.params.folder.text)
+            setIsActive(route.params.folder.active)
+            if (route.params.folder.mode === "personal") setSelectedMode({ label: 'Personal', value: 'personal' })
+            else if (route.params.folder.mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
+        }
     }, [])
 
     return (
@@ -58,7 +84,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                     <View>
                         <View className='flex-row items-center justify-between mb-14'>
                             <Text className='text-center font-medium flex-grow text-2xl  text-gray-300'>
-                                New Collection
+                                {isEditingMode ? "Edit" : "New"} Collection
                             </Text>
 
                             <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -100,7 +126,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                         }}
                         onPress={addCollection}
                         disabled={folderName === ""}>
-                        Add Collection
+                        {isEditingMode ? "Edit" : "Add"} Collection
                     </Touchable>
                 </View>
             </View>

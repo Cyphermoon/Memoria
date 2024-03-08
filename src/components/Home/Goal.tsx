@@ -1,24 +1,25 @@
-import { View, TouchableOpacity } from 'react-native'
 import { Entypo } from '@expo/vector-icons';
-import React from 'react'
-import Text from '../common/Text'
-import { plural } from '../../util'
-import colors from 'tailwindcss/colors';
 import customColors from 'colors';
-import { SelectedGoalProps } from './type';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import colors from 'tailwindcss/colors';
+import { plural } from '../../util';
+import Text from '../common/Text';
+import { CollectionOptionTypes, FolderProps } from './type';
 
 interface Props {
   id: string
   className?: string
-  onPress: (goal: SelectedGoalProps) => void
-  onMoreDetailsPress: (goal: SelectedGoalProps) => void
+  onPress: (goal: FolderProps) => void
+  onMoreDetailsPress: (goal: FolderProps) => void
   text: string
   active: boolean
   items: number
+  mode: CollectionOptionTypes
 }
 
-const Goal = ({ className = "", onPress, text, active, items, id, onMoreDetailsPress }: Props) => {
-  const goal = { id, name: text }
+const Goal = ({ className = "", onPress, text, active, items, id, mode, onMoreDetailsPress }: Props) => {
+  const goal = { id, text, items, active, mode }
   return (
     <View
       className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}

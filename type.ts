@@ -1,13 +1,13 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {  GoalItemProps } from "./src/components/Goal/type";
-import { CollectionOptionTypes, SelectedGoalProps } from "./src/components/Home/type";
+import { CollectionOptionTypes, FolderProps, SelectedFolderProps } from "./src/components/Home/type";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { HomeDrawerParamList } from "src/navigation/HomeDrawer";
 
 export type HomeStackParamList = {
     HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
-    AddCollection: {mode: CollectionOptionTypes}
-    Goal: SelectedGoalProps
+    AddCollection: {mode: CollectionOptionTypes, folder?:FolderProps}
+    Goal: SelectedFolderProps
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
     NewGoalItem: {goalFolderId?: string, unsplashImage?: UnsplashResult}
     EditGoalItem: {goalItem: GoalItemProps}

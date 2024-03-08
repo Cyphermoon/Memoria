@@ -1,21 +1,22 @@
-import { TouchableHighlight, TouchableOpacity, View } from "react-native"
 import { MaterialIcons } from '@expo/vector-icons';
-import Text from "../common/Text"
-import colors from "tailwindcss/colors"
+import { TouchableOpacity, View } from "react-native";
+import colors from "tailwindcss/colors";
+import Text from "../common/Text";
+import { FolderProps } from "./type";
 
 type IconNames = "delete-outline" | "delete" | "edit" | 'favorite'
 
 interface Props {
-    onPress: (id: string) => void
-    text: string
+    onPress: (folder: FolderProps) => void
+    label: string
     danger?: boolean
-    id: string
     icon: IconNames | ((color: string, size: number) => JSX.Element)
+    selectedFolder: FolderProps
 }
 
-const GoalActionItem = ({ onPress, text, danger, id, icon }: Props) => {
+const GoalActionItem = ({ onPress, label, danger, icon, selectedFolder }: Props) => {
     return (
-        <TouchableOpacity onPress={() => onPress(id)}>
+        <TouchableOpacity onPress={() => onPress(selectedFolder)}>
             <View className="flex-row items-center mb-4">
                 {typeof icon === "string" ?
                     <MaterialIcons
@@ -25,7 +26,7 @@ const GoalActionItem = ({ onPress, text, danger, id, icon }: Props) => {
                     /> :
                     icon(danger ? colors.red[400] : colors.gray[400], 20)
                 }
-                <Text className={`${danger ? 'text-red-400' : 'text-gray-400'} text-base ml-1`}>{text}</Text>
+                <Text className={`${danger ? 'text-red-400' : 'text-gray-400'} text-base ml-1`}>{label}</Text>
             </View>
 
         </TouchableOpacity>
