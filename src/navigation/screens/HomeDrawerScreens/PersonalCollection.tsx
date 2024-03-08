@@ -98,7 +98,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
 
 
     function handleGoalPress(goal: FolderProps) {
-        navigation.navigate("Goal", { id: goal.id, name: goal.text })
+        navigation.navigate("Goal", { id: goal.id, name: goal.name })
     }
 
 
@@ -132,13 +132,9 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
                     renderItem={({ item }) => (
                         <View className='w-1/2 p-2'>
                             <Goal
-                                items={item.items}
-                                id={item.id.toString()}
+                                selectedFolder={item}
                                 onPress={handleGoalPress}
                                 onMoreDetailsPress={handleMoreDetailsPress}
-                                text={item.name}
-                                active={item.active}
-                                mode={item.mode}
                             />
                         </View>
                     )}

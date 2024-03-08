@@ -5,41 +5,37 @@ import { TouchableOpacity, View } from 'react-native';
 import colors from 'tailwindcss/colors';
 import { plural } from '../../util';
 import Text from '../common/Text';
-import { CollectionOptionTypes, FolderProps } from './type';
+import { FolderProps } from './type';
 
 interface Props {
-  id: string
   className?: string
   onPress: (goal: FolderProps) => void
   onMoreDetailsPress: (goal: FolderProps) => void
-  text: string
-  active: boolean
-  items: number
-  mode: CollectionOptionTypes
+  selectedFolder: FolderProps
 }
 
-const Goal = ({ className = "", onPress, text, active, items, id, mode, onMoreDetailsPress }: Props) => {
-  const goal = { id, text, items, active, mode }
+const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress }: Props) => {
+
   return (
     <View
-      className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
+      className={`w-[185] h-36 relative items-center justify-center rounded-2xl bg-primary-300 ${selectedFolder.active && "border border-accent"} ${className}`}
     >
       <TouchableOpacity
         className='absolute top-2 right-2'
-        onPress={() => onMoreDetailsPress(goal)}>
-        <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
+        onPress={() => onMoreDetailsPress(selectedFolder)}>
+        <Entypo name="dots-three-horizontal" size={20} color={selectedFolder.active ? customColors.accent : colors.gray[500]} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        onPress={() => onPress(goal)}
-        onLongPress={() => onMoreDetailsPress(goal)}>
-        <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
-          {text}
+        onPress={() => onPress(selectedFolder)}
+        onLongPress={() => onMoreDetailsPress(selectedFolder)}>
+        <Text className={`${selectedFolder.active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
+          {selectedFolder.name}
         </Text>
       </TouchableOpacity>
 
-      <Text className={`absolute bottom-1.5 left-2 text-sm ${active ? 'text-accent' : 'text-gray-500'}`}>
-        {items} {plural(items, "item")}
+      <Text className={`absolute bottom-1.5 left-2 text-sm ${selectedFolder.active ? 'text-accent' : 'text-gray-500'}`}>
+        {selectedFolder.items} {plural(selectedFolder.items, "item")}
       </Text>
     </View>
   )

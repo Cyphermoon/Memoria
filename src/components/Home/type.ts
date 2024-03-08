@@ -21,7 +21,7 @@ export type SelectedCollectionModeProps =
 
 export interface FolderProps {
     id: string;
-    text: string;
+    name: string;
     active: boolean;
     items: number;
     mode: CollectionOptionTypes

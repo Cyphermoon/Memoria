@@ -65,7 +65,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         // prepopulate fields if editing
 
         if (route.params.folder) {
-            setFolderName(route.params.folder.text)
+            setFolderName(route.params.folder.name)
             setIsActive(route.params.folder.active)
             if (route.params.folder.mode === "personal") setSelectedMode({ label: 'Personal', value: 'personal' })
             else if (route.params.folder.mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
