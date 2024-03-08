@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 
 interface CreateUserProp {
@@ -10,7 +10,7 @@ interface CreateUserProp {
 
 export const createUser = async (data: CreateUserProp) => {
   try {
-    await addDoc(collection(firestoreDB, "users"), data);
+    await setDoc(doc(firestoreDB, "users", data.uid), data);
     return true; // Return true if the operation was successful
   } catch (error) {
     console.error('Error creating user:', error);

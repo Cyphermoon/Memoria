@@ -10,6 +10,9 @@ import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
 import { SelectedCollectionModeProps } from '@components/Home/type';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { useAuthStore } from 'store/authStore';
+import { uploadFolder } from 'src/util/HomeDrawer/index.utll';
 
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
@@ -18,14 +21,21 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
     const [folderName, setFolderName] = useState('')
     const [selectedMode, setSelectedMode] = useState<SelectedCollectionModeProps>({ label: 'Personal', value: 'personal' })
     const [isActive, setIsActive] = useState(false)
+
     const insets = useSafeAreaInsets()
+    const bottomTabBarHeight = useBottomTabBarHeight()
+    const userId = useAuthStore(state => state.user?.uid)
 
     function toggleSwitch() {
         setIsActive(active => !active)
     }
 
-    function addCollection() {
+    async function addCollection() {
+        if (!userId) return
+
         setFolderName('')
+
+        await uploadFolder(userId, { active: isActive, mode: selectedMode.value, name: folderName })
         navigation.canGoBack() && navigation.goBack()
     }
 
@@ -83,7 +93,13 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                         </View>
                     </View>
 
-                    <Touchable isText onPress={addCollection} disabled={folderName === ""}>
+                    <Touchable
+                        isText
+                        style={{
+                            marginBottom: bottomTabBarHeight
+                        }}
+                        onPress={addCollection}
+                        disabled={folderName === ""}>
                         Add Collection
                     </Touchable>
                 </View>

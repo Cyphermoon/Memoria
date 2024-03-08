@@ -39,7 +39,7 @@ const _goals = [
 ];
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
-type Props = DrawerScreenProps<HomeDrawerParamList, "Personal">
+type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
 
 
 const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
