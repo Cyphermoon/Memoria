@@ -34,6 +34,7 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
     updateDoc(folderRef, folderData)
     .then(() => {
         if(active) setActiveFolder(userId, folderId)
+        else{!active} removeActiveFolder(userId)
     })
     .catch(() => {
         errorToast("An Error occured while updating this folder item. Please try again later.")
@@ -44,6 +45,15 @@ function setActiveFolder(userId: string, folderId: string){
     const userRef = doc(firestoreDB, "users", userId)
 
     updateDoc(userRef, {activeFolder: folderId})
+    .catch(() => {
+        errorToast("An Error occured while updating this folder item. Please try again later.")
+    })
+}
+
+function removeActiveFolder(userId: string){
+    const userRef = doc(firestoreDB, "users", userId)
+
+    updateDoc(userRef, {activeFolder: null})
     .catch(() => {
         errorToast("An Error occured while updating this folder item. Please try again later.")
     })

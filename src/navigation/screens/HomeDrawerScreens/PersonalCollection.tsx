@@ -112,7 +112,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     }
 
     async function handleGoalDelete(folder: FolderProps) {
-        userId && selectedFolder?.id && deleteFolder(userId, selectedFolder?.id)
+        userId && folder?.id && deleteFolder(userId, folder?.id)
         handleClosePress()
     }
 
