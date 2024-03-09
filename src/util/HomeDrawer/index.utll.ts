@@ -8,6 +8,13 @@ interface FolderData {
     dateCreated: FieldValue;
 }
 
+interface CommunityFolderData extends FolderData {
+    user: {
+        image_url?: string;
+        name: string;
+        id: string;
+    }
+}
 
 export async function uploadFolder (userId: string, folderData: FolderData, active: boolean): Promise<void> {
     try {
@@ -34,7 +41,7 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
     updateDoc(folderRef, folderData)
     .then(() => {
         if(active) setActiveFolder(userId, folderId)
-        else{!active} removeActiveFolder(userId)
+        else if(!active) removeActiveFolder(userId)
     })
     .catch(() => {
         errorToast("An Error occured while updating this folder item. Please try again later.")
@@ -59,3 +66,29 @@ function removeActiveFolder(userId: string){
     })
 }
 
+export function uploadCommunityFolder(folderData: CommunityFolderData){
+    const communityCollectionRef = collection(firestoreDB, "community")
+
+    addDoc(communityCollectionRef, folderData)
+    .catch(() => {
+        errorToast("An Error occured while uploading this folder item. Please try again later.")
+    })
+}
+
+export function deleteCommunityFolder(folderId: string){
+    const communityRef = doc(firestoreDB, "community", folderId)
+
+    deleteDoc(communityRef)
+    .catch(() => {
+        errorToast("An Error occured while deleting this folder item. Please try again later.")
+    })
+}
+
+export function editCommunityFolder(folderId: string, folderData: {[key: string]: any}){
+    const communityRef = doc(firestoreDB, "community", folderId)
+
+    updateDoc(communityRef, folderData)
+    .catch(() => {
+        errorToast("An Error occured while updating this folder item. Please try again later.")
+    })
+}

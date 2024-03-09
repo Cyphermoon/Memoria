@@ -7,16 +7,16 @@ import { FolderProps } from "./type";
 type IconNames = "delete-outline" | "delete" | "edit" | 'favorite'
 
 interface Props {
-    onPress: (folder: FolderProps) => void
+    onPress: () => void
     label: string
     danger?: boolean
     icon: IconNames | ((color: string, size: number) => JSX.Element)
-    selectedFolder: FolderProps
+    selectedFolder: FolderProps | string
 }
 
-const GoalActionItem = ({ onPress, label, danger, icon, selectedFolder }: Props) => {
+const GoalActionItem = ({ onPress, label, danger, icon }: Props) => {
     return (
-        <TouchableOpacity onPress={() => onPress(selectedFolder)}>
+        <TouchableOpacity onPress={() => onPress()}>
             <View className="flex-row items-center mb-4">
                 {typeof icon === "string" ?
                     <MaterialIcons

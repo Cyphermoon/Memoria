@@ -21,6 +21,7 @@ export type SelectedCollectionModeProps =
     { label: "Personal", value: "personal" } |
     { label: "Community", value: "community" };
 
+
 export interface FolderProps {
     id: string
     name: string
@@ -31,5 +32,19 @@ export interface FolderProps {
 
 export interface FolderPropsWithActive extends FolderProps {
     active: boolean
+}
+
+export interface CommunityFolderProps{
+    id: string
+    name: string
+    items: number
+    mode: CollectionOptionTypes
+    dateCreated: Timestamp
+    likes:number
+    user: {
+        image_url?: string
+        name: string
+        id: string
+    }
 }
 

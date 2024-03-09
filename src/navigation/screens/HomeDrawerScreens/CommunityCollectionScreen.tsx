@@ -76,13 +76,13 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         handleOpenPress()
     }
 
-    function handleUseCollection(id: string) {
-        console.log("Delete Goal: ", id)
+    function handleUseCollection() {
+        console.log("Delete Goal: ", selectedGoal?.id)
     }
 
-    function handleLikeCollection(id: string) {
+    function handleLikeCollection() {
         setGoals(prevGoals => prevGoals.map(goal => {
-            if (goal.id.toString() === id) {
+            if (goal.id.toString() === selectedGoal?.id.toString()) {
                 return { ...goal, liked: !goal.liked };
             } else {
                 return goal;
@@ -152,14 +152,14 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                                     name="favorite"
                                     size={size}
                                     color={selectedGoal.liked ? customColors.accent : color} />}
-                            text={selectedGoal.liked ? 'Unlike Collection' : 'Like Collection'}
-                            id={selectedGoal.id} />
+                            label={selectedGoal.liked ? 'Unlike Collection' : 'Like Collection'}
+                            selectedFolder={selectedGoal.id} />
 
                         <GoalActionItem
-                            onPress={(handleUseCollection)}
+                            onPress={handleUseCollection}
                             icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />}
-                            text='Use Collection'
-                            id={selectedGoal.id} />
+                            label='Use Collection'
+                            selectedFolder={selectedGoal.id} />
                     </View>
                 }
             </CustomBottomSheetModal>

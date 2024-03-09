@@ -1,19 +1,19 @@
 import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
+import { CommunityFolderProps, SelectedCollectionModeProps } from '@components/Home/type';
 import { FontAwesome } from '@expo/vector-icons';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { serverTimestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { editCommunityFolder, editFolder, uploadCommunityFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
+import { useAuthStore } from 'store/authStore';
 import colors from 'tailwindcss/colors';
 import customColors from '../../../../../colors';
 import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
-import { SelectedCollectionModeProps } from '@components/Home/type';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { useAuthStore } from 'store/authStore';
-import { editFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
-import { serverTimestamp } from 'firebase/firestore';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
@@ -31,16 +31,14 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
     const insets = useSafeAreaInsets()
     const bottomTabBarHeight = useBottomTabBarHeight()
     const userId = useAuthStore(state => state.user?.uid)
+    const userName = useAuthStore(state => state.user?.username)
+    //    const userImage = useAuthStore(state => state.user?.i)
 
     function toggleSwitch() {
         setIsActive(active => !active)
     }
 
-    async function addCollection() {
-        if (!userId) return
-
-        setFolderName('')
-
+    async function addPersonalCollection(userId: string) {
         if (!route.params.folder) {
             await uploadFolder(userId,
                 {
@@ -52,12 +50,40 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         } else {
             await editFolder(userId, route.params.folder.id, { mode: selectedMode.value, name: folderName }, isActive)
         }
+    }
+
+    async function addCommunityCollection(userId: string) {
+
+        if (!route.params.folder && userName) {
+            uploadCommunityFolder({
+                mode: selectedMode.value,
+                name: folderName,
+                dateCreated: serverTimestamp(),
+                user: {
+                    name: userName,
+                    id: userId
+                }
+            })
+        } else if (route.params.folder) {
+            const folder = route.params.folder as CommunityFolderProps
+            const { id, ...rest } = folder
+            editCommunityFolder(id, rest)
+        }
+    }
+
+    function handleCollection() {
+        if (!userId) return
+        setFolderName('')
+
+        // specific actions for mode of operation
+        if (route.params.mode === "personal") addPersonalCollection(userId)
+        else if (route.params.mode === "community") addCommunityCollection(userId)
 
         navigation.canGoBack() && navigation.goBack()
     }
 
     useEffect(() => {
-        // stop prepopulating mode field if editing
+        // stop prefill mode field if editing
         if (isEditingMode) return
 
         const mode = route.params.mode
@@ -68,13 +94,17 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
     }, [])
 
     useEffect(() => {
-        // prepopulate fields if editing
+        // prefill fields if editing
 
         if (route.params.folder) {
             setFolderName(route.params.folder.name)
-            setIsActive(route.params.folder.active)
-            if (route.params.folder.mode === "personal") setSelectedMode({ label: 'Personal', value: 'personal' })
-            else if (route.params.folder.mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
+
+            if (route.params.mode === "personal") {
+                setIsActive(route.params.folder.active)
+                setSelectedMode({ label: 'Personal', value: 'personal' })
+            } else if (route.params.mode === "community") {
+                setSelectedMode({ label: 'Community', value: 'community' })
+            }
         }
     }, [])
 
@@ -127,7 +157,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                     <Touchable
                         isText
                         style={{ marginBottom: bottomTabBarHeight }}
-                        onPress={addCollection}
+                        onPress={handleCollection}
                         disabled={folderName === ""}>
                         {isEditingMode ? "Edit" : "Add"} Collection
                     </Touchable>

@@ -111,16 +111,17 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
         handleOpenPress()
     }
 
-    async function handleGoalDelete(folder: FolderProps) {
-        userId && folder?.id && deleteFolder(userId, folder?.id)
+    async function handleGoalDelete() {
+        userId && selectedFolder?.id && deleteFolder(userId, selectedFolder?.id)
         handleClosePress()
     }
 
-    function handleGoalEdit(folder: FolderProps) {
+    function handleGoalEdit() {
+        if (!selectedFolder) return
         navigation.navigate("AddCollection", {
             mode: 'personal',
             folder: {
-                ...folder,
+                ...selectedFolder,
                 active: activeFolderId === selectedFolder?.id
             }
         })
