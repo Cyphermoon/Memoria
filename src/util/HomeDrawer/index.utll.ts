@@ -9,10 +9,12 @@ interface FolderData {
 }
 
 interface CommunityFolderData extends FolderData {
+    likes: number
+    items: number
     user: {
-        image_url?: string;
-        name: string;
-        id: string;
+        image_url?: string
+        name: string
+        id: string
     }
 }
 

@@ -29,7 +29,7 @@ export function getGreetings(): string {
 }
 
 export function plural(count: number, word:string){
-    return count === 1 ? word : word + 's';
+    return typeof count === "number" && count <= 1 ? word : word + 's';
 }
 
 export function truncateText (text: string, maxLength: number = 20) {

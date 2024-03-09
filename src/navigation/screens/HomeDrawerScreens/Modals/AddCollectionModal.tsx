@@ -53,21 +53,35 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
     }
 
     async function addCommunityCollection(userId: string) {
-
+        // Create a new community folder if no existing folder is provided
         if (!route.params.folder && userName) {
             uploadCommunityFolder({
                 mode: selectedMode.value,
                 name: folderName,
                 dateCreated: serverTimestamp(),
+                likes: 0,
+                items: 0,
                 user: {
                     name: userName,
                     id: userId
                 }
             })
-        } else if (route.params.folder) {
+        }
+        // Edit the existing community folder if a folder is provided
+        else if (route.params.folder) {
             const folder = route.params.folder as CommunityFolderProps
             const { id, ...rest } = folder
-            editCommunityFolder(id, rest)
+
+            const data = {
+                id,
+                name: folderName,
+                mode: selectedMode.value,
+                dateCreated: rest.dateCreated,
+                items: rest.items,
+                user: rest.user,
+                likes: rest.likes,
+            }
+            editCommunityFolder(id, data)
         }
     }
 
@@ -99,11 +113,15 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         if (route.params.folder) {
             setFolderName(route.params.folder.name)
 
-            if (route.params.mode === "personal") {
-                setIsActive(route.params.folder.active)
+            // set active to the param value
+            route.params.mode === "personal" && setIsActive(route.params.folder.active)
+
+            // set mode to the param value
+            if (route.params.folder.mode === "personal") {
                 setSelectedMode({ label: 'Personal', value: 'personal' })
-            } else if (route.params.mode === "community") {
+            } else if (route.params.folder.mode === "community") {
                 setSelectedMode({ label: 'Community', value: 'community' })
+
             }
         }
     }, [])

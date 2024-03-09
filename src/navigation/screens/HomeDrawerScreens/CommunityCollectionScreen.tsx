@@ -1,42 +1,27 @@
 import CommunityGoal from '@components/Home/CommunityGoal'
+import Text from '@components/common/Text'
 import { Fontisto, MaterialIcons } from '@expo/vector-icons'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
+import { DrawerScreenProps } from '@react-navigation/drawer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import customColors from 'colors'
-import React, { useMemo, useRef, useState } from 'react'
-import { FlatList, StyleSheet, View } from 'react-native'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { firestoreDB } from 'firebaseConfig'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { View } from 'react-native'
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import { sortOptions } from 'settings'
+import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 import { HomeStackParamList } from 'type'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
-import { CommunitySelectedGoal, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
+import { CommunityFolderProps, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
-import HomeDrawerLayout, { HEADER_HEIGHT, Header } from './HomeDrawerLayout'
-import { DrawerScreenProps } from '@react-navigation/drawer'
-import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
-import HeaderContent from './HomeDrawerLayout'
+import HeaderContent, { Header } from './HomeDrawerLayout'
+import { useAuthStore } from 'store/authStore'
+import { deleteCommunityFolder } from 'src/util/HomeDrawer/index.utll'
 
-const _goals = [
-    { id: 1, text: 'Goal 1', active: true, items: 5, liked: true },
-    { id: 2, text: 'Goal 2', active: false, items: 3, liked: false },
-    { id: 3, text: 'Goal 3', active: false, items: 7, liked: true },
-    { id: 4, text: 'Goal 4', active: false, items: 9, liked: false },
-    { id: 5, text: 'Goal 5', active: false, items: 1, liked: true },
-    { id: 6, text: 'Goal 6', active: false, items: 3, liked: false },
-    { id: 7, text: 'Goal 7', active: false, items: 4, liked: true },
-    { id: 8, text: 'Goal 8', active: false, items: 1, liked: false },
-    { id: 9, text: 'Goal 9', active: false, items: 5, liked: true },
-    { id: 10, text: 'Goal 10', active: false, items: 2, liked: false },
-    { id: 11, text: 'Goal 11', active: false, items: 7, liked: true },
-    { id: 12, text: 'Goal 12', active: false, items: 8, liked: false },
-    { id: 13, text: 'Goal 13', active: false, items: 1, liked: true },
-    { id: 14, text: 'Goal 14', active: false, items: 3, liked: false },
-    { id: 15, text: 'Goal 15', active: false, items: 9, liked: true },
-    { id: 16, text: 'Goal 16', active: false, items: 1, liked: false },
-    { id: 17, text: 'Goal 17', active: false, items: 2, liked: true },
-    { id: 18, text: 'Goal 18', active: false, items: 3, liked: false },
-];
+
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
 type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
@@ -45,10 +30,13 @@ type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
 const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const snapPoints = useMemo(() => ['10%', '25%'], []);
-    const [selectedGoal, setSelectedGoal] = useState<CommunitySelectedGoal | null>(null)
+    const snapPoints = useMemo(() => ['10%', '30%'], []);
+
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
-    const [goals, setGoals] = useState(_goals);
+    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderProps | null>(null)
+    const [folders, setFolders] = useState<CommunityFolderProps[] | null>(null);
+
+    const userId = useAuthStore(state => state.user?.uid)
 
     const scrollY = useSharedValue(0)
 
@@ -58,10 +46,31 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         },
     });
 
+    useEffect(() => {
+        /// get community folder ref
+        const folderRef = collection(firestoreDB, "community");
+
+        // watch for changes and update the folders state
+        const unsubscribe = onSnapshot(folderRef, (querySnapshot) => {
+            const folders: CommunityFolderProps[] = [];
+
+            querySnapshot.forEach((doc) => {
+                folders.push({ id: doc.id, ...doc.data() } as CommunityFolderProps);
+            });
+
+            setFolders(folders);
+        });
+
+        // unsubscribe from the collection when component unmounts
+        return () => {
+            unsubscribe();
+        };
+
+    }, [])
+
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
     }
-
 
     function handleClosePress() {
         bottomSheetModalRef.current?.dismiss()
@@ -71,28 +80,39 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         setCurrentSortOption(option)
     }
 
-    function handleMoreDetailsPress(goal: CommunitySelectedGoal) {
-        setSelectedGoal(goal)
+    function handleMoreDetailsPress(goal: CommunityFolderProps) {
+        setSelectedFolder(goal)
         handleOpenPress()
     }
 
     function handleUseCollection() {
-        console.log("Delete Goal: ", selectedGoal?.id)
+        console.log("Delete Goal: ", selectedFolder?.id)
     }
 
     function handleLikeCollection() {
-        setGoals(prevGoals => prevGoals.map(goal => {
-            if (goal.id.toString() === selectedGoal?.id.toString()) {
-                return { ...goal, liked: !goal.liked };
+        setFolders(prevGoals => prevGoals ? prevGoals.map(goal => {
+            if (goal.id.toString() === selectedFolder?.id.toString()) {
+                return { ...goal, liked: true };
             } else {
                 return goal;
             }
-        }));
+        }) : null);
         handleClosePress()
     }
 
     function handleGoalPress(goal: SelectedFolderProps) {
         navigation.navigate("Goal", goal)
+    }
+
+    function handleFolderEdit() {
+        if (!selectedFolder) return
+        navigation.navigate("AddCollection", { mode: "community", folder: selectedFolder })
+        handleClosePress()
+    }
+
+    function handleFolderDelete() {
+        selectedFolder && deleteCommunityFolder(selectedFolder?.id)
+        handleClosePress()
     }
 
 
@@ -105,44 +125,44 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                 openDrawer={() => drawerNavigation.openDrawer()}
             />
 
-            <Animated.FlatList
-                data={goals}
-                keyExtractor={(item) => item.id.toString()}
+            {folders ?
+                <Animated.FlatList
+                    data={folders}
+                    keyExtractor={(item) => item.id.toString()}
 
-                numColumns={1}
-                ListFooterComponent={() => <View className='h-20' />}
-                onScroll={scrollHandler}
-                scrollEventThrottle={16}
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={() => (
-                    <HeaderContent
-                        navigationTitle='Community Collection'
-                        handleSortPress={handleSortPress}
-                        currentSortOption={currentSortOption}
-                        marginBottom={36}
-                    />
-                )}
-                renderItem={({ item }) => (
-                    <View className='px-3 mb-7'>
-                        <CommunityGoal
-                            id={item.id.toString()}
-                            onPress={handleGoalPress}
-                            onMoreDetailsPress={handleMoreDetailsPress}
-                            text={item.text}
-                            active={item.active}
-                            items={item.items}
-                            liked={item.liked}
-                            handleLike={handleLikeCollection}
+                    numColumns={1}
+                    ListFooterComponent={() => <View className='h-20' />}
+                    onScroll={scrollHandler}
+                    scrollEventThrottle={16}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={() => (
+                        <HeaderContent
+                            navigationTitle='Community Collection'
+                            handleSortPress={handleSortPress}
+                            currentSortOption={currentSortOption}
+                            marginBottom={36}
                         />
-                    </View>
-                )}
-            />
+                    )}
+                    renderItem={({ item }) => (
+                        <View className='px-3 mb-7'>
+                            <CommunityGoal
+                                folder={item}
+                                active={true}
+                                liked={true}
+                                onPress={handleGoalPress}
+                                onMoreDetailsPress={handleMoreDetailsPress}
+                                handleLike={handleLikeCollection}
+                            />
+                        </View>
+                    )}
+                /> :
+                <Text>There are no community folders</Text>}
 
             <NewGoal mode="community" />
 
             {/* Goal Bottom Sheet */}
-            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Goal Actions' >
-                {selectedGoal &&
+            <CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text='Community Folder Actions' >
+                {selectedFolder &&
 
                     <View>
                         <GoalActionItem
@@ -151,15 +171,33 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                                 <MaterialIcons
                                     name="favorite"
                                     size={size}
-                                    color={selectedGoal.liked ? customColors.accent : color} />}
-                            label={selectedGoal.liked ? 'Unlike Collection' : 'Like Collection'}
-                            selectedFolder={selectedGoal.id} />
+                                    color={true ? customColors.accent : color} />}
+                            label={true ? 'Unlike Collection' : 'Like Collection'}
+                            selectedFolder={selectedFolder.id} />
 
                         <GoalActionItem
                             onPress={handleUseCollection}
                             icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />}
                             label='Use Collection'
-                            selectedFolder={selectedGoal.id} />
+                            selectedFolder={selectedFolder.id} />
+                        {selectedFolder?.user.id === userId &&
+                            <>
+                                <GoalActionItem
+                                    onPress={handleFolderEdit}
+                                    icon='edit'
+                                    label='Edit'
+                                    selectedFolder={selectedFolder} />
+
+                                <GoalActionItem
+                                    onPress={handleFolderDelete}
+                                    icon='delete'
+                                    label='Delete'
+                                    selectedFolder={selectedFolder}
+                                    danger />
+                            </>
+                        }
+
+
                     </View>
                 }
             </CustomBottomSheetModal>

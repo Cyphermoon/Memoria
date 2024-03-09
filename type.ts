@@ -1,8 +1,8 @@
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {  GoalItemProps } from "./src/components/Goal/type";
-import { CollectionOptionTypes, CommunityFolderProps, FolderProps, FolderPropsWithActive, SelectedFolderProps } from "./src/components/Home/type";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { HomeDrawerParamList } from "src/navigation/HomeDrawer";
+import { GoalItemProps } from "./src/components/Goal/type";
+import { CommunityFolderProps, FolderPropsWithActive, SelectedFolderProps } from "./src/components/Home/type";
 
 export type HomeStackParamList = {
     HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
