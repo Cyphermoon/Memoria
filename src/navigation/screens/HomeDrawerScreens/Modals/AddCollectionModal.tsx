@@ -13,6 +13,7 @@ import { SelectedCollectionModeProps } from '@components/Home/type';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useAuthStore } from 'store/authStore';
 import { editFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
+import { serverTimestamp } from 'firebase/firestore';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
@@ -41,7 +42,13 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         setFolderName('')
 
         if (!route.params.folder) {
-            await uploadFolder(userId, { mode: selectedMode.value, name: folderName }, isActive)
+            await uploadFolder(userId,
+                {
+                    mode: selectedMode.value,
+                    name: folderName,
+                    dateCreated: serverTimestamp()
+                },
+                isActive)
         } else {
             await editFolder(userId, route.params.folder.id, { mode: selectedMode.value, name: folderName }, isActive)
         }

@@ -1,10 +1,11 @@
-import { addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { FieldValue, addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
 
 interface FolderData {
     name: string;
     mode: string;
+    dateCreated: FieldValue;
 }
 
 

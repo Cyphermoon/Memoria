@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 export interface SelectedFolderProps {
     id: string
     name: string
@@ -20,10 +22,11 @@ export type SelectedCollectionModeProps =
     { label: "Community", value: "community" };
 
 export interface FolderProps {
-    id: string;
-    name: string;
-    items: number;
+    id: string
+    name: string
+    items: number
     mode: CollectionOptionTypes
+    dateCreated: Timestamp
 }
 
 export interface FolderPropsWithActive extends FolderProps {

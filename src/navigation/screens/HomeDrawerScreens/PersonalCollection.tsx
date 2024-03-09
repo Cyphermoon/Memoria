@@ -26,8 +26,6 @@ import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
 type Props = DrawerScreenProps<HomeDrawerParamList, "Personal">
 
-
-
 //constants
 
 const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
@@ -45,13 +43,13 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     const activeFolderId = useActiveFolderId(userId)
 
     const scrollHandler = useAnimatedScrollHandler({
+        // update scrollY value as user scrolls
         onScroll: (event) => {
             scrollY.value = event.contentOffset.y;
         },
     });
 
     useEffect(() => {
-        console.log("Active Folder Id: ", activeFolderId)
         if (!userId) return
         const folderRef = collection(firestoreDB, "users", userId, "folders"); // Replace with your actual user and folder IDs
 
@@ -69,7 +67,32 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
         return () => unsubscribe();
     }, [])
 
+    useEffect(() => {
+        // sort the folders based on the current sort option
 
+        setFolders((prevFolders) => {
+            return prevFolders ? [...prevFolders].sort((a, b) => {
+                switch (currentSortOption.id) {
+                    case 'name_desc':
+                        // Sort by name
+                        return b.name.localeCompare(a.name);
+                    case 'date_desc':
+                        // Sort by date
+                        if (a.dateCreated && b.dateCreated) {
+                            return b.dateCreated.toDate().getTime() - a.dateCreated.toDate().getTime();
+                        } else {
+                            return 0;
+                        }
+                    case 'size_desc':
+                        // Sort by size
+                        return b.items - a.items;
+                    default:
+                        // If no sort option is selected, don't change the order
+                        return 0;
+                }
+            }) : null;
+        });
+    }, [currentSortOption]) // Re-run this effect whenever the sort option changes
 
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
@@ -103,7 +126,6 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
         })
         handleClosePress()
     }
-
 
     function handleGoalPress(goal: FolderProps) {
         navigation.navigate("Goal", { id: goal.id, name: goal.name })
