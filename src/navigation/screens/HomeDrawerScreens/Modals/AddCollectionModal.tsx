@@ -41,9 +41,9 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         setFolderName('')
 
         if (!route.params.folder) {
-            await uploadFolder(userId, { active: isActive, mode: selectedMode.value, name: folderName })
+            await uploadFolder(userId, { mode: selectedMode.value, name: folderName }, isActive)
         } else {
-            await editFolder(userId, route.params.folder.id, { active: isActive, mode: selectedMode.value, name: folderName })
+            await editFolder(userId, route.params.folder.id, { mode: selectedMode.value, name: folderName }, isActive)
         }
 
         navigation.canGoBack() && navigation.goBack()
@@ -59,7 +59,6 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         else if (mode === "community") setSelectedMode({ label: 'Community', value: 'community' })
 
     }, [])
-
 
     useEffect(() => {
         // prepopulate fields if editing
@@ -106,7 +105,6 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                             selectedMode={selectedMode}
                             handleImageSelected={setSelectedMode} />
 
-
                         <View className='flex-col justify-center space-y-2'>
                             <Text>Active</Text>
 
@@ -121,9 +119,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 
                     <Touchable
                         isText
-                        style={{
-                            marginBottom: bottomTabBarHeight
-                        }}
+                        style={{ marginBottom: bottomTabBarHeight }}
                         onPress={addCollection}
                         disabled={folderName === ""}>
                         {isEditingMode ? "Edit" : "Add"} Collection

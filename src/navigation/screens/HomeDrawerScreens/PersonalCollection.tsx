@@ -19,6 +19,7 @@ import { firestoreDB } from 'firebaseConfig'
 import { useAuthStore } from 'store/authStore'
 import Text from '@components/common/Text'
 import { deleteFolder } from 'src/util/HomeDrawer/index.utll'
+import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
 
 
 // Screen Types
@@ -41,6 +42,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
 
     const scrollY = useSharedValue(0)
+    const activeFolderId = useActiveFolderId(userId)
 
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
@@ -49,6 +51,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     });
 
     useEffect(() => {
+        console.log("Active Folder Id: ", activeFolderId)
         if (!userId) return
         const folderRef = collection(firestoreDB, "users", userId, "folders"); // Replace with your actual user and folder IDs
 
@@ -86,13 +89,18 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     }
 
     async function handleGoalDelete(folder: FolderProps) {
-        console.log("Goal Document Id: ", folder.id)
         userId && selectedFolder?.id && deleteFolder(userId, selectedFolder?.id)
         handleClosePress()
     }
 
     function handleGoalEdit(folder: FolderProps) {
-        navigation.navigate("AddCollection", { mode: 'personal', folder })
+        navigation.navigate("AddCollection", {
+            mode: 'personal',
+            folder: {
+                ...folder,
+                active: activeFolderId === selectedFolder?.id
+            }
+        })
         handleClosePress()
     }
 
@@ -133,6 +141,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
                         <View className='w-1/2 p-2'>
                             <Goal
                                 selectedFolder={item}
+                                active={item.id === activeFolderId}
                                 onPress={handleGoalPress}
                                 onMoreDetailsPress={handleMoreDetailsPress}
                             />

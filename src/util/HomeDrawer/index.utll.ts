@@ -1,18 +1,17 @@
 import { addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
-import { FolderProps } from "@components/Home/type";
 
 interface FolderData {
     name: string;
     mode: string;
-    active: boolean;
 }
 
 
-export async function uploadFolder (userId: string, folderData: FolderData): Promise<void> {
+export async function uploadFolder (userId: string, folderData: FolderData, active: boolean): Promise<void> {
     try {
-        await addDoc(collection(firestoreDB, "users", userId, "folders"), {...folderData, items: 0});
+       const response = await addDoc(collection(firestoreDB, "users", userId, "folders"), {...folderData, items: 0});
+        if(active) setActiveFolder(userId, response.id)
     } catch (error) {
         errorToast("An Error Occurred while creating your folder. Please try again later.")
     }
@@ -28,10 +27,22 @@ export function deleteFolder(userId: string, folderId: string){
       });
 }
 
-export function editFolder(userId: string, folderId: string, folderData: {[key: string]: any}){
+export function editFolder(userId: string, folderId: string, folderData: {[key: string]: any}, active: boolean){
     const folderRef = doc(firestoreDB, "users", userId, "folders", folderId)
 
     updateDoc(folderRef, folderData)
+    .then(() => {
+        if(active) setActiveFolder(userId, folderId)
+    })
+    .catch(() => {
+        errorToast("An Error occured while updating this folder item. Please try again later.")
+    })
+}
+
+function setActiveFolder(userId: string, folderId: string){
+    const userRef = doc(firestoreDB, "users", userId)
+
+    updateDoc(userRef, {activeFolder: folderId})
     .catch(() => {
         errorToast("An Error occured while updating this folder item. Please try again later.")
     })
