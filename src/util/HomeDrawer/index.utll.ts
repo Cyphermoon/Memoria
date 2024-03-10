@@ -1,6 +1,7 @@
 import { FieldValue, addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
+import { SortOptionProp } from "@components/Home/type";
 
 interface FolderData {
     name: string;
@@ -94,3 +95,14 @@ export function editCommunityFolder(folderId: string, folderData: {[key: string]
         errorToast("An Error occured while updating this folder item. Please try again later.")
     })
 }
+
+export async function handleSortChanged (sortOption: SortOptionProp, userId?: string){
+    // Update Firebase document
+    if (userId) {
+        const userDocRef = doc(firestoreDB, 'users', userId);
+        await updateDoc(userDocRef, {
+            communitySort: sortOption
+        });
+    }
+};
+

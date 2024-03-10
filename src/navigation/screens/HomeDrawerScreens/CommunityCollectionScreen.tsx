@@ -5,7 +5,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { DrawerScreenProps } from '@react-navigation/drawer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import customColors from 'colors'
-import { collection, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { firestoreDB } from 'firebaseConfig'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { View } from 'react-native'
@@ -19,7 +19,7 @@ import { CommunityFolderProps, SelectedFolderProps, SortOptionProp } from '../..
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HeaderContent, { Header } from './HomeDrawerLayout'
 import { useAuthStore } from 'store/authStore'
-import { deleteCommunityFolder } from 'src/util/HomeDrawer/index.utll'
+import { deleteCommunityFolder, handleSortChanged } from 'src/util/HomeDrawer/index.utll'
 
 
 
@@ -33,7 +33,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const snapPoints = useMemo(() => ['10%', '30%'], []);
 
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
-    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderProps | null>(null)
+    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderProps | undefined | null>(undefined)
     const [folders, setFolders] = useState<CommunityFolderProps[] | null>(null);
 
     const userId = useAuthStore(state => state.user?.uid)
@@ -46,12 +46,47 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         },
     });
 
+
     useEffect(() => {
+        // Get a reference to the user's document
+        if (!userId) return
+        const userDocRef = doc(firestoreDB, 'users', userId);
+
+        // Listen for real-time changes to the communitySort property
+        const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                // Update currentSortOption with the new communitySort value
+                const communitySort = docSnapshot.data()?.communitySort;
+                if (communitySort) {
+                    setCurrentSortOption(communitySort);
+                } else {
+                    handleSortChanged(sortOptions[0], userId)
+
+                }
+            }
+        });
+
+        // Return a cleanup function to unsubscribe when the component unmounts
+        return unsubscribe;
+    }, [userId]);
+
+
+    useEffect(() => {
+        /*
+            Get the community collection in real-time from firestore while simoultaneously sorting the array
+        */
+        const firebaseValueMap = {
+            name_desc: "name",
+            date_desc: "dateCreated",
+            size_desc: "items"
+        }
+
         /// get community folder ref
         const folderRef = collection(firestoreDB, "community");
+        const q = query(folderRef, orderBy(firebaseValueMap[currentSortOption.id as keyof typeof firebaseValueMap], "desc"))
 
         // watch for changes and update the folders state
-        const unsubscribe = onSnapshot(folderRef, (querySnapshot) => {
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const folders: CommunityFolderProps[] = [];
 
             querySnapshot.forEach((doc) => {
@@ -66,7 +101,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
             unsubscribe();
         };
 
-    }, [])
+    }, [currentSortOption])
 
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
@@ -77,7 +112,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     }
 
     function handleSortPress(option: SortOptionProp) {
-        setCurrentSortOption(option)
+        handleSortChanged(option, userId)
     }
 
     function handleMoreDetailsPress(goal: CommunityFolderProps) {
@@ -125,7 +160,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                 openDrawer={() => drawerNavigation.openDrawer()}
             />
 
-            {folders ?
+            {folders && currentSortOption !== undefined ?
                 <Animated.FlatList
                     data={folders}
                     keyExtractor={(item) => item.id.toString()}
