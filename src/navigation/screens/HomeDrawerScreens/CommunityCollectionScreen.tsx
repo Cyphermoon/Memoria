@@ -5,7 +5,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { DrawerScreenProps } from '@react-navigation/drawer'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import customColors from 'colors'
-import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
+import { DocumentData, Query, collection, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore'
 import { firestoreDB } from 'firebaseConfig'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { View } from 'react-native'
@@ -37,6 +37,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
     const [selectedFolder, setSelectedFolder] = useState<CustomCommunityFolderProps | undefined | null>(undefined)
     const [folders, setFolders] = useState<FirestoreCommunityFolderProps[] | null>(null);
+    const [filterLiked, setFilterLiked] = useState(false)
 
     const userId = useAuthStore(state => state.user?.uid)
     const activeFolder = useActiveFolderId(userId)
@@ -44,6 +45,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
     const scrollY = useSharedValue(0)
 
     const scrollHandler = useAnimatedScrollHandler({
+        // updates the scrollY value whenever the user scrolls
         onScroll: (event) => {
             scrollY.value = event.contentOffset.y;
         },
@@ -86,7 +88,21 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
         /// get community folder ref
         const folderRef = collection(firestoreDB, "community");
-        const q = query(folderRef, orderBy(firebaseValueMap[currentSortOption.id as keyof typeof firebaseValueMap], "desc"))
+
+        let q: Query<DocumentData>;
+
+        if (filterLiked && userId) {
+            q = query(
+                folderRef,
+                orderBy(firebaseValueMap[currentSortOption.id as keyof typeof firebaseValueMap], "desc"),
+                where("likes", "array-contains", userId)
+            );
+        } else {
+            q = query(
+                folderRef,
+                orderBy(firebaseValueMap[currentSortOption.id as keyof typeof firebaseValueMap], "desc")
+            );
+        }
 
         // watch for changes and update the folders state
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -104,7 +120,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
             unsubscribe();
         };
 
-    }, [currentSortOption])
+    }, [currentSortOption, filterLiked])
 
     function handleOpenPress() {
         bottomSheetModalRef.current?.present()
@@ -184,6 +200,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                         <HeaderContent
                             navigationTitle='Community Collection'
                             handleSortPress={handleSortPress}
+                            handleLikedFilter={setFilterLiked}
+                            filterLiked={filterLiked}
                             currentSortOption={currentSortOption}
                             marginBottom={36}
                         />

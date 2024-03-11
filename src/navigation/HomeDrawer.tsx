@@ -1,6 +1,7 @@
 import Logo from '@components/common/Logo';
 import { Ionicons } from '@expo/vector-icons';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem, createDrawerNavigator } from '@react-navigation/drawer';
+import ActiveCollectionScreen from '@screens/HomeDrawerScreens/ActiveCollectionScreen';
 import CommunityCollectionScreen from '@screens/HomeDrawerScreens/CommunityCollectionScreen';
 import HomeScreen from '@screens/HomeDrawerScreens/PersonalCollection';
 import colors from 'colors';
@@ -13,7 +14,7 @@ import tailwindColors from 'tailwindcss/colors';
 export type HomeDrawerParamList = {
     Personal: undefined
     Community: undefined
-    Categories: undefined
+    ActiveCollection: undefined
 }
 
 
@@ -32,6 +33,7 @@ const HomeDrawer = () => {
             }>
             <Drawer.Screen name="Personal" component={HomeScreen} />
             <Drawer.Screen name="Community" component={CommunityCollectionScreen} />
+            <Drawer.Screen name="ActiveCollection" component={ActiveCollectionScreen} />
         </Drawer.Navigator>
 
     );

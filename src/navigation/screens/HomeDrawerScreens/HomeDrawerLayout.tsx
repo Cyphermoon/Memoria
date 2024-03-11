@@ -69,13 +69,15 @@ export const Header = ({ scrollY, openDrawer, navigationTitle }: Props) => {
 
 
 interface HeaderContentProps {
-    handleSortPress: (option: SortOptionProp) => void;
-    currentSortOption: SortOptionProp;
+    handleSortPress?: (option: SortOptionProp) => void;
+    currentSortOption?: SortOptionProp;
     navigationTitle: string
     marginBottom?: number
+    handleLikedFilter?: (value: boolean) => void
+    filterLiked?: boolean
 }
 
-const HeaderContent: React.FC<HeaderContentProps> = ({ handleSortPress, currentSortOption, navigationTitle, marginBottom }) => {
+const HeaderContent: React.FC<HeaderContentProps> = ({ handleSortPress, handleLikedFilter, filterLiked, currentSortOption, navigationTitle, marginBottom }) => {
     return (
         <View
             style={{
@@ -88,9 +90,13 @@ const HeaderContent: React.FC<HeaderContentProps> = ({ handleSortPress, currentS
                 {navigationTitle}
             </Text>
 
-            <SortActions
-                handleSortPress={handleSortPress}
-                currentOption={currentSortOption} />
+            {handleSortPress && currentSortOption &&
+                <SortActions
+                    handleSortPress={handleSortPress}
+                    handleLikedFilter={handleLikedFilter}
+                    filterLiked={filterLiked}
+                    currentOption={currentSortOption} />
+            }
         </View>
     );
 };
