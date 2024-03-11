@@ -40,11 +40,15 @@ export interface CommunityFolderProps{
     items: number
     mode: CollectionOptionTypes
     dateCreated: Timestamp
-    likes:number
+    likes:string[]
     user: {
         image_url?: string
         name: string
         id: string
     }
+}
+
+export interface CommunityFolderPropsWithLiked extends CommunityFolderProps {
+    liked: boolean
 }
 

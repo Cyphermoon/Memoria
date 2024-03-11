@@ -15,12 +15,11 @@ import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 import { HomeStackParamList } from 'type'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
-import { CommunityFolderProps, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
+import { CommunityFolderProps, CommunityFolderPropsWithLiked, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HeaderContent, { Header } from './HomeDrawerLayout'
 import { useAuthStore } from 'store/authStore'
-import { deleteCommunityFolder, handleSortChanged } from 'src/util/HomeDrawer/index.utll'
-
+import { deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll'
 
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
@@ -28,12 +27,14 @@ type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
 
 
 const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
+    // application components state
     const navigation = useNavigation<HomeScreenNavigationProp>()
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ['10%', '30%'], []);
 
+    // folder state
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
-    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderProps | undefined | null>(undefined)
+    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderPropsWithLiked | undefined | null>(undefined)
     const [folders, setFolders] = useState<CommunityFolderProps[] | null>(null);
 
     const userId = useAuthStore(state => state.user?.uid)
@@ -115,8 +116,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         handleSortChanged(option, userId)
     }
 
-    function handleMoreDetailsPress(goal: CommunityFolderProps) {
-        setSelectedFolder(goal)
+    function handleMoreDetailsPress(folder: CommunityFolderPropsWithLiked) {
+        setSelectedFolder(folder)
         handleOpenPress()
     }
 
@@ -124,14 +125,15 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         console.log("Delete Goal: ", selectedFolder?.id)
     }
 
-    function handleLikeCollection() {
-        setFolders(prevGoals => prevGoals ? prevGoals.map(goal => {
-            if (goal.id.toString() === selectedFolder?.id.toString()) {
-                return { ...goal, liked: true };
-            } else {
-                return goal;
-            }
-        }) : null);
+    function handleLikeCollection(folderId?: string, liked?: boolean) {
+        if (!userId) return
+
+        const resFolderId = folderId || selectedFolder?.id
+        const resLiked = liked !== undefined ? liked : selectedFolder?.liked
+
+        if (!resFolderId) return
+
+        resLiked ? unLikeFolder(resFolderId, userId, firestoreDB) : likeFolder(resFolderId, userId, firestoreDB)
         handleClosePress()
     }
 
@@ -183,7 +185,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                             <CommunityGoal
                                 folder={item}
                                 active={true}
-                                liked={true}
+                                liked={userId && item.likes ? [...item.likes].includes(userId) : false}
                                 onPress={handleGoalPress}
                                 onMoreDetailsPress={handleMoreDetailsPress}
                                 handleLike={handleLikeCollection}
@@ -207,7 +209,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                                     name="favorite"
                                     size={size}
                                     color={true ? customColors.accent : color} />}
-                            label={true ? 'Unlike Collection' : 'Like Collection'}
+                            label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'}
                             selectedFolder={selectedFolder.id} />
 
                         <GoalActionItem

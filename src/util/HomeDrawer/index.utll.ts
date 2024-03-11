@@ -1,4 +1,4 @@
-import { FieldValue, addDoc, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { FieldValue, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
 import { SortOptionProp } from "@components/Home/type";
@@ -106,3 +106,42 @@ export async function handleSortChanged (sortOption: SortOptionProp, userId?: st
     }
 };
 
+
+
+// Function to like a post
+export async function likeFolder(folderId: string, userId: string, firestoreDB: any) {
+    const folderRef = doc(firestoreDB, 'community', folderId);
+    const likesCollectionRef = collection(firestoreDB, 'likes');
+
+    // Add the user's ID to the post's list of likes
+    await updateDoc(folderRef, {
+        likes: arrayUnion(userId)
+    });
+
+    // Add a new document to the likes collection with the user ID and post ID
+    const likeDoc = await addDoc(likesCollectionRef, {
+        userId: userId,
+        folderId: folderId
+    });
+
+    return likeDoc.id; // Return the ID of the new like document
+}
+
+// Function to unlike a post
+export async function unLikeFolder(folderId: string, userId: string, firestoreDB: any) {
+    const folderRef = doc(firestoreDB, 'community', folderId);
+    const likesCollectionRef = collection(firestoreDB, 'likes');
+
+    // Remove the user's ID from the post's list of likes
+    await updateDoc(folderRef, {
+        likes: arrayRemove(userId)
+    });
+
+    // Delete the document in the likes collection for this user and post
+    const q = query(likesCollectionRef, where('userId', '==', userId), where('postId', '==', folderId));
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+        const likeDoc = querySnapshot.docs[0];
+        await deleteDoc(likeDoc.ref);
+    }
+}

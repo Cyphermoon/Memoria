@@ -7,13 +7,13 @@ import { TouchableOpacity, View } from 'react-native';
 import colors from 'tailwindcss/colors';
 import { plural } from '../../util';
 import Text from '../common/Text';
-import { CommunityFolderProps } from './type';
+import { CommunityFolderProps, CommunityFolderPropsWithLiked } from './type';
 
 interface Props {
     className?: string
     onPress: (folder: CommunityFolderProps) => void
-    onMoreDetailsPress: (folder: CommunityFolderProps) => void
-    handleLike: (id: string) => void
+    onMoreDetailsPress: (folder: CommunityFolderPropsWithLiked) => void
+    handleLike: (id: string, liked: boolean) => void
     folder: CommunityFolderProps
     liked: boolean
     active: boolean
@@ -37,13 +37,13 @@ const CommunityGoal = ({
             >
                 <TouchableOpacity
                     className='self-end'
-                    onPress={() => onMoreDetailsPress(folder)}>
+                    onPress={() => onMoreDetailsPress({ ...folder, liked })}>
                     <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                     onPress={() => onPress(folder)}
-                    onLongPress={() => onMoreDetailsPress(folder)}>
+                    onLongPress={() => onMoreDetailsPress({ ...folder, liked })}>
                     <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
                         {folder.name}
                     </Text>
@@ -63,14 +63,14 @@ const CommunityGoal = ({
                 </View>
 
                 <View className='space-x-10 flex-row items-center'>
-                    <TouchableOpacity className='flex-row' onPress={() => handleLike(folder.id)}>
+                    <TouchableOpacity className='flex-row' onPress={() => handleLike(folder.id, liked)}>
                         <Entypo name="heart" size={20} color={liked ? customColors.accent : colors.gray[500]} />
-                        <Counter count={folder.likes} liked={liked} />
+                        <Counter count={folder.likes.length} liked={liked} />
                     </TouchableOpacity>
 
                     <TouchableOpacity className='flex-row'>
                         <Fontisto name="radio-btn-active" size={20} color={colors.gray[500]} />
-                        <Counter count={folder.likes} liked={false} />
+                        <Counter count={folder.likes.length} liked={false} />
                     </TouchableOpacity>
                 </View>
 
