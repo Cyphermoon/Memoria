@@ -19,6 +19,29 @@ interface CommunityFolderData extends FolderData {
     }
 }
 
+async function setActiveFolder(userId: string, folderId: string, folderCategory: CollectionOptionTypes){
+    const userRef = doc(firestoreDB, "users", userId)
+
+    try{
+        await updateDoc(userRef, {activeFolder: { folderId, folderCategory}})
+        return {folderId, folderCategory}
+
+    }catch(err){
+        errorToast("An Error occured while updating this folder item. Please try again later.")
+    }
+}
+
+
+function removeActiveFolder(userId: string){
+    const userRef = doc(firestoreDB, "users", userId)
+
+    updateDoc(userRef, {activeFolder: null})
+    .catch(() => {
+        errorToast("An Error occured while updating this folder item. Please try again later.")
+    })
+}
+
+/* ============================ Folder Action =================================== */
 export async function uploadFolder (userId: string, folderData: FolderData, active: boolean): Promise<void> {
     try {
        const response = await addDoc(collection(firestoreDB, "users", userId, "folders"), {...folderData, items: 0});
@@ -51,24 +74,7 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
     })
 }
 
-function setActiveFolder(userId: string, folderId: string, folderCategory: CollectionOptionTypes){
-    const userRef = doc(firestoreDB, "users", userId)
-
-    updateDoc(userRef, {activeFolder: { folderId, folderCategory}})
-    .catch(() => {
-        errorToast("An Error occured while updating this folder item. Please try again later.")
-    })
-}
-
-function removeActiveFolder(userId: string){
-    const userRef = doc(firestoreDB, "users", userId)
-
-    updateDoc(userRef, {activeFolder: null})
-    .catch(() => {
-        errorToast("An Error occured while updating this folder item. Please try again later.")
-    })
-}
-
+/* ========================================== Community Folder Action ========================================== */
 export function uploadCommunityFolder(folderData: CommunityFolderData){
     const communityCollectionRef = collection(firestoreDB, "community")
 
@@ -107,9 +113,8 @@ export async function handleSortChanged (sortOption: SortOptionProp, userId?: st
 };
 
 
-
 // Function to like a post
-export async function likeFolder(folderId: string, userId: string, firestoreDB: any) {
+export async function likeFolder(folderId: string, userId: string) {
     const folderRef = doc(firestoreDB, 'community', folderId);
     const likesCollectionRef = collection(firestoreDB, 'likes');
 
@@ -128,7 +133,7 @@ export async function likeFolder(folderId: string, userId: string, firestoreDB: 
 }
 
 // Function to unlike a post
-export async function unLikeFolder(folderId: string, userId: string, firestoreDB: any) {
+export async function unLikeFolder(folderId: string, userId: string) {
     const folderRef = doc(firestoreDB, 'community', folderId);
     const likesCollectionRef = collection(firestoreDB, 'likes');
 
@@ -145,3 +150,40 @@ export async function unLikeFolder(folderId: string, userId: string, firestoreDB
         await deleteDoc(likeDoc.ref);
     }
 }
+
+export async function activateFolder(userId: string, folderId: string, prevFolderId?: string){
+    // reference the community folder
+    const communityFolderRef = doc(firestoreDB, "community", folderId)
+
+    // remove the user from the previous active folder
+    if(prevFolderId){
+        const prevFolderRef = doc(firestoreDB, "community", prevFolderId)
+        await updateDoc(prevFolderRef, {
+            "activeCount": arrayRemove(userId)
+        })
+    }
+
+    // make that new folder the user's active folder
+     await setActiveFolder(userId, folderId, "community")
+
+    // update the likes activeCount array to include the user
+    await updateDoc(communityFolderRef, {
+        "activeCount": arrayUnion(userId)
+    })
+
+}
+
+export async function deActivateFolder(userId: string, folderId: string){
+    // reference the community folder
+    const communityFolderRef = doc(firestoreDB, "community", folderId)
+
+    // update the likes activeCount array to remove the user
+    await updateDoc(communityFolderRef, {
+        "activeCount": arrayRemove(userId)
+    })
+
+    // remove the folder as the user's active folder
+    removeActiveFolder(userId)
+
+}
+

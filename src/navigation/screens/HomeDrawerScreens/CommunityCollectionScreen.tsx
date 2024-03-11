@@ -15,11 +15,12 @@ import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 import { HomeStackParamList } from 'type'
 import GoalActionItem from '../../../components/Home/GoalActionItem'
 import NewGoal from '../../../components/Home/NewGoal'
-import { CommunityFolderProps, CommunityFolderPropsWithLiked, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
+import { FirestoreCommunityFolderProps, CustomCommunityFolderProps, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
 import CustomBottomSheetModal from '../../../components/common/CustomBottomSheetModal'
 import HeaderContent, { Header } from './HomeDrawerLayout'
 import { useAuthStore } from 'store/authStore'
-import { deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll'
+import { activateFolder, deActivateFolder, deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll'
+import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
 
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, "HomeDrawer">
@@ -34,10 +35,11 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
     // folder state
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
-    const [selectedFolder, setSelectedFolder] = useState<CommunityFolderPropsWithLiked | undefined | null>(undefined)
-    const [folders, setFolders] = useState<CommunityFolderProps[] | null>(null);
+    const [selectedFolder, setSelectedFolder] = useState<CustomCommunityFolderProps | undefined | null>(undefined)
+    const [folders, setFolders] = useState<FirestoreCommunityFolderProps[] | null>(null);
 
     const userId = useAuthStore(state => state.user?.uid)
+    const activeFolder = useActiveFolderId(userId)
 
     const scrollY = useSharedValue(0)
 
@@ -88,10 +90,10 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
         // watch for changes and update the folders state
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const folders: CommunityFolderProps[] = [];
+            const folders: FirestoreCommunityFolderProps[] = [];
 
             querySnapshot.forEach((doc) => {
-                folders.push({ id: doc.id, ...doc.data() } as CommunityFolderProps);
+                folders.push({ id: doc.id, ...doc.data() } as FirestoreCommunityFolderProps);
             });
 
             setFolders(folders);
@@ -116,13 +118,19 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         handleSortChanged(option, userId)
     }
 
-    function handleMoreDetailsPress(folder: CommunityFolderPropsWithLiked) {
+    function handleMoreDetailsPress(folder: CustomCommunityFolderProps) {
         setSelectedFolder(folder)
         handleOpenPress()
     }
 
-    function handleUseCollection() {
-        console.log("Delete Goal: ", selectedFolder?.id)
+    function handleActiveFolder(folderId?: string, isActive?: boolean) {
+        const resFolderId = folderId || selectedFolder?.id
+        const resActive = isActive !== undefined ? isActive : selectedFolder?.active
+
+        if (!resFolderId) return
+        if (!userId) return
+
+        resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId, activeFolder?.folderId)
     }
 
     function handleLikeCollection(folderId?: string, liked?: boolean) {
@@ -133,7 +141,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
         if (!resFolderId) return
 
-        resLiked ? unLikeFolder(resFolderId, userId, firestoreDB) : likeFolder(resFolderId, userId, firestoreDB)
+        resLiked ? unLikeFolder(resFolderId, userId) : likeFolder(resFolderId, userId)
         handleClosePress()
     }
 
@@ -184,11 +192,12 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                         <View className='px-3 mb-7'>
                             <CommunityGoal
                                 folder={item}
-                                active={true}
+                                active={activeFolder !== null && activeFolder?.folderId === item.id}
                                 liked={userId && item.likes ? [...item.likes].includes(userId) : false}
                                 onPress={handleGoalPress}
                                 onMoreDetailsPress={handleMoreDetailsPress}
                                 handleLike={handleLikeCollection}
+                                handleActiveFolder={handleActiveFolder}
                             />
                         </View>
                     )}
@@ -213,7 +222,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
                             selectedFolder={selectedFolder.id} />
 
                         <GoalActionItem
-                            onPress={handleUseCollection}
+                            onPress={handleActiveFolder}
                             icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />}
                             label='Use Collection'
                             selectedFolder={selectedFolder.id} />

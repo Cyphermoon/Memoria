@@ -34,13 +34,14 @@ export interface FolderPropsWithActive extends FolderProps {
     active: boolean
 }
 
-export interface CommunityFolderProps{
+export interface FirestoreCommunityFolderProps{
     id: string
     name: string
     items: number
     mode: CollectionOptionTypes
     dateCreated: Timestamp
     likes:string[]
+    activeCount: string[]
     user: {
         image_url?: string
         name: string
@@ -48,7 +49,8 @@ export interface CommunityFolderProps{
     }
 }
 
-export interface CommunityFolderPropsWithLiked extends CommunityFolderProps {
+export interface CustomCommunityFolderProps extends FirestoreCommunityFolderProps {
     liked: boolean
+    active: boolean
 }
 

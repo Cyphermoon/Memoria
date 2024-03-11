@@ -1,5 +1,5 @@
 import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
-import { CommunityFolderProps, SelectedCollectionModeProps } from '@components/Home/type';
+import { FirestoreCommunityFolderProps, SelectedCollectionModeProps } from '@components/Home/type';
 import { FontAwesome } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -69,7 +69,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
         }
         // Edit the existing community folder if a folder is provided
         else if (route.params.folder) {
-            const folder = route.params.folder as CommunityFolderProps
+            const folder = route.params.folder as FirestoreCommunityFolderProps
             const { id, ...rest } = folder
 
             const data = {
