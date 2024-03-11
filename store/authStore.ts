@@ -43,7 +43,12 @@ interface CustomFireStoreUserProps {
     email: string;
     // photoURL: string;
     folders: FolderProps[];
-    activeFolder: string;
+    activeFolder: ActiveFolderProps | null;
+}
+
+export interface ActiveFolderProps {
+  folderId: string;
+  folderCategory: string;
 }
 
 

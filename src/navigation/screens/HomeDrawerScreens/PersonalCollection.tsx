@@ -6,20 +6,20 @@ import { StyleSheet, View } from 'react-native'
 import { sortOptions } from 'settings'
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
 import { HomeStackParamList } from 'type'
-import { FolderProps, SelectedFolderProps, SortOptionProp } from '../../../components/Home/type'
+import { FolderProps, SortOptionProp } from '../../../components/Home/type'
 
 import Goal from '@components/Home/Goal'
 import GoalActionItem from '@components/Home/GoalActionItem'
 import NewGoal from '@components/Home/NewGoal'
 import CustomBottomSheetModal from '@components/common/CustomBottomSheetModal'
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
-import HeaderContent, { Header } from './HomeDrawerLayout'
-import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
-import { firestoreDB } from 'firebaseConfig'
-import { useAuthStore } from 'store/authStore'
 import Text from '@components/common/Text'
-import { deleteFolder } from 'src/util/HomeDrawer/index.utll'
+import { collection, onSnapshot } from 'firebase/firestore'
+import { firestoreDB } from 'firebaseConfig'
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated'
 import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
+import { deleteFolder } from 'src/util/HomeDrawer/index.utll'
+import { useAuthStore } from 'store/authStore'
+import HeaderContent, { Header } from './HomeDrawerLayout'
 
 
 // Screen Types
@@ -40,7 +40,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     const [currentSortOption, setCurrentSortOption] = useState<SortOptionProp>(sortOptions[0])
 
     const scrollY = useSharedValue(0)
-    const activeFolderId = useActiveFolderId(userId)
+    const activeFolder = useActiveFolderId(userId)
 
     const scrollHandler = useAnimatedScrollHandler({
         // update scrollY value as user scrolls
@@ -122,7 +122,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
             mode: 'personal',
             folder: {
                 ...selectedFolder,
-                active: activeFolderId === selectedFolder?.id
+                active: activeFolder?.folderId === selectedFolder?.id
             }
         })
         handleClosePress()
@@ -164,7 +164,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
                         <View className='w-1/2 p-2'>
                             <Goal
                                 selectedFolder={item}
-                                active={item.id === activeFolderId}
+                                active={item.id === activeFolder?.folderId}
                                 onPress={handleGoalPress}
                                 onMoreDetailsPress={handleMoreDetailsPress}
                             />

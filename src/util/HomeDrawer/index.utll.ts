@@ -1,7 +1,7 @@
 import { FieldValue, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
-import { SortOptionProp } from "@components/Home/type";
+import { CollectionOptionTypes, SortOptionProp } from "@components/Home/type";
 
 interface FolderData {
     name: string;
@@ -22,7 +22,7 @@ interface CommunityFolderData extends FolderData {
 export async function uploadFolder (userId: string, folderData: FolderData, active: boolean): Promise<void> {
     try {
        const response = await addDoc(collection(firestoreDB, "users", userId, "folders"), {...folderData, items: 0});
-        if(active) setActiveFolder(userId, response.id)
+        if(active) setActiveFolder(userId, response.id, "personal")
     } catch (error) {
         errorToast("An Error Occurred while creating your folder. Please try again later.")
     }
@@ -43,7 +43,7 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
 
     updateDoc(folderRef, folderData)
     .then(() => {
-        if(active) setActiveFolder(userId, folderId)
+        if(active) setActiveFolder(userId, folderId, "personal")
         else if(!active) removeActiveFolder(userId)
     })
     .catch(() => {
@@ -51,10 +51,10 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
     })
 }
 
-function setActiveFolder(userId: string, folderId: string){
+function setActiveFolder(userId: string, folderId: string, folderCategory: CollectionOptionTypes){
     const userRef = doc(firestoreDB, "users", userId)
 
-    updateDoc(userRef, {activeFolder: folderId})
+    updateDoc(userRef, {activeFolder: { folderId, folderCategory}})
     .catch(() => {
         errorToast("An Error occured while updating this folder item. Please try again later.")
     })

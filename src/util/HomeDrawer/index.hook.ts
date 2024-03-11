@@ -1,9 +1,10 @@
 import { doc, onSnapshot } from "firebase/firestore";
 import { firestoreDB } from "firebaseConfig";
 import { useEffect, useState } from "react";
+import { ActiveFolderProps } from "store/authStore";
 
 export function useActiveFolderId (userId?: string){
-    const [activeFolderId, setActiveFolderId] = useState<string | null>(null)
+    const [activeFolder, setActiveFolderId] = useState<ActiveFolderProps | null>(null)
 
     useEffect(() => {
         if (!userId) return
@@ -17,5 +18,5 @@ export function useActiveFolderId (userId?: string){
         return () => unsubscribe();
     }, [])
 
-    return activeFolderId
+    return activeFolder
 }
