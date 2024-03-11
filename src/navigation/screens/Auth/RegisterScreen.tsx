@@ -18,6 +18,7 @@ import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
 import { errorToast, successToast } from 'src/util/toast.util'
 import { FirebaseError } from 'firebase/app'
+import ProtectedScreen from './ProtectedScreen'
 
 
 type Prop = NativeStackScreenProps<AuthStackParamList, "Auth">
@@ -166,18 +167,19 @@ const RegisterScreen = ({ navigation }: Prop) => {
     // }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAvoidingView
-                className='flex-grow'
-                behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                <SafeAreaView className='flex-grow flex flex-col justify-center items-center bg-primary'>
-                    <View className='w-full px-4'>
-                        <View className='mb-6'>
-                            <Logo withName size='md' />
-                            <Text className='text-xl font-medium text-center' >Sign up</Text>
-                        </View>
+        <ProtectedScreen>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <KeyboardAvoidingView
+                    className='flex-grow'
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                    <SafeAreaView className='flex-grow flex flex-col justify-center items-center bg-primary'>
+                        <View className='w-full px-4'>
+                            <View className='mb-6'>
+                                <Logo withName size='md' />
+                                <Text className='text-xl font-medium text-center' >Sign up</Text>
+                            </View>
 
-                        {/* <View className='w-full'>
+                            {/* <View className='w-full'>
                     <SocialButton
                         icon="google"
                         text="Sign up with Google"
@@ -205,63 +207,64 @@ const RegisterScreen = ({ navigation }: Prop) => {
                     </Checkbox>
                 </View> */}
 
-                        <View>
-                            <View className='mb-6'>
-                                <View className='mb-6'>
-                                    <FormControl
-                                        label="Username"
-                                        type="username"
-                                        variant="outline"
-                                        value={username}
-                                        onChange={setUsername}
-                                    />
-
-                                </View>
-                                <View className='mb-6'>
-                                    <FormControl
-                                        label="Email"
-                                        type="email"
-                                        variant="outline"
-                                        value={email}
-                                        onChange={setEmail}
-                                    />
-
-                                </View>
-
-                                <View className='mb-6'>
-                                    <FormControl
-                                        label="Password"
-                                        type="password"
-                                        variant="outline"
-                                        value={password}
-                                        onChange={setPassword}
-                                    />
-                                </View>
-
-
-                                <Checkbox
-                                    isChecked={isChecked}
-                                    onCheck={handleCheck}>
-                                    <Text className='text-gray-300'>By signing up, you agree to our <Text className='text-white'>Terms of Service</Text> and <Text className='text-white'>Privacy Policy</Text></Text>
-                                </Checkbox>
-                            </View>
                             <View>
-                                <Touchable onPress={handleSubmit} isText>Create Account</Touchable>
+                                <View className='mb-6'>
+                                    <View className='mb-6'>
+                                        <FormControl
+                                            label="Username"
+                                            type="username"
+                                            variant="outline"
+                                            value={username}
+                                            onChange={setUsername}
+                                        />
 
-                                <View className='flex flex-row items-center justify-center mt-5'>
-                                    <Text className='text-gray-400'>Already have an Account? </Text>
+                                    </View>
+                                    <View className='mb-6'>
+                                        <FormControl
+                                            label="Email"
+                                            type="email"
+                                            variant="outline"
+                                            value={email}
+                                            onChange={setEmail}
+                                        />
 
-                                    <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                                        <Text className='underline'>Sign In</Text>
-                                    </TouchableOpacity>
+                                    </View>
+
+                                    <View className='mb-6'>
+                                        <FormControl
+                                            label="Password"
+                                            type="password"
+                                            variant="outline"
+                                            value={password}
+                                            onChange={setPassword}
+                                        />
+                                    </View>
+
+
+                                    <Checkbox
+                                        isChecked={isChecked}
+                                        onCheck={handleCheck}>
+                                        <Text className='text-gray-300'>By signing up, you agree to our <Text className='text-white'>Terms of Service</Text> and <Text className='text-white'>Privacy Policy</Text></Text>
+                                    </Checkbox>
+                                </View>
+                                <View>
+                                    <Touchable onPress={handleSubmit} isText>Create Account</Touchable>
+
+                                    <View className='flex flex-row items-center justify-center mt-5'>
+                                        <Text className='text-gray-400'>Already have an Account? </Text>
+
+                                        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                                            <Text className='underline'>Sign In</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
 
-                </SafeAreaView >
-            </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+                    </SafeAreaView >
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+        </ProtectedScreen>
 
     )
 }

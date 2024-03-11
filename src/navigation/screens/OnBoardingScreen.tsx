@@ -8,6 +8,7 @@ import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import Text from '../../components/common/Text'
 import { AuthStackParamList, HomeStackParamList } from 'type'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import ProtectedScreen from './Auth/ProtectedScreen'
 
 // Onboarding slides
 const _slides = [
@@ -90,45 +91,47 @@ const OnBoardingScreen = ({ navigation }: Props) => {
 
 
     return (
-        <View
-            style={{
-                paddingTop: insets.top,
-                paddingBottom: insets.bottom
-            }}
-            className="flex-grow flex flex-col justify-between bg-primary">
+        <ProtectedScreen>
+            <View
+                style={{
+                    paddingTop: insets.top,
+                    paddingBottom: insets.bottom
+                }}
+                className="flex-grow flex flex-col justify-between bg-primary">
 
-            <TouchableOpacity className='self-end mr-4' onPress={moveToAuthScreen}>
-                <Text>Skip</Text>
-            </TouchableOpacity>
+                <TouchableOpacity className='self-end mr-4' onPress={moveToAuthScreen}>
+                    <Text>Skip</Text>
+                </TouchableOpacity>
 
-            <Carousel
-                vertical={false}
-                width={windowWidth}
-                height={500}
-                ref={ref}
-                style={styles.carousel}
-                autoPlay={true}
-                autoPlayInterval={3000}
-                data={_slides}
-                customAnimation={animationStyle}
-                onSnapToItem={handleSnapToItem}
-                renderItem={({ item, index }: { item: typeof _slides[0], index: number }) => (
-                    <Slide item={item} index={index} />
-                )} />
+                <Carousel
+                    vertical={false}
+                    width={windowWidth}
+                    height={500}
+                    ref={ref}
+                    style={styles.carousel}
+                    autoPlay={true}
+                    autoPlayInterval={3000}
+                    data={_slides}
+                    customAnimation={animationStyle}
+                    onSnapToItem={handleSnapToItem}
+                    renderItem={({ item, index }: { item: typeof _slides[0], index: number }) => (
+                        <Slide item={item} index={index} />
+                    )} />
 
-            {/* Scroll Indicators */}
-            <View className='flex flex-row justify-center'>
-                <ScrollIndicator isActive={currentIdx === 0} />
-                <ScrollIndicator isActive={currentIdx === 1} />
-                <ScrollIndicator isActive={currentIdx === 2} />
+                {/* Scroll Indicators */}
+                <View className='flex flex-row justify-center'>
+                    <ScrollIndicator isActive={currentIdx === 0} />
+                    <ScrollIndicator isActive={currentIdx === 1} />
+                    <ScrollIndicator isActive={currentIdx === 2} />
+                </View>
+
+
+
+                <TouchableOpacity className='bg-secondary p-3 rounded-lg mx-4' onPress={moveToNextSlide}>
+                    <Text className='text-primary text-base text-center'>Next</Text>
+                </TouchableOpacity>
             </View>
-
-
-
-            <TouchableOpacity className='bg-secondary p-3 rounded-lg mx-4' onPress={moveToNextSlide}>
-                <Text className='text-primary text-base text-center'>Next</Text>
-            </TouchableOpacity>
-        </View>
+        </ProtectedScreen>
     )
 }
 

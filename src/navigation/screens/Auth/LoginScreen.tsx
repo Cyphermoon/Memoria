@@ -13,6 +13,7 @@ import { errorToast, successToast } from 'src/util/toast.util'
 import { AuthStackParamList, RootStackParamList } from '../../../../type'
 import Logo from '../../../components/common/Logo'
 import Text from '../../../components/common/Text'
+import ProtectedScreen from './ProtectedScreen'
 
 
 type Props = NativeStackScreenProps<AuthStackParamList, "Login">
@@ -67,55 +68,57 @@ const LoginScreen = ({ navigation }: Props) => {
     }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAvoidingView
-                className='flex-grow'
-                behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                <SafeAreaView className='flex-grow flex flex-col justify-center items-center bg-primary'>
-                    <View className='w-full px-4'>
-                        <View className='mb-6'>
-                            <Logo withName size='md' />
-                            <Text className='text-xl font-medium text-center' >Sign In</Text>
-                        </View>
-
-                        <View>
+        <ProtectedScreen>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <KeyboardAvoidingView
+                    className='flex-grow'
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                    <SafeAreaView className='flex-grow flex flex-col justify-center items-center bg-primary'>
+                        <View className='w-full px-4'>
                             <View className='mb-6'>
-                                <View className='mb-6'>
-                                    <FormControl
-                                        label="Email"
-                                        type="email"
-                                        variant="outline"
-                                        value={email}
-                                        onChange={setEmail}
-                                    />
-                                </View>
-
-                                <View className='mb-6'>
-                                    <FormControl
-                                        label="Password"
-                                        type="password"
-                                        variant="outline"
-                                        value={password}
-                                        onChange={setPassword}
-                                    />
-                                </View>
+                                <Logo withName size='md' />
+                                <Text className='text-xl font-medium text-center' >Sign In</Text>
                             </View>
-                            <View>
-                                <Touchable onPress={handleSubmit} isText>Login</Touchable>
 
-                                <View className='flex flex-row items-center justify-center mt-5'>
-                                    <Text className='text-gray-400'>Don't have an account? </Text>
-                                    <TouchableOpacity onPress={() => navigation.navigate("Auth")}>
-                                        <Text className='underline'>Sign Up</Text>
-                                    </TouchableOpacity>
+                            <View>
+                                <View className='mb-6'>
+                                    <View className='mb-6'>
+                                        <FormControl
+                                            label="Email"
+                                            type="email"
+                                            variant="outline"
+                                            value={email}
+                                            onChange={setEmail}
+                                        />
+                                    </View>
+
+                                    <View className='mb-6'>
+                                        <FormControl
+                                            label="Password"
+                                            type="password"
+                                            variant="outline"
+                                            value={password}
+                                            onChange={setPassword}
+                                        />
+                                    </View>
+                                </View>
+                                <View>
+                                    <Touchable onPress={handleSubmit} isText>Login</Touchable>
+
+                                    <View className='flex flex-row items-center justify-center mt-5'>
+                                        <Text className='text-gray-400'>Don't have an account? </Text>
+                                        <TouchableOpacity onPress={() => navigation.navigate("Auth")}>
+                                            <Text className='underline'>Sign Up</Text>
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
 
-                </SafeAreaView >
-            </KeyboardAvoidingView>
-        </TouchableWithoutFeedback>
+                    </SafeAreaView >
+                </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+        </ProtectedScreen>
 
     )
 }
