@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth, firestoreDB } from 'firebaseConfig';
-import { FolderProps } from '@components/Home/type';
+import { CollectionOptionTypes, FolderProps } from '@components/Home/type';
 import { doc, getDoc } from 'firebase/firestore';
 
 // Create a store
@@ -48,7 +48,7 @@ interface CustomFireStoreUserProps {
 
 export interface ActiveFolderProps {
   folderId: string;
-  folderCategory: string;
+  folderCategory: CollectionOptionTypes;
 }
 
 

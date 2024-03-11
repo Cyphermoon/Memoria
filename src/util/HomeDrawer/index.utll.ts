@@ -2,6 +2,7 @@ import { FieldValue, addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc
 import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
 import { CollectionOptionTypes, SortOptionProp } from "@components/Home/type";
+import { ActiveFolderProps } from "store/authStore";
 
 interface FolderData {
     name: string;
@@ -151,13 +152,13 @@ export async function unLikeFolder(folderId: string, userId: string) {
     }
 }
 
-export async function activateFolder(userId: string, folderId: string, prevFolderId?: string){
+export async function activateFolder(userId: string, folderId: string, previousFolder?: ActiveFolderProps){
     // reference the community folder
     const communityFolderRef = doc(firestoreDB, "community", folderId)
-
+    
     // remove the user from the previous active folder
-    if(prevFolderId){
-        const prevFolderRef = doc(firestoreDB, "community", prevFolderId)
+    if(previousFolder !== undefined && previousFolder.folderCategory === "community"){
+        const prevFolderRef = doc(firestoreDB, "community", previousFolder.folderId)
         await updateDoc(prevFolderRef, {
             "activeCount": arrayRemove(userId)
         })
