@@ -152,12 +152,12 @@ export async function unLikeFolder(folderId: string, userId: string) {
     }
 }
 
-export async function activateFolder(userId: string, folderId: string, previousFolder?: ActiveFolderProps){
+export async function activateFolder(userId: string, folderId: string, previousFolder?: ActiveFolderProps | null){
     // reference the community folder
     const communityFolderRef = doc(firestoreDB, "community", folderId)
     
     // remove the user from the previous active folder
-    if(previousFolder !== undefined && previousFolder.folderCategory === "community"){
+    if(previousFolder !== undefined && previousFolder && previousFolder?.folderCategory === "community"){
         const prevFolderRef = doc(firestoreDB, "community", previousFolder.folderId)
         await updateDoc(prevFolderRef, {
             "activeCount": arrayRemove(userId)

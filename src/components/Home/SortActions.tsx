@@ -44,12 +44,14 @@ const SortActions = ({ handleSortPress: _handleSortPress, extendSortOptions, cur
                         <AntDesign name="caretdown" size={12} color={colors.secondary} />
                     </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity
-                    onPress={() => handleLikedFilter && handleLikedFilter(!filterLiked)}
-                    className={`px-8 h-9 rounded-full justify-center items-center  ${filterLiked ? "bg-accent text-primary" : "bg-primary-300 text-gray-400"}`}>
-                    <Text className={`${filterLiked ? "text-primary" : "text-gray-400"} p-0`}>Liked</Text>
-                </TouchableOpacity>
+                {
+                    handleLikedFilter &&
+                    <TouchableOpacity
+                        onPress={() => handleLikedFilter && handleLikedFilter(!filterLiked)}
+                        className={`px-8 h-9 rounded-full justify-center items-center  ${filterLiked ? "bg-accent text-primary" : "bg-primary-300 text-gray-400"}`}>
+                        <Text className={`${filterLiked ? "text-primary" : "text-gray-400"} p-0`}>Liked</Text>
+                    </TouchableOpacity>
+                }
             </View>
 
 

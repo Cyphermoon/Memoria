@@ -9,10 +9,18 @@ import { CustomCommunityFolderProps, FolderProps } from '@components/Home/type'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { firestoreDB } from 'firebaseConfig'
 import { useIsFocused } from '@react-navigation/native'
+import { Header } from './HomeDrawerLayout'
+import { DrawerScreenProps } from '@react-navigation/drawer'
+import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import colors from 'colors'
+import { FontAwesome6 } from '@expo/vector-icons'
 
 //TODO: Add interaction functionalities to this screen (edit, delete, like, unlike, etc)
 
-const ActiveCollectionScreen = () => {
+type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
+
+const ActiveCollectionScreen = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()
     const bottomTabBar = useBottomTabBarHeight()
 
@@ -53,8 +61,12 @@ const ActiveCollectionScreen = () => {
                 paddingBottom: bottomTabBar + insets.bottom
             }}
             className='bg-primary flex-grow px-4'>
+            <TouchableOpacity onPress={() => navigation.openDrawer()} className='rotate-180 mr-auto'>
+                <FontAwesome6 name="bars-staggered" size={26} color={colors.secondary} />
+            </TouchableOpacity>
 
-            <Text className='text-center text-3xl font-bold mt-8 mb-8'>Your Active Folder</Text>
+
+            {activeFolder && <Text className='text-center text-3xl font-bold mt-8 mb-8'>Your Active Folder</Text>}
 
             {likedFolder ?
                 <View className='bg-primary-300 rounded-2xl p-2 border border-accent h-40 flex flex-col justify-between'>
@@ -65,10 +77,12 @@ const ActiveCollectionScreen = () => {
                 <Text className='text-center text-3xl font-bold mt-8 mb-8'>No Active Folder</Text>
             }
 
-            <View>
-                <Text className='text-center mt-8'>This folder is in the <Text className='text-accent'>{activeFolder?.folderCategory}</Text> collection
-                </Text>
-            </View>
+            {activeFolder &&
+                <View>
+                    <Text className='text-center mt-8'>This folder is in the <Text className='text-accent'>{activeFolder?.folderCategory}</Text> collection
+                    </Text>
+                </View>
+            }
         </View>
     )
 }

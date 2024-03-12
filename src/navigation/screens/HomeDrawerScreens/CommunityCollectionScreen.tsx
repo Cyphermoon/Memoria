@@ -146,7 +146,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         if (!resFolderId) return
         if (!userId) return
 
-        resActive ? deActivateFolder(userId, resFolderId) : (activeFolder && activateFolder(userId, resFolderId, activeFolder))
+        resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId, activeFolder)
     }
 
     function handleLikeCollection(folderId?: string, liked?: boolean) {
