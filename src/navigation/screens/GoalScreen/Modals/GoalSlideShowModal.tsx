@@ -9,19 +9,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import colors from '../../../../../colors'
 import { HomeStackParamList } from '../../../../../type'
-import { GoalItemProps } from '../../../../components/Goal/type'
 
 import { useSlidePosition } from '../../../../context/SlidePositionProvider'
 import { parallaxLayout } from '../../../../util/parallax'
 import Text from '@components/common/Text'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { CloudinaryResponse, FolderItemProps } from 'src/util/HomeDrawer/type'
 
 
 // Types
 type Props = NativeStackScreenProps<HomeStackParamList, "GoalSlideShow">
 
-interface SlideProps extends GoalItemProps {
+interface SlideProps {
     animationValue: SharedValue<number>
+    id: string
+    description: string
+    image: CloudinaryResponse
 }
 
 // Constants
@@ -68,7 +71,7 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
                 renderItem={({ item, animationValue }) => {
                     return (
                         <Slide
-                            imageUrl={item.imageUrl}
+                            image={item.image}
                             description={item.description}
                             id={item.id}
                             animationValue={animationValue} />
@@ -94,7 +97,7 @@ export default GoalSlideShowModal
 
 
 // Child component
-const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
+const Slide = ({ description, image, id, animationValue }: SlideProps) => {
     const bottomTabBarHeight = useBottomTabBarHeight()
 
     // Opacity Animation
@@ -115,7 +118,7 @@ const Slide = ({ description, imageUrl, id, animationValue }: SlideProps) => {
         <Animated.View className='flex-grow items-center' style={[opacityStyle]}>
             <Image
                 style={styles.imageSlide}
-                source={imageUrl}
+                source={image.secure_url}
                 contentFit='cover'
                 className='rounded-xl mb-8' />
 

@@ -17,7 +17,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { uploadFolderItem, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
 import { useAuthStore } from 'store/authStore'
 import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
-import { FolderItem, ImageUploadType } from 'src/util/HomeDrawer/type'
+import { AddFolderItemProps, ImageUploadType } from 'src/util/HomeDrawer/type'
 import { Timestamp, serverTimestamp } from 'firebase/firestore'
 import { successToast } from 'src/util/toast.util'
 
@@ -27,7 +27,7 @@ export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, 'NewGoalI
 export type AddGoalItemModalNavigationProps = NavigationProp<HomeStackParamList, 'NewGoalItem'>
 
 
-const AddGoalItemModal = ({ navigation }: Props) => {
+const AddGoalItemModal = ({ navigation, route }: Props) => {
     const insets = useSafeAreaInsets()
     const bottomTabBarHeight = useBottomTabBarHeight()
     const [descriptionFocused, setDescriptionFocused] = useState(false)
@@ -46,7 +46,7 @@ const AddGoalItemModal = ({ navigation }: Props) => {
 
     async function createFolderItem() {
         if (!userId) return
-        if (!activeFolder) return
+        if (!route.params.folder) return
 
         // Check if imageGenerated exists and has a uri property
         if (imageGenerated && imageGenerated.url) {
@@ -67,11 +67,11 @@ const AddGoalItemModal = ({ navigation }: Props) => {
                 }
 
                 // Upload the image and get the URL
-                const imageUrl = await uploadImage(imageGenerated.url, uploadType, "Test");
+                const image = await uploadImage(imageGenerated.url, uploadType, "Test");
 
                 // Create the folder item with the image URL and description
-                const folderItem: FolderItem = {
-                    imageUrl,
+                const folderItem: AddFolderItemProps = {
+                    image,
                     description,
                     generationMode: selectedMode?.value,
                     aiTitle: "Test",
@@ -79,7 +79,7 @@ const AddGoalItemModal = ({ navigation }: Props) => {
                 };
 
                 //Upload the folder item
-                const imageUploadId = await uploadFolderItem(userId, activeFolder.folderId, folderItem, activeFolder.folderCategory);
+                const imageUploadId = await uploadFolderItem(userId, route.params.folder?.id, folderItem, route.params.folder?.type);
 
                 if (imageUploadId) {
                     successToast("Folder Item Created successfully")

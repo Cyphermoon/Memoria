@@ -7,33 +7,62 @@ import colors from 'tailwindcss/colors'
 import { HomeStackParamList } from '../../../../type'
 import GoalItem from '../../../components/Goal/GoalItem'
 import IntervalSelector from '../../../components/Goal/IntervalSelector'
-import { GoalItemProps, IntervalOptionProps } from '../../../components/Goal/type'
+import { IntervalOptionProps } from '../../../components/Goal/type'
 import SearchBar from '../../../components/common/SearchBar'
 import Text from '../../../components/common/Text'
 import Touchable from '../../../components/common/Touchable'
 import { useSlidePosition } from '../../../context/SlidePositionProvider'
+import { FolderItemProps } from 'src/util/HomeDrawer/type'
+import { CollectionReference, collection, onSnapshot } from 'firebase/firestore'
+import { firestoreDB } from 'firebaseConfig'
+import { useAuthStore } from 'store/authStore'
+import { deleteFolderItem, deleteImageFromCloudinary } from 'src/util/HomeDrawer/addGoalItem.util'
+import { errorToast } from 'src/util/toast.util'
 
-
-const goalItems = [
-    { id: '1', description: 'Make 50 coffees', imageUrl: 'https://picsum.photos/id/63/200/300' },
-    { id: '2', description: 'Read 5 books', imageUrl: 'https://picsum.photos/id/64/200/300' },
-    { id: '3', description: 'Run 10 miles', imageUrl: 'https://picsum.photos/id/65/200/300' },
-    { id: '4', description: 'Write 3 blog posts', imageUrl: 'https://picsum.photos/id/66/200/300' },
-    { id: '5', description: 'Visit 2 new cities', imageUrl: 'https://picsum.photos/id/67/200/300' },
-    { id: '6', description: 'Learn a new programming language', imageUrl: 'https://picsum.photos/id/68/200/300' },
-    { id: '7', description: 'Cook a new recipe', imageUrl: 'https://picsum.photos/id/69/200/300' },
-];
 
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
 
 const GoalScreen = ({ route, navigation }: Props) => {
-    const [searchQuery, setSearchQuery] = useState('');
     const ref = useRef<FlatList<any> | null>(null)
     const { position } = useSlidePosition()
+    const userId = useAuthStore(state => state.user?.uid);
 
     const [selectedInterval, setSelectedInterval] = useState<IntervalOptionProps>(intervalOptions[0]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [folderItems, setFolderItems] = useState<FolderItemProps[]>([]);
+
+
+    useEffect(() => {
+        if (!userId) return
+
+        // initialize the folderItem reference
+        let folderItemRef: CollectionReference | null = null
+
+        // update the folderItem reference based on the folder mode
+        if (route.params.folder.mode === 'personal') {
+            folderItemRef = collection(firestoreDB, "users", userId, "folders", route.params.folder.id, "items");
+        } else if (route.params.folder.mode === 'community') {
+            folderItemRef = collection(firestoreDB, "community", route.params.folder.id, "items");
+        }
+
+        // exit the the code if for some reason the folderItemRef is null
+        if (!folderItemRef) return
+
+        //use a snapshot to listen to changes in the folderItem collection
+        const unsubscribe = onSnapshot(folderItemRef, (querySnapshot) => {
+            const items: FolderItemProps[] = [];
+
+            querySnapshot.forEach((doc) => {
+                // update the temporary items array with the data from the document
+                items.push({ id: doc.id, ...doc.data() } as FolderItemProps);
+            })
+
+            // set the folderItems state with the items array
+            setFolderItems(items)
+        })
+    }, [])
 
     const handleIntervalSelected = (interval: IntervalOptionProps) => {
         setSelectedInterval(interval);
@@ -65,14 +94,9 @@ const GoalScreen = ({ route, navigation }: Props) => {
     }
 
     // Goal Items Actions
-    function handleDelete(id: string) {
-        // Find the goal item by its id
-        const goalItem = goalItems.find(item => item.id === id);
+    function handleDelete(itemId: string, imageId: string) {
 
-        // If the goal item was found, use its name in the alert message
-        const message = goalItem
-            ? `Are you sure you want to delete "${goalItem.description}"?`
-            : "Are you sure you want to delete this goal item?";
+        const message = "Are you sure you want to delete this item";
 
         Alert.alert(
             "Delete Goal Item", // Alert title
@@ -80,13 +104,22 @@ const GoalScreen = ({ route, navigation }: Props) => {
             [
                 {
                     text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                 },
                 {
                     text: "OK",
-                    onPress: () => {
-                        console.log('Delete button pressed');
+                    onPress: async () => {
+                        try {
+                            if (userId) {
+                                await deleteImageFromCloudinary(imageId)
+                                await deleteFolderItem(userId, route.params.folder.id, itemId, route.params.folder.mode)
+                            } else {
+                                errorToast('User not found')
+                            }
+                        } catch (error) {
+                            throw new Error(`${error}`)
+                        }
+
                         // Add your delete logic here
                     }
                 }
@@ -96,10 +129,10 @@ const GoalScreen = ({ route, navigation }: Props) => {
     };
 
     function handleFullscreen(id: string) {
-        navigation.navigate('GoalSlideShow', { currentId: id, goals: goalItems });
+        navigation.navigate('GoalSlideShow', { currentId: id, goals: folderItems });
     };
 
-    function handleEdit(goalItem: GoalItemProps) {
+    function handleEdit(goalItem: FolderItemProps) {
         navigation.navigate('EditGoalItem', { goalItem });
     }
 
@@ -117,15 +150,19 @@ const GoalScreen = ({ route, navigation }: Props) => {
         wait.then(() => {
             ref.current?.scrollToIndex({ index: info.index, animated: true });
         });
+
+        console.error("Could not scroll to index", info.index);
     };
 
 
-    useEffect(() => {
-        if (ref.current) {
-            ref.current.scrollToIndex({ index: position, animated: true })
-        }
+    //TODO uncomment later
+    // useEffect(() => {
+    //     if (ref.current) {
+    //         ref.current.scrollToIndex({ index: position, animated: true })
+    //     }
 
-    }, [position])
+    // }, [position])
+
 
     return (
         <SafeAreaView className='bg-primary flex-grow'>
@@ -162,27 +199,28 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
                 {/* Goals List */}
                 <View className='flex-grow h-96'>
-
-                    <FlatList
-                        ref={ref}
-                        data={goalItems}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                        ListFooterComponent={() => <View className='h-10' />}
-                        renderItem={({ item }) => (
-                            <View className='relative w-full h-56 rounded-2xl'>
-                                <GoalItem
-                                    id={item.id}
-                                    name={item.description}
-                                    url={item.imageUrl}
-                                    onDelete={handleDelete}
-                                    onFullscreen={handleFullscreen}
-                                    onEdit={handleEdit} />
-                            </View>
-                        )}
-                        getItemLayout={getItemLayout}
-                        onScrollToIndexFailed={onScrollToIndexFailed}
-                    />
+                    {folderItems.length > 0 ?
+                        <FlatList
+                            ref={ref}
+                            data={folderItems}
+                            keyExtractor={item => item.id}
+                            showsVerticalScrollIndicator={false}
+                            ListFooterComponent={() => <View className='h-10' />}
+                            renderItem={({ item }) => (
+                                <View className='relative w-full h-56 rounded-2xl'>
+                                    <GoalItem
+                                        id={item.id}
+                                        name={item.description}
+                                        image={item.image}
+                                        onDelete={handleDelete}
+                                        onFullscreen={handleFullscreen}
+                                        onEdit={handleEdit} />
+                                </View>
+                            )}
+                            getItemLayout={getItemLayout}
+                            onScrollToIndexFailed={onScrollToIndexFailed}
+                        /> :
+                        <Text className='text-center text-lg'>There are no items here</Text>}
                 </View>
             </View>
         </SafeAreaView>

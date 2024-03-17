@@ -1,14 +1,15 @@
-import { Timestamp, addDoc, collection, doc } from "firebase/firestore"
+import { Timestamp, addDoc, collection, deleteDoc, doc } from "firebase/firestore"
 import { firestoreDB } from "firebaseConfig";
 import { successToast } from "../toast.util";
-import { FolderItem, ImageUploadType } from "./type";
+import { AddFolderItemProps, CloudinaryResponse, ImageUploadType } from "./type";
 import { CollectionOptionTypes } from "@components/Home/type";
+import SHA1 from 'crypto-js/sha1';
 
-
-const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqebv2gce/image/upload';
+const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqebv2gce/image';
 
 // This function uploads an image to Cloudinary.
-export async function uploadImage(data: string, type: ImageUploadType, name: string): Promise<string> {
+export async function uploadImage(data: string, type: ImageUploadType, name: string): Promise<CloudinaryResponse> {
+    const url = `${CLOUDINARY_URL}/upload`;
     // Create a new FormData instance to hold the image data.
     const formData = new FormData();
 
@@ -43,7 +44,7 @@ export async function uploadImage(data: string, type: ImageUploadType, name: str
     try{
 
         // Send the fetch request to the Cloudinary URL.
-        const response = await fetch(CLOUDINARY_URL, options);
+        const response = await fetch(url, options);
 
         console.log("response ok: ", response.ok)
 
@@ -55,19 +56,46 @@ export async function uploadImage(data: string, type: ImageUploadType, name: str
         }
     
         // Parse the response data as JSON.
-        const jsonData = await response.json();
+        const jsonData: CloudinaryResponse = await response.json();
     
         // Return the URL of the uploaded image.
-        return jsonData.url;
+        return jsonData;
     }catch(error){
         throw new Error(`${error}`);
 
     }
 }
 
+export async function deleteImageFromCloudinary(publicId: string) {
+    const timestamp = Math.round((new Date()).getTime() / 1000);
+    const paramsToSign = `public_id=${publicId}&timestamp=${timestamp}${process.env.EXPO_PUBLIC_CLOUDINARY_API_SECRET }`;
+    const signature = SHA1(paramsToSign).toString();
+
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('api_key', process.env.EXPO_PUBLIC_CLOUDINARY_API_KEY as string);
+    formData.append('timestamp', String(timestamp));
+    formData.append('signature', signature);
+
+    try {
+        const response = await fetch(`${CLOUDINARY_URL}/destroy`, {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.result !== 'ok') {
+            throw new Error('Failed to delete image from Cloudinary');
+        }
+    } catch (error) {
+        console.error('Error deleting image from Cloudinary: ', error);
+    }
+}
+
 
 // This function uploads a folder item to Firestore.
-export async function uploadFolderItem(userId: string, folderId: string, item: FolderItem, type: CollectionOptionTypes){
+export async function uploadFolderItem(userId: string, folderId: string, item: AddFolderItemProps, type: CollectionOptionTypes){
         // Declare a variable to hold the reference to the Firestore collection.
         let folderRef;
     
@@ -87,4 +115,26 @@ export async function uploadFolderItem(userId: string, folderId: string, item: F
             // If there's an error adding the item, log the error.
             console.error('Error uploading folder item: ', error);
         }
+}
+
+// This function deletes a folder item from Firestore.
+export async function deleteFolderItem(userId: string, folderId: string, itemId: string, type: CollectionOptionTypes) {
+    // Declare a variable to hold the reference to the Firestore document.
+    let folderItemRef;
+
+    // If the type is 'personal', set the folderItemRef to point to the 'users/{userId}/folders/{folderId}/items/{itemId}' document.
+    if (type === 'personal') {
+        folderItemRef = doc(firestoreDB, 'users', userId, 'folders', folderId, 'items', itemId);
+    } else {
+        // If the type is not 'personal' (i.e., it's 'community'), set the folderItemRef to point to the 'community/{folderId}/items/{itemId}' document.
+        folderItemRef = doc(firestoreDB, 'community', folderId, 'items', itemId);
+    }
+
+    try {
+        // Try to delete the item from the specified collection.
+        await deleteDoc(folderItemRef);
+    } catch (error) {
+        // If there's an error deleting the item, log the error.
+        console.error('Error deleting folder item: ', error);
+    }
 }
