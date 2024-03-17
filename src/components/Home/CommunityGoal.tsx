@@ -30,8 +30,6 @@ const CommunityGoal = ({
     handleLike,
     handleActiveFolder
 }: Props) => {
-
-
     return (
         <View className={`rounded-2xl space-y-2`}>
             <View
@@ -58,9 +56,10 @@ const CommunityGoal = ({
                 </View>
             </View>
 
+            {/* Goal footer. contains action items and user information */}
             <View className='flex-row items-center justify-between'>
                 <View className='flex-row items-center space-x-2'>
-                    <UserAvatar username={folder.user.name} />
+                    <UserAvatar username={folder.user.name} imageUrl={folder.user.image_url} />
                     <Text className='text-sm text-gray-500'>{folder.user.name}</Text>
                 </View>
 

@@ -7,6 +7,7 @@ import colors from "colors"
 import { TouchableOpacity, View } from "react-native"
 import Animated, { Extrapolation, interpolate, useAnimatedStyle } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useAuthStore } from "store/authStore"
 
 
 export const HEADER_HEIGHT = 100
@@ -19,6 +20,8 @@ interface Props {
 
 export const Header = ({ scrollY, openDrawer, navigationTitle }: Props) => {
     const insets = useSafeAreaInsets()
+    const userName = useAuthStore(state => state.user?.username)
+    const userImageUrl = useAuthStore(state => state.user?.image?.secure_url)
 
 
     // const headerStyle = useAnimatedStyle(() => {
@@ -61,7 +64,7 @@ export const Header = ({ scrollY, openDrawer, navigationTitle }: Props) => {
                 {navigationTitle}
             </Animated.Text>
 
-            <UserAvatar username='Cypher_Moon' />
+            {userName ? <UserAvatar username={userName} imageUrl={userImageUrl} /> : <Text>No user found</Text>}
         </View>
 
     )

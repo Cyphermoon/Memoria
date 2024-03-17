@@ -10,7 +10,7 @@ import { Alert, Keyboard, KeyboardAvoidingView, Platform, TouchableOpacity, Touc
 import Toast from 'react-native-root-toast'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { validateInputs } from 'src/util'
-import { createUser } from 'src/util/firebase.util'
+import { createUser } from 'src/util/user/userFirestore.util'
 import tailwindColors from 'tailwindcss/colors'
 import { AuthStackParamList, RootStackParamList } from '../../../../type'
 import Checkbox from '../../../components/common/Checkbox'

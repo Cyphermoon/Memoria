@@ -4,9 +4,49 @@ import { Image } from 'expo-image'
 import React from 'react'
 import { Platform, ScrollView, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useAuthStore } from 'store/authStore'
+import { Entypo } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker'
+import colors from 'tailwindcss/colors'
+import { deleteImageFromCloudinary, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
+import { CloudinaryResponse } from 'src/util/HomeDrawer/type'
+import { updateUser } from 'src/util/user/userFirestore.util'
 
 const ProfileScreen = () => {
     const insets = useSafeAreaInsets()
+
+    const userName = useAuthStore(state => state.user?.username)
+    const userId = useAuthStore(state => state.user?.uid)
+    const _userImageUrl = useAuthStore(state => state.user?.image)
+
+    const [userImage, setUserImage] = React.useState<CloudinaryResponse | undefined>(_userImageUrl)
+
+    async function handleProfileChange() {
+        // Launch the image picker
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1
+        })
+
+        // If the user didn't cancel the picker, set the image
+        if (!result.canceled) {
+            // Delete the previous image from cloudindary
+            if (userImage) {
+                await deleteImageFromCloudinary(userImage.public_id)
+            }
+            const imageUrl = result.assets[0].uri
+            // Upload the new image to cloudinary
+            const cloudinaryImage = await uploadImage(imageUrl, 'file', userName || "profile-name")
+            // Set the user image
+            setUserImage(cloudinaryImage);
+            // Update the user image in firestore
+            userId && updateUser(userId, { image: cloudinaryImage })
+        }
+    }
+
+
     return (
         <View
             className='bg-primary px-4 flex-grow'
@@ -17,11 +57,23 @@ const ProfileScreen = () => {
             <ScrollView
                 className='flex-grow'>
                 <View className='flex-row items-center mb-5 mt-16 rounded-lg px-3 py-1.5'>
-                    <Image
-                        source={'https://picsum.photos/id/237/200/300'}
-                        className='w-16 h-16 rounded-full mr-3 border-gray-400 border-2'
-                    />
-                    <Text className='text-xl font-semibold text-gray-300'>Cypher Moon</Text>
+
+                    <TouchableOpacity onPress={handleProfileChange}>
+                        {userImage ? (
+                            <Image
+                                source={{ uri: userImage.secure_url }}
+                                className='w-16 h-16 rounded-full mr-3 border-gray-400 border-2'
+                            />
+                        ) : (
+                            <View className='relative w-16 h-16 rounded-full mr-3 border-gray-400 border-2 bg-primary-300 items-center justify-center p-1'>
+                                <Text className='text-[10px] text-center text-gray-400'>Update profile here</Text>
+                                <View className='absolute top-0 right-0 rounded-full'>
+                                    <Entypo name="edit" size={18} color={colors.gray['400']} />
+                                </View>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                    <Text className='text-xl font-semibold text-gray-300'>{userName}</Text>
                 </View>
 
                 {/*Action Section */}

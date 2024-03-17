@@ -2,7 +2,8 @@ import {create} from 'zustand';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth, firestoreDB } from 'firebaseConfig';
 import { CollectionOptionTypes, FolderProps } from '@components/Home/type';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { CloudinaryResponse } from 'src/util/HomeDrawer/type';
 
 // Create a store
 export const useAuthStore = create<AuthState>((set) => ({
@@ -10,25 +11,27 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user }),
 }));
 
-// Monitor the user's authentication state
-onAuthStateChanged(firebaseAuth, async (user) => {
+// Listen for auth state changes
+onAuthStateChanged(firebaseAuth, (user) => {
   if (user) {
+    // Get the user's data from Firestore
     const userRef = doc(firestoreDB, 'users', user.uid);
-    const docSnap = await getDoc(userRef);
 
-    if (docSnap.exists()) {
-      const firestoreUser = docSnap.data() as CustomFireStoreUserProps;
-      useAuthStore.getState().setUser(firestoreUser);
-
-    } else {
-      console.log("No such document!");
-    }
+    // Listen for real-time updates to the user's data
+    onSnapshot(userRef, (docSnap) => {
+      if (docSnap.exists()) {
+        // Get the user's data
+        const firestoreUser = docSnap.data() as CustomFireStoreUserProps;
+        // Set the user's data in the store
+        useAuthStore.getState().setUser(firestoreUser);
+      } else {
+        console.log("No such document!");
+      }
+    });
   } else {
     useAuthStore.getState().setUser(null);
   }
 });
-
-
 
 
 // types
@@ -37,11 +40,11 @@ interface AuthState {
     setUser: (user: CustomFireStoreUserProps | null) => void;
 }
 
-interface CustomFireStoreUserProps {
+export interface CustomFireStoreUserProps {
     uid: string;
     username: string;
     email: string;
-    // photoURL: string;
+    image?: CloudinaryResponse;
     folders: FolderProps[];
     activeFolder: ActiveFolderProps | null;
 }
