@@ -13,6 +13,13 @@ import UnSplashOption from '../../../../components/Goal/UnSplashOption'
 import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from '../../../../components/Goal/type'
 import Touchable from '../../../../components/common/Touchable'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { uploadFolderItem, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
+import { useAuthStore } from 'store/authStore'
+import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
+import { FolderItem, ImageUploadType } from 'src/util/HomeDrawer/type'
+import { Timestamp, serverTimestamp } from 'firebase/firestore'
+import { successToast } from 'src/util/toast.util'
 
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'NewGoalItem'>
@@ -22,16 +29,69 @@ export type AddGoalItemModalNavigationProps = NavigationProp<HomeStackParamList,
 
 const AddGoalItemModal = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()
-
-    const [description, setDescription] = useState('')
+    const bottomTabBarHeight = useBottomTabBarHeight()
     const [descriptionFocused, setDescriptionFocused] = useState(false)
 
-    const [selectedMode, setSelectedMode] =
-        useState<ImageGenerationMethodOptionProps | null>(imageGenerationModes[0])
+    const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps>(imageGenerationModes[0])
+    const [description, setDescription] = useState('')
     const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
+
+    const userId = useAuthStore(state => state.user?.uid)
+    const activeFolder = useActiveFolderId(userId)
+
 
     function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
         setSelectedMode(mode)
+    }
+
+    async function createFolderItem() {
+        if (!userId) return
+        if (!activeFolder) return
+
+        // Check if imageGenerated exists and has a uri property
+        if (imageGenerated && imageGenerated.url) {
+            try {
+                // Map the selected mode type to the upload type
+                const uploadTypeMap = {
+                    'unsplash': 'url',
+                    'gallery': 'file',
+                    'ai': 'base64'
+                };
+
+                // Get the upload type from the map
+                let uploadType = selectedMode && uploadTypeMap[selectedMode.value as keyof typeof uploadTypeMap] as ImageUploadType
+
+                // If the upload type is not defined, throw an error
+                if (!uploadType) {
+                    throw new Error('Invalid mode type');
+                }
+
+                // Upload the image and get the URL
+                const imageUrl = await uploadImage(imageGenerated.url, uploadType, "Test");
+
+                // Create the folder item with the image URL and description
+                const folderItem: FolderItem = {
+                    imageUrl,
+                    description,
+                    generationMode: selectedMode?.value,
+                    aiTitle: "Test",
+                    dateCreated: serverTimestamp()
+                };
+
+                //Upload the folder item
+                const imageUploadId = await uploadFolderItem(userId, activeFolder.folderId, folderItem, activeFolder.folderCategory);
+
+                if (imageUploadId) {
+                    successToast("Folder Item Created successfully")
+                    navigation.canGoBack() && navigation.goBack()
+                }
+
+            } catch (error) {
+                console.error('An Error Occured: ', error);
+            }
+        } else {
+            console.error('No image selected');
+        }
     }
 
     useEffect(() => {
@@ -47,7 +107,7 @@ const AddGoalItemModal = ({ navigation }: Props) => {
             <View
                 className='px-4 pt-6 flex-grow bg-primary '
                 style={{
-                    paddingBottom: insets.bottom,
+                    paddingBottom: insets.bottom + bottomTabBarHeight,
                 }}>
 
                 <View className='space-y-10 mb-6 flex-grow'>
@@ -86,7 +146,7 @@ const AddGoalItemModal = ({ navigation }: Props) => {
                     </View>
                 </View>
 
-                <Touchable isText>Create</Touchable>
+                <Touchable isText onPress={createFolderItem}>Create</Touchable>
 
             </View>
         </TouchableWithoutFeedback>
