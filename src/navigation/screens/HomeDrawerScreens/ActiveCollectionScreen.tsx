@@ -17,7 +17,7 @@ import { useAuthStore } from 'store/authStore'
 
 //TODO: Add interaction functionalities to this screen (edit, delete, like, unlike, etc)
 
-type Props = DrawerScreenProps<HomeDrawerParamList, "Community">
+type Props = DrawerScreenProps<HomeDrawerParamList, "ActiveCollection">
 
 const ActiveCollectionScreen = ({ navigation }: Props) => {
     const insets = useSafeAreaInsets()

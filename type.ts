@@ -2,14 +2,14 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { HomeDrawerParamList } from "src/navigation/HomeDrawer";
 import { GoalItemProps } from "./src/components/Goal/type";
-import { FirestoreCommunityFolderProps, FolderPropsWithActive, SelectedFolderProps } from "./src/components/Home/type";
+import { CollectionOptionTypes, CustomCommunityFolderProps, FirestoreCommunityFolderProps, FolderProps, FolderPropsWithActive, SelectedFolderProps } from "./src/components/Home/type";
 
 export type HomeStackParamList = {
     HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
     AddCollection: {mode: "personal", folder?:FolderPropsWithActive} | {mode: "community", folder?:FirestoreCommunityFolderProps}
-    Goal: SelectedFolderProps
+    Goal: {folder: CustomCommunityFolderProps | FolderProps}
     GoalSlideShow: { currentId: string, goals: GoalItemProps[] }
-    NewGoalItem: {goalFolderId?: string, unsplashImage?: UnsplashResult}
+    NewGoalItem: {folder?: {id: string, type: CollectionOptionTypes}, unsplashImage?: UnsplashResult}
     EditGoalItem: {goalItem: GoalItemProps}
     UnSplashModal: undefined
   };

@@ -41,7 +41,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
     };
 
     function movetoNewGoalItem() {
-        navigation.navigate('NewGoalItem', { goalFolderId: route.params.id })
+        navigation.navigate('NewGoalItem', {
+            folder:
+            {
+                id: route.params.folder.id,
+                type: route.params.folder.mode
+            }
+        })
     }
 
     //* Search Actions
@@ -127,7 +133,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
                 {/* Header Section */}
                 <View className='flex-row justify-between items-center mb-8 mt-6'>
-                    <Text className='text-4xl font-semibold'>{route.params.name}</Text>
+                    <Text className='text-4xl font-semibold'>{route.params?.folder.name}</Text>
 
                     <View className='flex-row items-center'>
                         <IntervalSelector

@@ -129,7 +129,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     }
 
     function handleGoalPress(goal: FolderProps) {
-        navigation.navigate("Goal", { id: goal.id, name: goal.name })
+        navigation.navigate("Goal", { folder: goal })
     }
 
 
