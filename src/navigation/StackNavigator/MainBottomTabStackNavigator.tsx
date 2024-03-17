@@ -10,7 +10,7 @@ import { StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 
-type MainBottomTabNavigatorParamList = {
+export type MainBottomTabNavigatorParamList = {
     Home: BottomTabScreenProps<HomeStackParamList>
     Profile: undefined;
     Search: undefined

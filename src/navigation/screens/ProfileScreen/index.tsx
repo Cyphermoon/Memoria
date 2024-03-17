@@ -10,11 +10,17 @@ import * as ImagePicker from 'expo-image-picker'
 import colors from 'tailwindcss/colors'
 import { deleteImageFromCloudinary, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
 import { CloudinaryResponse } from 'src/util/HomeDrawer/type'
-import { updateUser } from 'src/util/user/userFirestore.util'
+import { logUserOut, updateUser } from 'src/util/user/userFirestore.util'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
+
+import { MainBottomTabNavigatorParamList } from 'src/navigation/StackNavigator/MainBottomTabStackNavigator'
+import { AuthStackParamList, HomeStackParamList, RootStackParamList } from 'type'
+
+type AuthNavigationProps = NavigationProp<AuthStackParamList, "Auth">
 
 const ProfileScreen = () => {
     const insets = useSafeAreaInsets()
-
+    const navigation = useNavigation<AuthNavigationProps>();
     const userName = useAuthStore(state => state.user?.username)
     const userId = useAuthStore(state => state.user?.uid)
     const _userImageUrl = useAuthStore(state => state.user?.image)
@@ -44,6 +50,15 @@ const ProfileScreen = () => {
             // Update the user image in firestore
             userId && updateUser(userId, { image: cloudinaryImage })
         }
+    }
+
+    function handleSignOut() {
+        logUserOut()
+
+        // Navigate to the login screen after 1.5 seconds
+        setTimeout(() => {
+            navigation.navigate('Login')
+        }, 1500)
     }
 
 
@@ -94,7 +109,7 @@ const ProfileScreen = () => {
 
                 {/*Account Section */}
                 <ProfileItem
-                    onPress={() => { }}
+                    onPress={() => handleSignOut()}
                     showIcon={false}
                     textCenter
                     text='Logout'

@@ -1,5 +1,7 @@
+import { signOut } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { firestoreDB } from "firebaseConfig";
+import { firebaseAuth, firestoreDB } from "firebaseConfig";
+import { successToast } from "../toast.util";
 
 interface CreateUserProp {
     username: string
@@ -25,5 +27,14 @@ export const updateUser = async (uid: string, data: { [key: string]: any }) => {
     } catch (error) {
       console.error('Error updating user:', error);
       return false; // Return false if there was an error
+    }
+  }
+
+  export async function logUserOut() {
+    try {
+      await signOut(firebaseAuth);
+      successToast('Signed out successfully,see you soon!')
+    } catch (error) {
+      console.error("Error signing out: ", error);
     }
   }
