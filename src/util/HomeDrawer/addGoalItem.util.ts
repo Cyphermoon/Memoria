@@ -46,8 +46,6 @@ export async function uploadImage(data: string, type: ImageUploadType, name: str
         // Send the fetch request to the Cloudinary URL.
         const response = await fetch(url, options);
 
-        console.log("response ok: ", response.ok)
-
         // If the response is not OK, throw an error.
         if(!response.ok){
             const message = await response.json();

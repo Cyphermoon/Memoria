@@ -25,6 +25,8 @@ export const intervalOptions: IntervalOptionProps[] = [
     { label: 'Monthly', value: 'monthly', icon: 'calendar' },
 ];
 
+export type IntervalValueTypes = 'daily' | 'weekly' | 'monthly';
+
 export const publishModes = [
     { label: 'Community', value: 'community'},
     { label: 'Personal', value: 'personal'},

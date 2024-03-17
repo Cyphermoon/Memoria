@@ -13,13 +13,12 @@ import Text from '../../../components/common/Text'
 import Touchable from '../../../components/common/Touchable'
 import { useSlidePosition } from '../../../context/SlidePositionProvider'
 import { FolderItemProps } from 'src/util/HomeDrawer/type'
-import { CollectionReference, collection, onSnapshot } from 'firebase/firestore'
+import { CollectionReference, DocumentReference, collection, doc, onSnapshot } from 'firebase/firestore'
 import { firestoreDB } from 'firebaseConfig'
 import { useAuthStore } from 'store/authStore'
 import { deleteFolderItem, deleteImageFromCloudinary } from 'src/util/HomeDrawer/addGoalItem.util'
 import { errorToast } from 'src/util/toast.util'
-
-
+import { editCommunityFolder, editFolder } from 'src/util/HomeDrawer/index.utll'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -32,9 +31,63 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const [selectedInterval, setSelectedInterval] = useState<IntervalOptionProps>(intervalOptions[0]);
     const [searchQuery, setSearchQuery] = useState('');
     const [folderItems, setFolderItems] = useState<FolderItemProps[]>([]);
+    const [filteredFolderItems, setFilteredFolderItems] = useState<FolderItemProps[]>([]);
 
 
     useEffect(() => {
+        if (!userId) return
+        let folderRef: DocumentReference | null = null
+
+        // update the folder reference based on the folder mode
+        if (route.params.folder.mode === 'personal') {
+            folderRef = doc(firestoreDB, "users", userId, "folders", route.params.folder.id)
+        } else if (route.params.folder.mode === 'community') {
+            folderRef = doc(firestoreDB, "community", route.params.folder.id)
+        }
+
+        // exit the the code if for some reason the folderRef is null
+        if (!folderRef) return
+
+        //use a snapshot to listen to changes in the folder collection
+        const unsubscribe = onSnapshot(folderRef, (doc) => {
+            const interval = doc.data()?.interval
+
+            // set the selected interval based on the interval in the database
+            if (interval) {
+                // find the interval option that matches the interval in the database
+                const optionInterval = intervalOptions.find(option => option.value === interval)
+                optionInterval && setSelectedInterval(optionInterval)
+            } else {
+                // update the interval in the database if it is not set
+                route.params.folder.mode === 'personal' && userId && editFolder(userId, route.params.folder.id, { interval: selectedInterval.value }, null)
+                route.params.folder.mode === 'community' && userId && editCommunityFolder(route.params.folder.id, { interval: selectedInterval.value })
+            }
+        })
+
+        return () => unsubscribe()
+
+    }, [])
+
+    useEffect(() => {
+        // Convert the search query to lower case for case-insensitive search
+        const lowerCaseSearchQuery = searchQuery.toLowerCase();
+
+        // Filter the folder items based on the search query
+        const filteredItems = folderItems.filter(item =>
+            // Check if the description includes the search query
+            (item.description && item.description.toLowerCase().includes(lowerCaseSearchQuery)) ||
+            // Check if the aiTitle includes the search query
+            (item.aiTitle && item.aiTitle.toLowerCase().includes(lowerCaseSearchQuery)) ||
+            // Check if the aiActionWord includes the search query
+            (item.aiActionWord && item.aiActionWord.toLowerCase().includes(lowerCaseSearchQuery))
+        );
+
+        // Update the state with the filtered items
+        setFilteredFolderItems(filteredItems);
+    }, [folderItems, searchQuery]);
+
+    useEffect(() => {
+        /* populate the folder items */
         if (!userId) return
 
         // initialize the folderItem reference
@@ -61,12 +114,19 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
             // set the folderItems state with the items array
             setFolderItems(items)
+
+            // update the items property of a folder to reflect the number of items in the folder
+            route.params.folder.mode === 'personal' && userId && editFolder(userId, route.params.folder.id, { items: items.length }, null)
+            route.params.folder.mode === 'community' && userId && editCommunityFolder(route.params.folder.id, { items: items.length })
         })
+
+        return () => unsubscribe()
     }, [])
 
     const handleIntervalSelected = (interval: IntervalOptionProps) => {
-        setSelectedInterval(interval);
-        // You can add more logic here if needed
+        // update the interval in the database
+        route.params.folder.mode === 'personal' && userId && editFolder(userId, route.params.folder.id, { interval: interval.value }, null)
+        route.params.folder.mode === 'community' && userId && editCommunityFolder(route.params.folder.id, { interval: interval.value })
     };
 
     function movetoNewGoalItem() {
@@ -80,18 +140,11 @@ const GoalScreen = ({ route, navigation }: Props) => {
     }
 
     //* Search Actions
-    const handleSearchQueryChanged = (query: string) => {
-        setSearchQuery(query);
-        // Add any additional logic for handling search query changes here
-    };
 
     function handleSearchSubmit() {
         console.log("Search submitted! ", searchQuery)
     }
 
-    function handleSortPress(id: string) {
-        console.log("Sort Pressed: ", id)
-    }
 
     // Goal Items Actions
     function handleDelete(itemId: string, imageId: string) {
@@ -154,14 +207,12 @@ const GoalScreen = ({ route, navigation }: Props) => {
         console.error("Could not scroll to index", info.index);
     };
 
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.scrollToIndex({ index: position, animated: true })
+        }
 
-    //TODO uncomment later
-    // useEffect(() => {
-    //     if (ref.current) {
-    //         ref.current.scrollToIndex({ index: position, animated: true })
-    //     }
-
-    // }, [position])
+    }, [position])
 
 
     return (
@@ -192,7 +243,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                 <View className='mb-10'>
                     <SearchBar
                         searchQuery={searchQuery}
-                        setSearchQuery={handleSearchQueryChanged}
+                        setSearchQuery={setSearchQuery}
                         handleSearchSubmit={handleSearchSubmit} />
                 </View>
 
@@ -202,7 +253,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                     {folderItems.length > 0 ?
                         <FlatList
                             ref={ref}
-                            data={folderItems}
+                            data={filteredFolderItems}
                             keyExtractor={item => item.id}
                             showsVerticalScrollIndicator={false}
                             ListFooterComponent={() => <View className='h-10' />}

@@ -43,6 +43,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
             await uploadFolder(userId,
                 {
                     mode: selectedMode.value,
+                    interval: "daily",
                     name: folderName,
                     dateCreated: serverTimestamp()
                 },
@@ -60,6 +61,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
                 name: folderName,
                 dateCreated: serverTimestamp(),
                 likes: 0,
+                interval: "daily",
                 items: 0,
                 user: {
                     name: userName,

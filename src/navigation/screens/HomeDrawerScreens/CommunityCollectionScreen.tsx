@@ -161,8 +161,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
         handleClosePress()
     }
 
-    function handleGoalPress(goal: SelectedFolderProps) {
-        navigation.navigate("Goal", goal)
+    function handleGoalPress(goal: FirestoreCommunityFolderProps) {
+        navigation.navigate("Goal", { folder: goal })
     }
 
     function handleFolderEdit() {

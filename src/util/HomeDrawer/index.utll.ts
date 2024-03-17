@@ -3,10 +3,12 @@ import { firestoreDB } from "firebaseConfig";
 import { errorToast } from "../toast.util";
 import { CollectionOptionTypes, SortOptionProp } from "@components/Home/type";
 import { ActiveFolderProps } from "store/authStore";
+import { IntervalValueTypes } from "settings";
 
 interface FolderData {
     name: string;
     mode: string;
+    interval: IntervalValueTypes
     dateCreated: FieldValue;
 }
 
@@ -62,12 +64,16 @@ export function deleteFolder(userId: string, folderId: string){
       });
 }
 
-export function editFolder(userId: string, folderId: string, folderData: {[key: string]: any}, active: boolean){
+export function editFolder(userId: string, folderId: string, folderData: {[key: string]: any}, active: boolean | null){
     const folderRef = doc(firestoreDB, "users", userId, "folders", folderId)
 
     updateDoc(folderRef, folderData)
     .then(() => {
+        // do not change the active state it is null
+        if(active === null) return
+        // if active is true, set the folder as the user's active folder
         if(active) setActiveFolder(userId, folderId, "personal")
+        // if active is false, remove the folder as the user's active folder
         else if(!active) removeActiveFolder(userId)
     })
     .catch(() => {
