@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, } from 'react-native';
 import { getInitials } from '../../util';
 
@@ -10,7 +10,6 @@ interface UserAvatarProps {
 
 
 const UserAvatar: React.FC<UserAvatarProps> = ({ imageUrl, username }) => {
-
     const initials = getInitials(username);
 
     return (

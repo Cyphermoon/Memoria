@@ -19,6 +19,7 @@ import { useAuthStore } from 'store/authStore'
 import { deleteFolderItem, deleteImageFromCloudinary } from 'src/util/HomeDrawer/addGoalItem.util'
 import { errorToast } from 'src/util/toast.util'
 import { editCommunityFolder, editFolder } from 'src/util/HomeDrawer/index.utll'
+import { truncateText } from 'src/util'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -221,7 +222,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
                 {/* Header Section */}
                 <View className='flex-row justify-between items-center mb-8 mt-6'>
-                    <Text className='text-4xl font-semibold'>{route.params?.folder.name}</Text>
+                    <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
 
                     <View className='flex-row items-center'>
                         <IntervalSelector
