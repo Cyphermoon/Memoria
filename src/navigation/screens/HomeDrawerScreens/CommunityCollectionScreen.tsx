@@ -199,9 +199,18 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 			<CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text="Community Folder Actions">
 				{selectedFolder && (
 					<View>
-						<GoalActionItem onPress={handleLikeCollection} icon={(color, size) => <MaterialIcons name="favorite" size={size} color={customColors.accent} />} label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'} selectedFolder={selectedFolder.id} />
+						<GoalActionItem 
+							onPress={handleLikeCollection} 
+							icon={(color, size) => <MaterialIcons name="favorite" size={size} color={customColors.accent} />} 
+							label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'} 
+							selectedFolder={selectedFolder.id} />
 
-						<GoalActionItem onPress={handleActiveFolder} icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />} label="Use Collection" selectedFolder={selectedFolder.id} />
+						<GoalActionItem 
+							onPress={handleActiveFolder} 
+							icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />} 
+							label="Use Collection" 
+							selectedFolder={selectedFolder.id} />
+							
 						{selectedFolder?.user.id === userId && (
 							<>
 								<GoalActionItem onPress={handleFolderEdit} icon="edit" label="Edit" selectedFolder={selectedFolder} />

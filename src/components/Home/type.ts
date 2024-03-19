@@ -28,6 +28,7 @@ export interface FolderProps {
     items: number
     mode: CollectionOptionTypes
     dateCreated: Timestamp
+    interval: string
 }
 
 export interface FolderPropsWithActive extends FolderProps {
@@ -39,6 +40,7 @@ export interface FirestoreCommunityFolderProps{
     name: string
     items: number
     mode: CollectionOptionTypes
+    interval: string
     dateCreated: Timestamp
     likes:string[]
     activeCount: string[]

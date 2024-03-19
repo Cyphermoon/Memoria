@@ -28,20 +28,29 @@ const ActiveCollectionScreen = ({ navigation }: Props) => {
     const isFocused = useIsFocused()
     const [likedFolder, setLikedFolder] = useState<FolderProps | CustomCommunityFolderProps | null>()
 
+    // useEffect hook to subscribe to real-time updates from the Firestore document
     useEffect(() => {
+        // Only run the effect if the screen is currently focused
         if (!isFocused) return
+
         let folderRef;
+        // If the active folder is a personal folder, get a reference to the document in the user's 'folders' collection
         if (activeFolder?.folderCategory === 'personal' && userId && activeFolder?.folderId) {
             folderRef = doc(firestoreDB, 'users', userId, 'folders', activeFolder.folderId);
-        } else if (activeFolder?.folderCategory === 'community') {
+        } 
+        // If the active folder is a community folder, get a reference to the document in the 'community' collection
+        else if (activeFolder?.folderCategory === 'community') {
             folderRef = doc(firestoreDB, 'community', activeFolder.folderId);
         }
 
+        // If a folder reference was obtained, subscribe to real-time updates from the document
         if (folderRef) {
             const unsubscribe = onSnapshot(folderRef, (docSnapshot) => {
+                // If the document exists, update the likedFolder state with the document data
                 if (docSnapshot.exists()) {
                     setLikedFolder({ id: docSnapshot.id, ...docSnapshot.data() } as any);
                 } else {
+                    // If the document doesn't exist, log a message to the console
                     console.log(`No document found with id: ${activeFolder?.folderId}`);
                 }
             });
@@ -51,6 +60,7 @@ const ActiveCollectionScreen = ({ navigation }: Props) => {
                 unsubscribe();
             };
         }
+    // The useEffect hook will run again if any of these dependencies change
     }, [userId, activeFolder, isFocused]);
 
     return (
@@ -78,7 +88,7 @@ const ActiveCollectionScreen = ({ navigation }: Props) => {
 
             {activeFolder &&
                 <View>
-                    <Text className='text-center mt-8'>This folder is in the <Text className='text-accent'>{activeFolder?.folderCategory}</Text> collection
+                    <Text className='text-center mt-8'>This folder is in the <Text className='text-accent'>{activeFolder?.folderCategory}</Text> collection and the interval is set <Text className='text-accent'>{likedFolder?.interval}</Text> 
                     </Text>
                 </View>
             }

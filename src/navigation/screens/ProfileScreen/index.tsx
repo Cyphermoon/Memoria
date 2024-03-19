@@ -69,8 +69,7 @@ const ProfileScreen = () => {
                 paddingTop: insets.top,
                 paddingBottom: insets.bottom,
             }}>
-            <ScrollView
-                className='flex-grow'>
+           
                 <View className='flex-row items-center mb-5 mt-16 rounded-lg px-3 py-1.5'>
 
                     <TouchableOpacity onPress={handleProfileChange}>
@@ -118,7 +117,7 @@ const ProfileScreen = () => {
                 <TouchableOpacity className='' onPress={() => { }}>
                     <Text className='text-red-500 text-center'>Delete Account</Text>
                 </TouchableOpacity>
-            </ScrollView>
+        
         </View>
     )
 }

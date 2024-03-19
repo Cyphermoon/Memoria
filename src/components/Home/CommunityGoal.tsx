@@ -41,7 +41,7 @@ const CommunityGoal = ({
                     onPress={() => onMoreDetailsPress({ ...folder, liked, active })}>
                     <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
                 </TouchableOpacity>:
-                <Text className='text-primary-300'>invinsible</Text>
+                <Text className='text-primary-300'>invincible</Text>
                 }
 
                 <TouchableOpacity
