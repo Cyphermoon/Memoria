@@ -3,7 +3,7 @@ import { firestoreDB } from "firebaseConfig";
 import { useEffect, useState } from "react";
 import { ActiveFolderProps } from "store/authStore";
 
-export function useActiveFolderId (userId?: string){
+export function useActiveFolder (userId?: string){
     const [activeFolder, setActiveFolderId] = useState<ActiveFolderProps | null>(null)
 
     useEffect(() => {

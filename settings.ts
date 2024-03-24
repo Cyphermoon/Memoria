@@ -3,6 +3,8 @@ import { ImageGenerationMethodOptionProps, IntervalOptionProps } from "./src/com
 export const blurHash =
 '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
 
+export const DEFAULT_ACTIVE_FOLDER_ITEM_IDX = 0
+
 
 // bottom sheet sort action items
 export const sortOptions = [

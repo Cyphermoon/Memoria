@@ -1,22 +1,22 @@
+import CommunityGoal from '@components/Home/CommunityGoal';
 import Goal from '@components/Home/Goal';
 import { CustomCommunityFolderProps, FirestoreCommunityFolderProps, FolderProps } from '@components/Home/type';
 import FilterTag from '@components/common/FilterTag';
 import SearchBar from '@components/common/SearchBar';
 import Text from '@components/common/Text';
+import UserAvatar from '@components/common/UserAvatar';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { CollectionReference, DocumentData, Query, collection, doc, getDocs, limit, onSnapshot, query, where } from 'firebase/firestore';
+import { CollectionReference, DocumentData, Query, collection, getDocs, limit, onSnapshot, query } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
+import { activateFolder, deActivateFolder, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
 import { CustomFireStoreUserProps, useAuthStore } from 'store/authStore';
 import { HomeStackParamList } from 'type';
-import { HomeDrawerParamList } from '../HomeDrawer';
-import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook';
-import CommunityGoal from '@components/Home/CommunityGoal';
-import { activateFolder, deActivateFolder, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import UserAvatar from '@components/common/UserAvatar';
 
 //TODO Currently suspended. Would implement when I have the main goal of the app
 
@@ -32,7 +32,7 @@ const GlobalSearchScreen = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter]  = useState<SearchFilterTypes>('personal');
     
-    const activeFolder = useActiveFolderId(userId)
+    const activeFolder = useActiveFolder(userId)
 
     // datas 
     const [personalFolders, setPersonalFolders] = useState<FolderProps[]>([]);
@@ -152,7 +152,7 @@ const GlobalSearchScreen = () => {
     // Function to handle the press event on a community folder
     // It navigates to the 'Goal' screen with the selected folder as a parameter
     function handleCommunityFolderPress(folder: FirestoreCommunityFolderProps){
-        personalScreenNavigation.navigate('Goal', { folder });
+        personalScreenNavigation.navigate('Goal', { folder: folder as CustomCommunityFolderProps });
     }
 
     // Function to handle the activation or deactivation of a folder
@@ -160,7 +160,7 @@ const GlobalSearchScreen = () => {
     function handleActiveFolder(folderId?: string, isActive?: boolean) {
         if (!folderId || !userId) return;
     
-        isActive ? deActivateFolder(userId, folderId) : activateFolder(userId, folderId, activeFolder);
+        isActive ? deActivateFolder(userId, folderId) : activateFolder(userId, folderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
     }
 
     // Function to handle the liking or unliking of a collection

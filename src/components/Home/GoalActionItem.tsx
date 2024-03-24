@@ -11,7 +11,7 @@ interface Props {
     label: string
     danger?: boolean
     icon: IconNames | ((color: string, size: number) => JSX.Element)
-    selectedFolder: FolderProps | string
+    // selectedFolder: FolderProps | string
 }
 
 const GoalActionItem = ({ onPress, label, danger, icon }: Props) => {

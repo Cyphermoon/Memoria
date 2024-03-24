@@ -52,6 +52,7 @@ export interface CustomFireStoreUserProps {
 export interface ActiveFolderProps {
   folderId: string;
   folderCategory: CollectionOptionTypes;
+  activeFolderItemIdx: number;
 }
 
 

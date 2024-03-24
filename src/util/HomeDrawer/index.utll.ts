@@ -10,9 +10,10 @@ interface FolderData {
     mode: string;
     interval: IntervalValueTypes
     dateCreated: FieldValue;
+    activeFolderItemIdx: number;
 }
 
-interface CommunityFolderData extends FolderData {
+interface CommunityFolderData extends Omit<FolderData, "activeFolderItemIdx"> {
     likes: number
     items: number
     user: {
@@ -22,14 +23,25 @@ interface CommunityFolderData extends FolderData {
     }
 }
 
-async function setActiveFolder(userId: string, folderId: string, folderCategory: CollectionOptionTypes){
+// This is an asynchronous function that sets the active folder for a user.
+async function setUserActiveFolder(userId: string, folderId: string, folderCategory: CollectionOptionTypes, activeItemIdx?: number){
+    // Create a reference to the user's document in the Firestore database.
     const userRef = doc(firestoreDB, "users", userId)
 
     try{
-        await updateDoc(userRef, {activeFolder: { folderId, folderCategory}})
+        // If an active item index is provided...
+        if(activeItemIdx !== undefined && activeItemIdx !== null){
+            // Update the user's document with the new active folder and the active item index.
+            await updateDoc(userRef, {activeFolder: { folderId, folderCategory, activeFolderItemIdx: activeItemIdx}})
+        }else{
+            // If no active item index is provided, update the user's document with the new active folder only.
+            await updateDoc(userRef, {activeFolder: { folderId, folderCategory}})
+        }
+        // Return the folder ID and category.
         return {folderId, folderCategory}
 
     }catch(err){
+        // If an error occurs, display a toast notification with an error message.
         errorToast("An Error occured while updating this folder item. Please try again later.")
     }
 }
@@ -48,7 +60,7 @@ function removeActiveFolder(userId: string){
 export async function uploadFolder (userId: string, folderData: FolderData, active: boolean): Promise<void> {
     try {
        const response = await addDoc(collection(firestoreDB, "users", userId, "folders"), {...folderData, items: 0});
-        if(active) setActiveFolder(userId, response.id, "personal")
+        if(active) setUserActiveFolder(userId, response.id, "personal", folderData.activeFolderItemIdx)
     } catch (error) {
         errorToast("An Error Occurred while creating your folder. Please try again later.")
     }
@@ -72,7 +84,7 @@ export function editFolder(userId: string, folderId: string, folderData: {[key: 
         // do not change the active state it is null
         if(active === null) return
         // if active is true, set the folder as the user's active folder
-        if(active) setActiveFolder(userId, folderId, "personal")
+        if(active) setUserActiveFolder(userId, folderId, "personal", folderData.activeFolderItemIdx)
         // if active is false, remove the folder as the user's active folder
         else if(!active) removeActiveFolder(userId)
     })
@@ -158,7 +170,7 @@ export async function unLikeFolder(folderId: string, userId: string) {
     }
 }
 
-export async function activateFolder(userId: string, folderId: string, previousFolder?: ActiveFolderProps | null){
+export async function activateFolder(userId: string, folderId: string, activeFolderItemIdx: number, previousFolder?: ActiveFolderProps | null){
     // reference the community folder
     const communityFolderRef = doc(firestoreDB, "community", folderId)
     
@@ -171,7 +183,7 @@ export async function activateFolder(userId: string, folderId: string, previousF
     }
 
     // make that new folder the user's active folder
-     await setActiveFolder(userId, folderId, "community")
+     await setUserActiveFolder(userId, folderId, "community", activeFolderItemIdx)
 
     // update the likes activeCount array to include the user
     await updateDoc(communityFolderRef, {

@@ -29,6 +29,7 @@ export interface FolderProps {
     mode: CollectionOptionTypes
     dateCreated: Timestamp
     interval: string
+    activeFolderItemIdx: number
 }
 
 export interface FolderPropsWithActive extends FolderProps {

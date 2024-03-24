@@ -10,7 +10,7 @@ import { firestoreDB } from 'firebaseConfig';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
-import { sortOptions } from 'settings';
+import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX, sortOptions } from 'settings';
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer';
 import { HomeStackParamList } from 'type';
 import GoalActionItem from '../../../components/Home/GoalActionItem';
@@ -20,7 +20,7 @@ import CustomBottomSheetModal from '../../../components/common/CustomBottomSheet
 import HeaderContent, { Header } from './HomeDrawerLayout';
 import { useAuthStore } from 'store/authStore';
 import { activateFolder, deActivateFolder, deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
-import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook';
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, 'HomeDrawer'>;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Community'>;
@@ -38,7 +38,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 	const [filterLiked, setFilterLiked] = useState(false);
 
 	const userId = useAuthStore((state) => state.user?.uid);
-	const activeFolder = useActiveFolderId(userId);
+	const activeFolder = useActiveFolder(userId);
 
 	const scrollY = useSharedValue(0);
 
@@ -136,7 +136,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		if (!resFolderId) return;
 		if (!userId) return;
 
-		resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId, activeFolder);
+		resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId,DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
 	}
 
 	function handleLikeCollection(folderId?: string, liked?: boolean) {
@@ -152,7 +152,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 	}
 
 	function handleGoalPress(goal: FirestoreCommunityFolderProps) {
-		navigation.navigate('Goal', { folder: goal });
+		navigation.navigate('Goal', { folder: (goal as CustomCommunityFolderProps) });
 	}
 
 	function handleFolderEdit() {
@@ -202,20 +202,19 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 						<GoalActionItem 
 							onPress={handleLikeCollection} 
 							icon={(color, size) => <MaterialIcons name="favorite" size={size} color={customColors.accent} />} 
-							label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'} 
-							selectedFolder={selectedFolder.id} />
+							label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'}  />
 
 						<GoalActionItem 
 							onPress={handleActiveFolder} 
 							icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />} 
 							label="Use Collection" 
-							selectedFolder={selectedFolder.id} />
+						/>
 							
 						{selectedFolder?.user.id === userId && (
 							<>
-								<GoalActionItem onPress={handleFolderEdit} icon="edit" label="Edit" selectedFolder={selectedFolder} />
+								<GoalActionItem onPress={handleFolderEdit} icon="edit" label="Edit"  />
 
-								<GoalActionItem onPress={handleFolderDelete} icon="delete" label="Delete" selectedFolder={selectedFolder} danger />
+								<GoalActionItem onPress={handleFolderDelete} icon="delete" label="Delete" danger />
 							</>
 						)}
 					</View>

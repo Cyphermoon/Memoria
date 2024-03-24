@@ -12,7 +12,7 @@ import { View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer'
-import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
 import { useAuthStore } from 'store/authStore'
 
 //TODO: Add interaction functionalities to this screen (edit, delete, like, unlike, etc)
@@ -24,7 +24,7 @@ const ActiveCollectionScreen = ({ navigation }: Props) => {
     const bottomTabBar = useBottomTabBarHeight()
 
     const userId = useAuthStore(state => state.user?.uid)
-    const activeFolder = useActiveFolderId(userId)
+    const activeFolder = useActiveFolder(userId)
     const isFocused = useIsFocused()
     const [likedFolder, setLikedFolder] = useState<FolderProps | CustomCommunityFolderProps | null>()
 

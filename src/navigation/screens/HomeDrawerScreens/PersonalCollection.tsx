@@ -19,10 +19,11 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
-import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook';
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 import { deleteFolder } from 'src/util/HomeDrawer/index.utll';
 import { useAuthStore } from 'store/authStore';
 import HeaderContent, { Header } from './HomeDrawerLayout';
+import Touchable from '@components/common/Touchable';
 
 // Screen Types
 type HomeScreenNavigationProp = NavigationProp<
@@ -49,7 +50,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
   );
 
   const scrollY = useSharedValue(0);
-  const activeFolder = useActiveFolderId(userId);
+  const activeFolder = useActiveFolder(userId);
 
   const scrollHandler = useAnimatedScrollHandler({
     // update scrollY value as user scrolls
@@ -139,6 +140,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
       folder: {
         ...selectedFolder,
         active: activeFolder?.folderId === selectedFolder?.id,
+        activeFolderItemIdx: selectedFolder?.activeFolderItemIdx ?? 0,
       },
     });
     handleClosePress();
@@ -147,6 +149,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
   function handleGoalPress(goal: FolderProps) {
     navigation.navigate('Goal', { folder: goal });
   }
+
 
   return (
     <View className="flex-grow bg-primary relative">
@@ -205,14 +208,14 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
               onPress={handleGoalEdit}
               icon="edit"
               label="Edit"
-              selectedFolder={selectedFolder}
+              // selectedFolder={selectedFolder}
             />
 
             <GoalActionItem
               onPress={handleGoalDelete}
               icon="delete"
               label="Delete"
-              selectedFolder={selectedFolder}
+              // selectedFolder={selectedFolder}
               danger
             />
           </View>

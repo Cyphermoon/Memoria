@@ -16,7 +16,7 @@ import { NavigationProp, RouteProp } from '@react-navigation/native'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { uploadFolderItem, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
 import { useAuthStore } from 'store/authStore'
-import { useActiveFolderId } from 'src/util/HomeDrawer/index.hook'
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
 import { AddFolderItemProps, ImageUploadType } from 'src/util/HomeDrawer/type'
 import { Timestamp, serverTimestamp } from 'firebase/firestore'
 import { successToast } from 'src/util/toast.util'
@@ -37,7 +37,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
     const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
 
     const userId = useAuthStore(state => state.user?.uid)
-    const activeFolder = useActiveFolderId(userId)
+    const activeFolder = useActiveFolder(userId)
 
 
     function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
