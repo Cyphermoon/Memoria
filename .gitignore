@@ -33,3 +33,10 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# native directories
+ios
+android
+
+# Eas
+eas.json
