@@ -1,6 +1,11 @@
 import BackgroundFetch, { HeadlessEvent } from 'react-native-background-fetch';
 import { setAndroidWallpaper } from '../wallpaper.util';
-import { getActiveFolderItemImageURL } from './firestore.util';
+import { getActiveFolderItemImageURL, updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from './firestore.util';
+import { CollectionOptionTypes, FolderProps } from '@components/Home/type';
+import { ActiveFolderProps, useAuthStore } from 'store/authStore';
+import { Platform } from 'react-native';
+import colors from 'colors';
+import { errorToast, neutralToast } from '../toast.util';
 
 
 // This function is used to compute the fetch interval based on the given interval
@@ -115,6 +120,52 @@ export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'w
 		case BackgroundFetch.STATUS_AVAILABLE:
 			console.log("BackgroundFetch is enabled");
 			break;
+	}
+}
+
+
+/**
+ * This function handles the update of the Android wallpaper based on the active folder.
+ * It checks if the provided folder is the active one and if the platform is Android.
+ * If these conditions are met, it updates the wallpaper and notifies the user.
+ * If the folder is not active, it prompts the user to make it active.
+ * Any errors during the process are caught and logged, and the user is notified.
+ */
+export async function handleAndroidWallpaperActive(isActive: boolean, folderId?: string, category: CollectionOptionTypes = 'personal') {
+
+	try {
+		if (!isActive) {
+			neutralToast('Please make a folder active', colors.primary[300])
+			return
+		}
+		// Check if the provided folder is the active one
+
+		// If the platform is Android and the folder is active
+		if (Platform.OS === 'android' && isActive) {
+			const userId = useAuthStore.getState().user?.uid;
+
+			// Notify the user that the wallpaper is being updated
+			neutralToast('Updating wallpaper')
+
+			// Update the wallpaper
+			await setWallpaperFromActiveFolder();
+
+			// If the folder has an ID and a user ID, update the folder and the active folder
+			if (folderId && userId) {
+				category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
+				category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
+			}
+
+			// Notify the user that the wallpaper has been changed
+			neutralToast('Wallpaper Set Successfully')
+		} else if (Platform.OS === 'android' && !isActive) {
+			// If the folder is not active, prompt the user to make it active
+			neutralToast('Please make the folder active')
+		}
+	} catch (error) {
+		// If an error occurs, log it and notify the user
+		console.error(error);
+		errorToast('An error occurred. Please try again later.');
 	}
 }
 

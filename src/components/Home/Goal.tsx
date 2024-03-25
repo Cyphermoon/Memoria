@@ -17,7 +17,7 @@ interface Props {
   fullWidth?: boolean
 }
 
-const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, active, fullWidth }: Props) => {
+const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, active, fullWidth, onLongPress }: Props) => {
 
   const { width } = useWindowDimensions()
 
@@ -34,7 +34,17 @@ const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, act
 
       <TouchableOpacity
         onPress={() => onPress(selectedFolder)}
-        onLongPress={() => onMoreDetailsPress && onMoreDetailsPress(selectedFolder)}>
+        onLongPress={() => {
+          if (onLongPress) {
+            onLongPress(selectedFolder)
+            return
+          }
+
+          if (onMoreDetailsPress) {
+            onMoreDetailsPress(selectedFolder)
+            return
+          }
+        }}>
         <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
           {selectedFolder.name}
         </Text>

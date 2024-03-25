@@ -15,7 +15,7 @@ import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
 import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
-import { configureAndScheduleBackgroundFetch, setWallpaperFromActiveFolder } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { configureAndScheduleBackgroundFetch, handleAndroidWallpaperActive, setWallpaperFromActiveFolder } from 'src/util/changeWallpaperBackgroundTask/index.util';
 import { updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from 'src/util/changeWallpaperBackgroundTask/firestore.util';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
@@ -79,6 +79,9 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			route.params.folder?.id && await updateFolderAndActiveFolder(1, route.params.folder.id);
 		}
 
+		// change the user wallpaper if the folder is active
+		handleAndroidWallpaperActive(isActive, route.params.folder?.id)
+
 	}
 
 	async function addCommunityCollection(userId: string) {
@@ -114,12 +117,9 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			await editCommunityFolder(id, data, isActive);
 		}
 
-		// update user wallpaper if the folder is active
-		if (Platform.OS === 'android' && isActive) {
-			// configureAndScheduleBackgroundFetch('daily');
-			await setWallpaperFromActiveFolder();
-			route.params.folder?.id && await updateUserActiveFolderItemIdx(userId, 1);
-		}
+		// change the user wallpaper if the folder is active
+		handleAndroidWallpaperActive(isActive, route.params.folder?.id, "community")
+
 	}
 
 	function handleCollection() {

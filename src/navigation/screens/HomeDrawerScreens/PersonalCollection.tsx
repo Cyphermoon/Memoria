@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { sortOptions } from 'settings';
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer';
 import { HomeStackParamList } from 'type';
@@ -23,6 +23,10 @@ import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 import { deleteFolder } from 'src/util/HomeDrawer/index.utll';
 import { useAuthStore } from 'store/authStore';
 import HeaderContent, { Header } from './HomeDrawerLayout';
+import { handleAndroidWallpaperActive, setWallpaperFromActiveFolder } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { updateFolderAndActiveFolder } from 'src/util/changeWallpaperBackgroundTask/firestore.util';
+import { errorToast, neutralToast } from 'src/util/toast.util';
+import colors from 'colors';
 
 // Screen Types
 type HomeScreenNavigationProp = NavigationProp<
@@ -145,6 +149,11 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     handleClosePress();
   }
 
+  async function handleLongPress(folder: FolderProps) {
+    // Set the user's wallpaper to the current folder Item
+    handleAndroidWallpaperActive(activeFolder?.folderId === folder?.id, folder.id)
+  }
+
   function handleGoalPress(goal: FolderProps) {
     navigation.navigate('Goal', { folder: goal });
   }
@@ -182,6 +191,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
                   active={item.id === activeFolder?.folderId}
                   onPress={handleGoalPress}
                   onMoreDetailsPress={handleMoreDetailsPress}
+                  onLongPress={handleLongPress}
                 />
               </View>
             );

@@ -188,7 +188,14 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 					ListHeaderComponent={() => <HeaderContent navigationTitle="Community Collection" handleSortPress={handleSortPress} handleLikedFilter={setFilterLiked} filterLiked={filterLiked} currentSortOption={currentSortOption} marginBottom={36} />}
 					renderItem={({ item }) => (
 						<View className="px-3 mb-7">
-							<CommunityGoal folder={item} active={activeFolder !== null && activeFolder?.folderId === item.id} liked={userId && item.likes ? [...item.likes].includes(userId) : false} onPress={handleGoalPress} onMoreDetailsPress={handleMoreDetailsPress} handleLike={handleLikeCollection} handleActiveFolder={handleActiveFolder} />
+							<CommunityGoal
+								folder={item}
+								active={activeFolder !== null && activeFolder?.folderId === item.id}
+								liked={userId && item.likes ? [...item.likes].includes(userId) : false}
+								onPress={handleGoalPress}
+								onMoreDetailsPress={handleMoreDetailsPress}
+								handleLike={handleLikeCollection}
+								handleActiveFolder={handleActiveFolder} />
 						</View>
 					)}
 				/>
