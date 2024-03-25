@@ -69,17 +69,10 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 				},
 				isActive
 			);
-
-			// Set the user wallpaper to the active item image if it is active
-		}
-
-		if (Platform.OS === 'android' && isActive) {
-			// configureAndScheduleBackgroundFetch('daily');
-			await setWallpaperFromActiveFolder();
-			route.params.folder?.id && await updateFolderAndActiveFolder(1, route.params.folder.id);
 		}
 
 		// change the user wallpaper if the folder is active
+		// configureAndScheduleBackgroundFetch('daily');
 		handleAndroidWallpaperActive(isActive, route.params.folder?.id)
 
 	}

@@ -21,6 +21,7 @@ import HeaderContent, { Header } from './HomeDrawerLayout';
 import { useAuthStore } from 'store/authStore';
 import { activateFolder, deActivateFolder, deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
+import { handleAndroidWallpaperActive } from 'src/util/changeWallpaperBackgroundTask/index.util';
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, 'HomeDrawer'>;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Community'>;
@@ -129,14 +130,19 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		handleOpenPress();
 	}
 
-	function handleActiveFolder(folderId?: string, isActive?: boolean) {
+	async function handleActiveFolder(folderId?: string, isActive?: boolean) {
 		const resFolderId = folderId || selectedFolder?.id;
 		const resActive = isActive !== undefined ? isActive : selectedFolder?.active;
 
 		if (!resFolderId) return;
 		if (!userId) return;
 
-		resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
+		if (resActive) {
+			deActivateFolder(userId, resFolderId);
+		} else {
+			await activateFolder(userId, resFolderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
+			handleAndroidWallpaperActive(true, resFolderId, 'community')
+		}
 	}
 
 	function handleLikeCollection(folderId?: string, liked?: boolean) {
