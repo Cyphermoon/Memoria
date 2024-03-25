@@ -5,20 +5,20 @@ import { CollectionOptionTypes, CustomCommunityFolderProps, FirestoreCommunityFo
 import { FolderItemProps } from "src/util/HomeDrawer/type";
 
 export type HomeStackParamList = {
-    HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
-    AddCollection: {mode: "personal", folder?:FolderPropsWithActive} | {mode: "community", folder?:FirestoreCommunityFolderProps}
-    Goal: {folder: CustomCommunityFolderProps | FolderProps}
-    GoalSlideShow: { currentId: string, goals: FolderItemProps[] }
-    NewGoalItem: {folder?: {id: string, type: CollectionOptionTypes}, unsplashImage?: UnsplashResult}
-    EditGoalItem: {goalItem: FolderItemProps}
-    UnSplashModal: undefined
-  };
+  HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
+  AddCollection: { mode: "personal", folder?: FolderPropsWithActive } | { mode: "community", folder?: CustomCommunityFolderProps }
+  Goal: { folder: CustomCommunityFolderProps | FolderProps }
+  GoalSlideShow: { currentId: string, goals: FolderItemProps[] }
+  NewGoalItem: { folder?: { id: string, type: CollectionOptionTypes }, unsplashImage?: UnsplashResult }
+  EditGoalItem: { goalItem: FolderItemProps }
+  UnSplashModal: undefined
+};
 
-  export type AuthStackParamList = {
-    onBoarding: undefined
-    Splash: undefined
-    Auth: undefined
-    Login: undefined
+export type AuthStackParamList = {
+  onBoarding: undefined
+  Splash: undefined
+  Auth: undefined
+  Login: undefined
 }
 
 export type RootStackParamList = {

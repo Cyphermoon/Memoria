@@ -73,8 +73,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 
 	useEffect(() => {
 		/*
-            Get the community collection in real-time from firestore while simoultaneously sorting the array
-        */
+			Get the community collection in real-time from firestore while simoultaneously sorting the array
+		*/
 		const firebaseValueMap = {
 			name_desc: 'name',
 			date_desc: 'dateCreated',
@@ -136,7 +136,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		if (!resFolderId) return;
 		if (!userId) return;
 
-		resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId,DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
+		resActive ? deActivateFolder(userId, resFolderId) : activateFolder(userId, resFolderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
 	}
 
 	function handleLikeCollection(folderId?: string, liked?: boolean) {
@@ -159,7 +159,10 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		if (!selectedFolder) return;
 		navigation.navigate('AddCollection', {
 			mode: 'community',
-			folder: selectedFolder,
+			folder: {
+				...selectedFolder,
+				active: activeFolder?.folderId === selectedFolder?.id,
+			},
 		});
 		handleClosePress();
 	}
@@ -199,20 +202,20 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 			<CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text="Community Folder Actions">
 				{selectedFolder && (
 					<View>
-						<GoalActionItem 
-							onPress={handleLikeCollection} 
-							icon={(color, size) => <MaterialIcons name="favorite" size={size} color={customColors.accent} />} 
-							label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'}  />
+						<GoalActionItem
+							onPress={handleLikeCollection}
+							icon={(color, size) => <MaterialIcons name="favorite" size={size} color={customColors.accent} />}
+							label={selectedFolder.liked ? 'Unlike Collection' : 'Like Collection'} />
 
-						<GoalActionItem 
-							onPress={handleActiveFolder} 
-							icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />} 
-							label="Use Collection" 
+						<GoalActionItem
+							onPress={handleActiveFolder}
+							icon={(color, size) => <Fontisto name="radio-btn-active" size={size} color={color} />}
+							label="Use Collection"
 						/>
-							
+
 						{selectedFolder?.user.id === userId && (
 							<>
-								<GoalActionItem onPress={handleFolderEdit} icon="edit" label="Edit"  />
+								<GoalActionItem onPress={handleFolderEdit} icon="edit" label="Edit" />
 
 								<GoalActionItem onPress={handleFolderDelete} icon="delete" label="Delete" danger />
 							</>

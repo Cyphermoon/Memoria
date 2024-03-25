@@ -23,7 +23,6 @@ import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 import { deleteFolder } from 'src/util/HomeDrawer/index.utll';
 import { useAuthStore } from 'store/authStore';
 import HeaderContent, { Header } from './HomeDrawerLayout';
-import Touchable from '@components/common/Touchable';
 
 // Screen Types
 type HomeScreenNavigationProp = NavigationProp<
@@ -85,28 +84,28 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     setFolders((prevFolders) => {
       return prevFolders
         ? [...prevFolders].sort((a, b) => {
-            switch (currentSortOption.id) {
-              case 'name_desc':
-                // Sort by name
-                return b.name.localeCompare(a.name);
-              case 'date_desc':
-                // Sort by date
-                if (a.dateCreated && b.dateCreated) {
-                  return (
-                    b.dateCreated.toDate().getTime() -
-                    a.dateCreated.toDate().getTime()
-                  );
-                } else {
-                  return 0;
-                }
-              case 'size_desc':
-                // Sort by size
-                return b.items - a.items;
-              default:
-                // If no sort option is selected, don't change the order
+          switch (currentSortOption.id) {
+            case 'name_desc':
+              // Sort by name
+              return b.name.localeCompare(a.name);
+            case 'date_desc':
+              // Sort by date
+              if (a.dateCreated && b.dateCreated) {
+                return (
+                  b.dateCreated.toDate().getTime() -
+                  a.dateCreated.toDate().getTime()
+                );
+              } else {
                 return 0;
-            }
-          })
+              }
+            case 'size_desc':
+              // Sort by size
+              return b.items - a.items;
+            default:
+              // If no sort option is selected, don't change the order
+              return 0;
+          }
+        })
         : null;
     });
   }, [currentSortOption]); // Re-run this effect whenever the sort option changes
@@ -140,7 +139,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
       folder: {
         ...selectedFolder,
         active: activeFolder?.folderId === selectedFolder?.id,
-        activeFolderItemIdx: selectedFolder?.activeFolderItemIdx ?? 0,
+        activeFolderItemIdx: selectedFolder?.activeFolderItemIdx,
       },
     });
     handleClosePress();
@@ -150,7 +149,6 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     navigation.navigate('Goal', { folder: goal });
   }
 
-
   return (
     <View className="flex-grow bg-primary relative">
       <Header
@@ -159,7 +157,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
         openDrawer={() => drawerNavigation.openDrawer()}
       />
 
-      {folders !== null ? (
+      {folders && folders?.length > 0 ? (
         <Animated.FlatList
           data={folders}
           keyExtractor={(item) => item.id.toString()}
@@ -176,16 +174,18 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
               currentSortOption={currentSortOption}
             />
           )}
-          renderItem={({ item }) => (
-            <View className="w-1/2 p-2">
-              <Goal
-                selectedFolder={item}
-                active={item.id === activeFolder?.folderId}
-                onPress={handleGoalPress}
-                onMoreDetailsPress={handleMoreDetailsPress}
-              />
-            </View>
-          )}
+          renderItem={({ item }) => {
+            return (
+              <View className="w-1/2 p-2">
+                <Goal
+                  selectedFolder={item}
+                  active={item.id === activeFolder?.folderId}
+                  onPress={handleGoalPress}
+                  onMoreDetailsPress={handleMoreDetailsPress}
+                />
+              </View>
+            );
+          }}
         />
       ) : (
         <View>
@@ -208,7 +208,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
               onPress={handleGoalEdit}
               icon="edit"
               label="Edit"
-              // selectedFolder={selectedFolder}
+            // selectedFolder={selectedFolder}
             />
 
             <GoalActionItem

@@ -7733,6 +7733,11 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-background-fetch@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-background-fetch/-/react-native-background-fetch-4.2.3.tgz#d952613afccbc64bc33f17ff402baa1540133d2a"
+  integrity sha512-JC20TejQZfQk5DueXwK/HPpJNB7WZ3rMmyzHVKF+F14vHKf/RzUMJf3q8WXZ4rs5iPiHjbMkadwXGAPWYe5g6w==
+
 react-native-gesture-handler@~2.14.0:
   version "2.14.1"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.14.1.tgz"

@@ -1,29 +1,13 @@
 import PublishCollectionModeSelector from '@components/Home/PublishCollectionModeSelector';
-import {
-	FirestoreCommunityFolderProps,
-	FolderPropsWithActive,
-	SelectedCollectionModeProps,
-} from '@components/Home/type';
+import { FirestoreCommunityFolderProps, FolderPropsWithActive, SelectedCollectionModeProps } from '@components/Home/type';
 import { FontAwesome } from '@expo/vector-icons';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { serverTimestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import {
-	Keyboard,
-	Switch,
-	TextInput,
-	TouchableOpacity,
-	TouchableWithoutFeedback,
-	View,
-} from 'react-native';
+import { Keyboard, Platform, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-	editCommunityFolder,
-	editFolder,
-	uploadCommunityFolder,
-	uploadFolder,
-} from 'src/util/HomeDrawer/index.utll';
+import { editCommunityFolder, editFolder, uploadCommunityFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
 import { useAuthStore } from 'store/authStore';
 import colors from 'tailwindcss/colors';
 import customColors from '../../../../../colors';
@@ -31,6 +15,8 @@ import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
 import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
+import { configureAndScheduleBackgroundFetch, setWallpaperFromActiveFolder } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from 'src/util/changeWallpaperBackgroundTask/firestore.util';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
@@ -72,26 +58,33 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 				isActive
 			);
 		} else {
+			await editFolder(
+				userId,
+				route.params.folder.id,
+				{
+					mode: selectedMode.value,
+					name: folderName,
+					activeFolderItemIdx: (route.params?.folder as FolderPropsWithActive)
+						?.activeFolderItemIdx,
+				},
+				isActive
+			);
 
-			editFolder(
-                userId,
-                route.params.folder.id,
-                {
-                    mode: selectedMode.value,
-                    name: folderName,
-                    activeFolderItemIdx: (route.params?.folder as FolderPropsWithActive)?.activeFolderItemIdx,
-                },
-                isActive
-            );
+			// Set the user wallpaper to the active item image if it is active
 		}
 
-		// Set the user wallpaper to the active item image if it is active
+		if (Platform.OS === 'android' && isActive) {
+			// configureAndScheduleBackgroundFetch('daily');
+			await setWallpaperFromActiveFolder();
+			route.params.folder?.id && await updateFolderAndActiveFolder(1, route.params.folder.id);
+		}
+
 	}
 
 	async function addCommunityCollection(userId: string) {
 		// Create a new community folder if no existing folder is provided
 		if (!route.params.folder && userName) {
-			uploadCommunityFolder({
+			await uploadCommunityFolder({
 				mode: selectedMode.value,
 				name: folderName,
 				dateCreated: serverTimestamp(),
@@ -118,7 +111,14 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 				user: rest.user,
 				likes: rest.likes,
 			};
-			editCommunityFolder(id, data);
+			await editCommunityFolder(id, data, isActive);
+		}
+
+		// update user wallpaper if the folder is active
+		if (Platform.OS === 'android' && isActive) {
+			// configureAndScheduleBackgroundFetch('daily');
+			await setWallpaperFromActiveFolder();
+			route.params.folder?.id && await updateUserActiveFolderItemIdx(userId, 1);
 		}
 	}
 
@@ -151,9 +151,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 		if (route.params.folder) {
 			setFolderName(route.params.folder.name);
 
-			// set active to the param value
-			route.params.mode === 'personal' &&
-				setIsActive(route.params.folder.active);
+			setIsActive(route.params.folder.active);
 
 			// set mode to the param value
 			if (route.params.folder.mode === 'personal') {
