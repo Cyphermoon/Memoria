@@ -31,10 +31,16 @@ export async function setWallpaperFromActiveFolder() {
 	// Get the active folder item image URL
 	const folderItem = await getActiveFolderItemImageURL();
 
+	if (!folderItem) {
+		// If the folder item does not exist, notify the user and return null
+		errorToast('No active folder item found');
+		return null;
+	}
+
 	// If the folder item exists, set the Android wallpaper to the folder item image
 	const res = folderItem?.folderItem && await setAndroidWallpaper(folderItem?.folderItem?.image.secure_url);
 
-	return res;
+	return folderItem;
 }
 
 /**
@@ -58,7 +64,15 @@ export async function getActiveFolderURLAndSetAndroidWallpaper(event: HeadlessEv
 		console.log('[BackgroundFetch HeadlessTask] start: ', taskId);
 
 		// Call the extracted function
-		await setWallpaperFromActiveFolder();
+		const folder = await setWallpaperFromActiveFolder();
+
+		if (folder && folder.folderId) {
+			// If the folder has an ID, update the folder and the active folder
+			folder.folderCategory === "personal" && updateFolderAndActiveFolder(1, folder?.folderId);
+
+			folder.folderCategory === "community" && updateUserActiveFolderItemIdx(folder?.folderId, 1);
+		}
+
 
 		// Finish the task
 		BackgroundFetch.finish(taskId);
@@ -82,7 +96,7 @@ export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'w
 
 	// Configure the background fetch
 	BackgroundFetch.configure({
-		minimumFetchInterval: fetchInterval, // Fetch interval in minutes
+		minimumFetchInterval: 15, // Fetch interval in minutes
 		stopOnTerminate: false,   // Android only
 		startOnBoot: true,        // Android only
 		enableHeadless: true,     // Enable headless mode
@@ -120,6 +134,17 @@ export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'w
 		case BackgroundFetch.STATUS_AVAILABLE:
 			console.log("BackgroundFetch is enabled");
 			break;
+	}
+}
+
+/**
+ * This function stops all running background fetch tasks.
+ */
+export async function stopBackgroundFetch() {
+	try {
+		await BackgroundFetch.stop();
+	} catch (error) {
+		console.error("Failed to stop BackgroundFetch", error);
 	}
 }
 

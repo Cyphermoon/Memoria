@@ -1,6 +1,6 @@
 import { Entypo } from '@expo/vector-icons';
 import customColors from 'colors';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import colors from 'tailwindcss/colors';
 import { plural } from '../../util';

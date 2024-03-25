@@ -13,7 +13,7 @@ import BackgroundFetch from 'react-native-background-fetch';
 import { getActiveFolderURLAndSetAndroidWallpaper } from 'src/util/changeWallpaperBackgroundTask/index.util';
 
 // Register headless task
-// BackgroundFetch.registerHeadlessTask(getActiveFolderURLAndSetAndroidWallpaper)
+BackgroundFetch.registerHeadlessTask(getActiveFolderURLAndSetAndroidWallpaper)
 
 // Creating a navigation stack
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';

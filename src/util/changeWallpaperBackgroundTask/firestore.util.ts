@@ -11,6 +11,7 @@ export type ActiveFolderAndItemResponse = {
     folderCategory?: CollectionOptionTypes | null;
     folderIdx?: number | null;
     folderItemsLength?: number | null;
+    folderId?: string | null;
 }
 
 // Firestore
@@ -215,7 +216,8 @@ export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItem
             folderItem: currentFolderItem,
             folderCategory: activeFolder?.folderCategory,
             folderIdx: activeFolderIdx,
-            folderItemsLength: folderItems.length
+            folderItemsLength: folderItems.length,
+            folderId: activeFolder.folderId
         };
     } catch (err) {
         // If an error occurs, log the error and return null

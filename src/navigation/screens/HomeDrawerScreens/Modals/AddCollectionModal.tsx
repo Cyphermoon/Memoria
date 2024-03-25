@@ -5,18 +5,17 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { serverTimestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Platform, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
 import { editCommunityFolder, editFolder, uploadCommunityFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
+import { configureAndScheduleBackgroundFetch, handleAndroidWallpaperActive, stopBackgroundFetch } from 'src/util/changeWallpaperBackgroundTask/index.util';
 import { useAuthStore } from 'store/authStore';
 import colors from 'tailwindcss/colors';
 import customColors from '../../../../../colors';
 import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
-import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
-import { configureAndScheduleBackgroundFetch, handleAndroidWallpaperActive, setWallpaperFromActiveFolder } from 'src/util/changeWallpaperBackgroundTask/index.util';
-import { updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from 'src/util/changeWallpaperBackgroundTask/firestore.util';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
@@ -72,8 +71,8 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 		}
 
 		// change the user wallpaper if the folder is active
-		// configureAndScheduleBackgroundFetch('daily');
-		handleAndroidWallpaperActive(isActive, route.params.folder?.id)
+		stopBackgroundFetch();
+		configureAndScheduleBackgroundFetch('daily');
 
 	}
 
