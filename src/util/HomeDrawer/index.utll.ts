@@ -47,11 +47,18 @@ async function setUserActiveFolder(userId: string, folderId: string, folderCateg
 }
 
 
+/**
+ * This function removes the active folder for a specified user in Firestore. 
+ * It sets the 'activeFolder' field of the user document to null.
+ */
 function removeActiveFolder(userId: string) {
+    // Get a reference to the user's document in Firestore
     const userRef = doc(firestoreDB, "users", userId)
 
+    // Update the 'activeFolder' field of the user document to null
     updateDoc(userRef, { activeFolder: null })
         .catch(() => {
+            // If an error occurs during the update, display an error toast
             errorToast("An Error occured while updating this folder item. Please try again later.")
         })
 }
@@ -162,7 +169,6 @@ export async function handleSortChanged(sortOption: SortOptionProp, userId?: str
         });
     }
 };
-
 
 // Function to like a post
 export async function likeFolder(folderId: string, userId: string) {
