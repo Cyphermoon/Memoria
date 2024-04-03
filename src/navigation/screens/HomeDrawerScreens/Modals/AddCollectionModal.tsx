@@ -42,8 +42,17 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 		setIsActive((active) => !active);
 	}
 
+	/**
+	 * This function adds a personal collection for a user.
+	 * If a folder is provided in the route parameters, it edits the existing folder.
+	 * Otherwise, it creates a new folder.
+	 * After the folder is created or edited, it stops any running background fetch tasks
+	 * and schedules a new one to run daily.
+	 *
+	 * @param {string} userId - The ID of the user for whom to add the personal collection.
+	 */
 	async function addPersonalCollection(userId: string) {
-		// create/edit the user personal folder in firestore
+		// If a folder is not provided in the route parameters, create a new folder
 		if (!route.params.folder) {
 			await uploadFolder(
 				userId,
@@ -57,6 +66,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 				isActive
 			);
 		} else {
+			// If a folder is provided in the route parameters, edit the existing folder
 			await editFolder(
 				userId,
 				route.params.folder.id,
@@ -70,10 +80,11 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			);
 		}
 
-		// change the user wallpaper if the folder is active
+		// Stop any running background fetch tasks
 		stopBackgroundFetch();
-		configureAndScheduleBackgroundFetch('daily');
 
+		// Schedule a new background fetch task to run daily
+		configureAndScheduleBackgroundFetch('daily');
 	}
 
 	async function addCommunityCollection(userId: string) {
