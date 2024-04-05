@@ -3,7 +3,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { Linking, View } from 'react-native';
+import { Linking, Platform, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStackNavigator from 'src/navigation/StackNavigator/RootStackNavigator';
@@ -12,8 +12,13 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 import BackgroundFetch from 'react-native-background-fetch';
 import { getActiveFolderURLAndSetAndroidWallpaper } from 'src/util/changeWallpaperBackgroundTask/index.util';
 
-// Register headless task
-BackgroundFetch.registerHeadlessTask(getActiveFolderURLAndSetAndroidWallpaper)
+if (Platform.OS === 'android') {
+	// Register background task
+	BackgroundFetch.registerHeadlessTask(getActiveFolderURLAndSetAndroidWallpaper)
+
+}
+
+
 
 // Creating a navigation stack
 const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';

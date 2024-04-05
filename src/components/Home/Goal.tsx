@@ -19,7 +19,7 @@ interface Props {
 
 const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, active, fullWidth, onLongPress }: Props) => {
 
-  const { width } = useWindowDimensions()
+  // console.log("active:", active, "Name:", selectedFolder.name, "Items:", selectedFolder.items)
 
   return (
     <View
