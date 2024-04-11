@@ -307,20 +307,22 @@ const GoalScreen = ({ route, navigation }: Props) => {
             <View className='flex-row justify-between items-center mb-8 mt-6'>
                 <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
 
-                <View className='flex flex-row items-center space-x-6'>
-                    <TouchableOpacity onPress={handlePreviousWallpaper}>
-                        <AntDesign name="stepbackward" size={24} color={customColors.secondary} />
-                    </TouchableOpacity>
+                {route.params.isActive &&
+                    <View className='flex flex-row items-center space-x-6'>
+                        <TouchableOpacity onPress={handlePreviousWallpaper}>
+                            <AntDesign name="stepbackward" size={24} color={customColors.secondary} />
+                        </TouchableOpacity>
 
-                    <TouchableOpacity onPress={syncWallpaper}>
-                        <AntDesign name="sync" size={24} color={customColors.secondary} />
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={syncWallpaper}>
+                            <AntDesign name="sync" size={24} color={customColors.secondary} />
+                        </TouchableOpacity>
 
-                    <TouchableOpacity onPress={handleNextWallpaper}>
-                        <AntDesign name="stepforward" size={24} color={customColors.secondary} />
-                    </TouchableOpacity>
+                        <TouchableOpacity onPress={handleNextWallpaper}>
+                            <AntDesign name="stepforward" size={24} color={customColors.secondary} />
+                        </TouchableOpacity>
 
-                </View>
+                    </View>
+                }
             </View>
 
 
@@ -349,7 +351,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                                     id={item.id}
                                     name={item.description}
                                     image={item.image}
-                                    active={index === activeFolderItemIdx}
+                                    active={route.params.isActive && index === activeFolderItemIdx}
                                     onDelete={handleDelete}
                                     onFullscreen={handleFullscreen}
                                     onEdit={handleEdit} />

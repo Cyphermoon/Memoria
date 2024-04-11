@@ -131,7 +131,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 
 		if (Platform.OS === 'android') {
 			// change the user wallpaper if the folder is active
-			NonHeadlessAndroidWallpaperUpdateChange(isActive, route.params.folder?.id, "community")
+			NonHeadlessAndroidWallpaperUpdateChange(isActive, route.params.folder?.id, true, "community")
 		} else {
 			console.log("Shortcut loading on IOS........ on add collection modal community")
 		}

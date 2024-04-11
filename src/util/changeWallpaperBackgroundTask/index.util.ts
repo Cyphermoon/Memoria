@@ -1,6 +1,6 @@
 import BackgroundFetch, { HeadlessEvent } from 'react-native-background-fetch';
 import { setAndroidWallpaper } from '../wallpaper.util';
-import { getActiveFolderItemImageURL, updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from './firestore.util';
+import { ActiveFolderAndItemResponse, getActiveFolderItemImageURL, getUserActiveFolder, updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from './firestore.util';
 import { CollectionOptionTypes, FolderProps } from '@components/Home/type';
 import { ActiveFolderProps, useAuthStore } from 'store/authStore';
 import { Platform } from 'react-native';
@@ -27,9 +27,9 @@ function computeFetchInterval(interval: 'daily' | 'weekly' | 'monthly'): number 
  * This function sets the Android wallpaper to the image of the active item in the user's active folder. 
  * It retrieves the image URL of the active folder item and, if the item exists, sets the Android wallpaper to this image.
  */
-export async function setWallpaperFromActiveFolder() {
+export async function setWallpaperFromActiveFolder(userId: string | undefined, activeFolder: ActiveFolderProps | null): Promise<ActiveFolderAndItemResponse | null> {
 	// Get the active folder item image URL
-	const folderItem = await getActiveFolderItemImageURL();
+	const folderItem = await getActiveFolderItemImageURL(userId, activeFolder);
 
 	if (!folderItem) {
 		// If the folder item does not exist, notify the user and return null
@@ -63,17 +63,7 @@ export async function headlessAndroidWallpaperUpdate(event: HeadlessEvent) {
 		// Log the start of the headless task
 		console.log('[BackgroundFetch HeadlessTask] start: ', taskId);
 
-		// Call the extracted function
-		const folder = await setWallpaperFromActiveFolder();
-
-		if (folder && folder.folderId) {
-			// If the folder has an ID, update the folder and the active folder
-			folder.folderCategory === "personal" && updateFolderAndActiveFolder(1, folder?.folderId);
-
-			folder.folderCategory === "community" && updateUserActiveFolderItemIdx(folder?.folderId, 1);
-		}
-
-		folder?.folderCategory !== null && setAndroidWallpaperAndUpdateItemIdx(true, folder?.folderCategory)
+		setAndroidWallpaperAndUpdateItemIdx(true)
 
 
 		// Finish the task
@@ -178,7 +168,7 @@ export async function NonHeadlessAndroidWallpaperUpdateChange(isActive: boolean,
 			neutralToast('Updating wallpaper')
 
 			// update the user's wallpaper and update the item index
-			await setAndroidWallpaperAndUpdateItemIdx(updateIdx, category);
+			await setAndroidWallpaperAndUpdateItemIdx(updateIdx);
 
 			// Notify the user that the wallpaper has been changed
 			neutralToast('Wallpaper Set Successfully')
@@ -193,18 +183,31 @@ export async function NonHeadlessAndroidWallpaperUpdateChange(isActive: boolean,
 	}
 }
 
-async function setAndroidWallpaperAndUpdateItemIdx(updateIdx: boolean = true, category: CollectionOptionTypes = 'personal') {
+async function setAndroidWallpaperAndUpdateItemIdx(updateIdx: boolean = true) {
 
-	// Update the wallpaper
-	const folder = await setWallpaperFromActiveFolder();
-	const folderId = folder?.folderId;
-	const userId = useAuthStore.getState().user?.uid;
+	try {
+		const userId = useAuthStore.getState().user?.uid;
+		let activeFolder = await getUserActiveFolder(userId);
+		const category = activeFolder?.folderCategory
 
-	// If the folder has an ID and a user ID and updateIdx is true, update the folder and the active folder
-	if (folderId && userId && updateIdx) {
-		category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
-		category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
+		// Update the wallpaper
+
+		const folderId = activeFolder?.folderId;
+
+		// If the folder has an ID and a user ID and updateIdx is true, update the folder and the active folder
+		if (folderId && userId && updateIdx) {
+			category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
+			category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
+
+			// pefrom an optimistic update on the activeFolderItemIdx
+			activeFolder = activeFolder && { ...activeFolder, activeFolderItemIdx: activeFolder.activeFolderItemIdx + 1 }
+		}
+
+		await setWallpaperFromActiveFolder(userId, activeFolder);
+	} catch (error) {
+		throw new Error(String(error));
 	}
+
 }
 
 

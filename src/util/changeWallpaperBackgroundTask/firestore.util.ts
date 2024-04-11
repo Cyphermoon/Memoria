@@ -171,16 +171,14 @@ export async function updateFolderAndActiveFolder(incrementValue: number, folder
  * If the active item index exceeds the number of items, it resets the index to zero. 
  * It returns an object containing the active item, folder category, and the active index.
  */
-export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItemResponse | null> {
+export async function getActiveFolderItemImageURL(userId: string | undefined, activeFolder: ActiveFolderProps | null): Promise<ActiveFolderAndItemResponse | null> {
     try {
-        // Get the user ID from the auth store
-        const userId = useAuthStore.getState().user?.uid;
 
         // If the user ID is not found, throw an error
         if (!userId) throw new Error('User Id not found');
 
         // Get the active folder of the user
-        const activeFolder = await getUserActiveFolder(userId);
+
         let activeFolderItemIdx = activeFolder?.activeFolderItemIdx
 
         //Let the user know if there is no active folder
