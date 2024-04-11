@@ -32,6 +32,9 @@ type HomeScreenNavigationProp = NavigationProp<
 >;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Personal'>;
 
+type HomeScreenNavigationProps = NavigationProp<HomeStackParamList, "HomeDrawer">
+
+
 //constants
 
 const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
@@ -39,6 +42,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
   const [folders, setFolders] = useState<FolderProps[] | null>(null);
 
   const navigation = useNavigation<HomeScreenNavigationProp>();
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ['10%', '25%'], []);
 
@@ -155,8 +159,12 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     }
   }
 
-  function handleGoalPress(goal: FolderProps) {
-    navigation.navigate('Goal', { folder: goal });
+  function handleGoalPress(goal: FolderProps, active: boolean) {
+    navigation.navigate('Goal', { folder: goal, isActive: active });
+  }
+
+  function navigateToAddCollection() {
+    navigation.navigate('AddCollection', { mode: "personal" })
   }
 
   return (
@@ -204,7 +212,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
         </View>
       )}
 
-      <NewGoal mode="personal" />
+      <NewGoal onPress={navigateToAddCollection} />
 
       {/* Goal Bottom Sheet */}
       <CustomBottomSheetModal

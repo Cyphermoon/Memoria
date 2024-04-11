@@ -29,7 +29,10 @@ type Props = DrawerScreenProps<HomeDrawerParamList, 'Community'>;
 const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 	// application components state
 	const navigation = useNavigation<HomeScreenNavigationProp>();
-	const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+	const bottomSheetModalRef = useRef<BottomSheetModal>
+
+
+		(null);
 	const snapPoints = useMemo(() => ['10%', '30%'], []);
 
 	// folder state
@@ -183,6 +186,11 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		handleClosePress();
 	}
 
+	function navigateToAddCollection() {
+		navigation.navigate('AddCollection', { mode: "community" })
+	}
+
+
 	return (
 		<View className="flex-grow bg-primary relative">
 			<Header navigationTitle="Community Collection" scrollY={scrollY} openDrawer={() => drawerNavigation.openDrawer()} />
@@ -214,7 +222,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 				<Text>There are no community folders</Text>
 			)}
 
-			<NewGoal mode="community" />
+			<NewGoal onPress={navigateToAddCollection} />
 
 			{/* Goal Bottom Sheet */}
 			<CustomBottomSheetModal ref={bottomSheetModalRef} snapPoints={snapPoints} index={1} text="Community Folder Actions">

@@ -11,6 +11,7 @@ import AddCollectionModal from "@screens/HomeDrawerScreens/Modals/AddCollectionM
 import colors from "colors"
 import { HomeStackParamList } from "type"
 import HomeDrawer from "../HomeDrawer"
+import IntervalSelector from "@components/Goal/IntervalSelector"
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
@@ -28,7 +29,8 @@ const HomeStackNavigator = () => {
                         headerTitle: '',
                         headerShadowVisible: false,
                         headerStyle: { backgroundColor: colors.primary.DEFAULT },
-                        headerLeft: () => <GoalBackButton />
+                        headerLeft: () => <GoalBackButton />,
+                        headerRight: () => <IntervalSelector selectedInterval={{ label: "Daily", value: "daily", icon: "calendar-day" }} />
                     }} />
                 <HomeStack.Screen
                     name="EditGoalItem"

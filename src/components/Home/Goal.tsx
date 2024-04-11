@@ -9,7 +9,7 @@ import { FolderProps } from './type';
 
 interface Props {
   className?: string
-  onPress: (goal: FolderProps) => void
+  onPress: (goal: FolderProps, isActive: boolean) => void
   onMoreDetailsPress?: (goal: FolderProps) => void
   onLongPress?: (goal: FolderProps) => void
   selectedFolder: FolderProps
@@ -33,7 +33,7 @@ const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, act
         </TouchableOpacity>}
 
       <TouchableOpacity
-        onPress={() => onPress(selectedFolder)}
+        onPress={() => onPress(selectedFolder, active)}
         onLongPress={() => {
           if (onLongPress) {
             onLongPress(selectedFolder)

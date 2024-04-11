@@ -20,6 +20,8 @@ import { deleteFolderItem, deleteImageFromCloudinary } from 'src/util/HomeDrawer
 import { errorToast } from 'src/util/toast.util'
 import { editCommunityFolder, editFolder } from 'src/util/HomeDrawer/index.utll'
 import { truncateText } from 'src/util'
+import NewGoal from '@components/Home/NewGoal'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -28,6 +30,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const ref = useRef<FlatList<any> | null>(null)
     const { position } = useSlidePosition()
     const userId = useAuthStore(state => state.user?.uid);
+    const inset = useSafeAreaInsets()
 
     const [selectedInterval, setSelectedInterval] = useState<IntervalOptionProps>(intervalOptions[0]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -208,74 +211,76 @@ const GoalScreen = ({ route, navigation }: Props) => {
         console.error("Could not scroll to index", info.index);
     };
 
+    // useEffect hook to automatically scroll to the current position in a list when 'position' state changes
     useEffect(() => {
         if (ref.current) {
             ref.current.scrollToIndex({ index: position, animated: true })
         }
-
     }, [position])
+
+    // side effect to update the header right component to an interval selector. It is the replacement of the initial placeholder for the HomeStackNavigator
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <IntervalSelector
+                    selectedInterval={selectedInterval}
+                    handleIntervalSelected={handleIntervalSelected}
+                />
+            )
+        })
+    }, [selectedInterval])
 
 
     return (
-        <SafeAreaView className='bg-primary flex-grow'>
-            <View className='px-1 flex-grow'>
+        <View style={{
+            paddingBottom: inset.bottom
 
-                {/* Header Section */}
-                <View className='flex-row justify-between items-center mb-8 mt-6'>
-                    <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
-
-                    <View className='flex-row items-center'>
-                        <IntervalSelector
-                            selectedInterval={selectedInterval}
-                            handleIntervalSelected={handleIntervalSelected}
-                        />
-
-                        <Touchable className='flex-row ml-4' onPress={movetoNewGoalItem}>
-                            <FontAwesome6 name="add" size={16} color={colors.gray[800]} />
-                            <Text className='text-primary ml-2'>
-                                New
-                            </Text>
-                        </Touchable>
-                    </View>
-                </View>
+        }}
+            className='bg-primary flex-grow px-2.5'>
 
 
-                {/* Search Bar */}
-                <View className='mb-10'>
-                    <SearchBar
-                        searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
-                        handleSearchSubmit={handleSearchSubmit} />
-                </View>
-
-
-                {/* Goals List */}
-                <View className='flex-grow h-96'>
-                    {folderItems.length > 0 ?
-                        <FlatList
-                            ref={ref}
-                            data={filteredFolderItems}
-                            keyExtractor={item => item.id}
-                            showsVerticalScrollIndicator={false}
-                            ListFooterComponent={() => <View className='h-10' />}
-                            renderItem={({ item }) => (
-                                <View className='relative w-full h-56 rounded-2xl'>
-                                    <GoalItem
-                                        id={item.id}
-                                        name={item.description}
-                                        image={item.image}
-                                        onDelete={handleDelete}
-                                        onFullscreen={handleFullscreen}
-                                        onEdit={handleEdit} />
-                                </View>
-                            )}
-                            getItemLayout={getItemLayout}
-                            onScrollToIndexFailed={onScrollToIndexFailed}
-                        /> :
-                        <Text className='text-center text-lg'>There are no items here</Text>}
-                </View>
+            {/* Header Section */}
+            <View className='flex-row justify-between items-center mb-8 mt-6'>
+                <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
             </View>
-        </SafeAreaView>
+
+
+            {/* Search Bar */}
+            <View className='mb-10'>
+                <SearchBar
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    handleSearchSubmit={handleSearchSubmit} />
+            </View>
+
+            <NewGoal onPress={movetoNewGoalItem} />
+
+            {/* Goals List */}
+            <View className='flex-grow h-96'>
+                {folderItems.length > 0 ?
+                    <FlatList
+                        ref={ref}
+                        data={filteredFolderItems}
+                        keyExtractor={item => item.id}
+                        showsVerticalScrollIndicator={false}
+                        ListFooterComponent={() => <View className='h-10' />}
+                        renderItem={({ item }) => (
+                            <View className='relative w-full h-56 rounded-2xl'>
+                                <GoalItem
+                                    id={item.id}
+                                    name={item.description}
+                                    image={item.image}
+                                    onDelete={handleDelete}
+                                    onFullscreen={handleFullscreen}
+                                    onEdit={handleEdit} />
+                            </View>
+                        )}
+                        getItemLayout={getItemLayout}
+                        onScrollToIndexFailed={onScrollToIndexFailed}
+                    /> :
+                    <Text className='text-center text-lg'>There are no items here</Text>}
+            </View>
+        </View>
     )
 }
 
