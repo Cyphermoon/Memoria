@@ -2,7 +2,7 @@ import ProfileItem from '@components/Profile/ProfileItem'
 import Text from '@components/common/Text'
 import { Image } from 'expo-image'
 import React from 'react'
-import { Linking, Platform, ScrollView, TouchableOpacity, View } from 'react-native'
+import { Linking, Platform, ScrollView, Share, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuthStore } from 'store/authStore'
 import { Entypo } from '@expo/vector-icons';
@@ -94,7 +94,12 @@ const ProfileScreen = () => {
             {/*Action Section */}
             <View className='mb-8'>
                 <Text className='uppercase font-semibold text-xs text-gray-500 ml-3 mb-1.5'>Action</Text>
-                <ProfileItem onPress={() => { }} text='Share with Friends' />
+                <ProfileItem onPress={() => {
+                    Share.share({
+                        message: 'Check out Memoria, the best app for setting and tracking your goals!',
+                        url: BASE_URL
+                    });
+                }} text='Share with Friends' />
                 {Platform.OS === 'ios' && <ProfileItem onPress={() => { }} text='Wallpaper Automation' />}
 
             </View>
@@ -107,15 +112,9 @@ const ProfileScreen = () => {
             </View>
 
             {/*Account Section */}
-            <ProfileItem
-                onPress={() => handleSignOut()}
-                showIcon={false}
-                textCenter
-                text='Logout'
-            />
 
-            <TouchableOpacity className='' onPress={() => { }}>
-                <Text className='text-red-500 text-center'>Delete Account</Text>
+            <TouchableOpacity className='' onPress={() => { handleSignOut() }}>
+                <Text className='text-red-500 text-center'>Log Out</Text>
             </TouchableOpacity>
 
         </View>
