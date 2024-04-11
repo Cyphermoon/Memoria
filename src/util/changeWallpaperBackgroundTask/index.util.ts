@@ -92,6 +92,10 @@ export async function getActiveFolderURLAndSetAndroidWallpaper(event: HeadlessEv
  * After configuration, it starts the background fetch and checks its status.
  */
 export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'weekly' | 'monthly') {
+	if (Platform.OS !== 'android') {
+		console.log("Background fetch is only available on Android");
+		return
+	}
 	const fetchInterval = computeFetchInterval(interval);
 
 	// Configure the background fetch

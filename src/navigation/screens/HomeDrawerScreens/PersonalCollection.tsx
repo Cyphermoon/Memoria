@@ -2,7 +2,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { sortOptions } from 'settings';
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer';
 import { HomeStackParamList } from 'type';
@@ -148,7 +148,11 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
 
   async function handleLongPress(folder: FolderProps) {
     // Set the user's wallpaper to the current folder Item
-    handleAndroidWallpaperActive(activeFolder?.folderId === folder?.id, folder.id)
+    if (Platform.OS === 'android') {
+      handleAndroidWallpaperActive(activeFolder?.folderId === folder?.id, folder.id)
+    } else {
+      console.log("Shortcut loading on IOS On Personal Collection........")
+    }
   }
 
   function handleGoalPress(goal: FolderProps) {

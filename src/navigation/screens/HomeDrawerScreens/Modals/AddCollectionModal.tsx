@@ -5,7 +5,7 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { serverTimestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, Platform, Switch, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
 import { editCommunityFolder, editFolder, uploadCommunityFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
@@ -20,7 +20,8 @@ import Touchable from '../../../../components/common/Touchable';
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
 /*
-This component is used to both add and edit a collection. Although it's original intention was to add collection
+	This component is used to both add and edit a collection. Although it's original intention was to add collection
+	Todo: Make sure user wallpaper only update when appropriate
 */
 
 const AddCollectionModal = ({ navigation, route }: Props) => {
@@ -80,11 +81,17 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			);
 		}
 
-		// Stop any running background fetch tasks
-		stopBackgroundFetch();
 
-		// Schedule a new background fetch task to run daily
-		configureAndScheduleBackgroundFetch('daily');
+		// Update the background wallpaper on Android if the folder is active
+		if (Platform.OS === 'android') {
+			// Stop any running background fetch tasks
+			stopBackgroundFetch();
+
+			// Schedule a new background fetch task to run daily
+			configureAndScheduleBackgroundFetch('daily');
+		} else {
+			console.log("Shortcut loading on IOS........ on Add collection modal personal")
+		}
 	}
 
 	async function addCommunityCollection(userId: string) {
@@ -120,8 +127,14 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			await editCommunityFolder(id, data, isActive);
 		}
 
-		// change the user wallpaper if the folder is active
-		handleAndroidWallpaperActive(isActive, route.params.folder?.id, "community")
+
+
+		if (Platform.OS === 'android') {
+			// change the user wallpaper if the folder is active
+			handleAndroidWallpaperActive(isActive, route.params.folder?.id, "community")
+		} else {
+			console.log("Shortcut loading on IOS........ on add collection modal community")
+		}
 
 	}
 

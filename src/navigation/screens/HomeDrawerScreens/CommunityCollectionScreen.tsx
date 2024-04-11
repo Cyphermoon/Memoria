@@ -8,7 +8,7 @@ import customColors from 'colors';
 import { DocumentData, Query, collection, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { firestoreDB } from 'firebaseConfig';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX, sortOptions } from 'settings';
 import { HomeDrawerParamList } from 'src/navigation/HomeDrawer';
@@ -141,7 +141,12 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 			deActivateFolder(userId, resFolderId);
 		} else {
 			await activateFolder(userId, resFolderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
-			handleAndroidWallpaperActive(true, resFolderId, 'community')
+
+			if (Platform.OS === 'android') {
+				handleAndroidWallpaperActive(true, resFolderId, 'community')
+			} else {
+				console.log('iOS not supported yet')
+			}
 		}
 	}
 

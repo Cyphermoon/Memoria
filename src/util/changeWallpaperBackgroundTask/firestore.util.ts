@@ -185,7 +185,7 @@ export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItem
 
         //Let the user know if there is no active folder
         if (activeFolder === null || activeFolderIdx === undefined) {
-            errorToast('Please Make a folder active to change the wallpaper background')
+            errorToast('No active folder found')
             return null
         }
 
