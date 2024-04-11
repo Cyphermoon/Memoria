@@ -11,6 +11,7 @@ import SlidePositionProvider from './src/context/SlidePositionProvider';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import BackgroundFetch from 'react-native-background-fetch';
 import { getActiveFolderURLAndSetAndroidWallpaper } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { StatusBar } from 'expo-status-bar';
 
 if (Platform.OS === 'android') {
 	// Register background task
@@ -75,6 +76,7 @@ export default function App() {
 							}}
 						>
 							<SlidePositionProvider>
+								<StatusBar style="light" />
 								<RootStackNavigator />
 							</SlidePositionProvider>
 						</NavigationContainer>
