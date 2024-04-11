@@ -12,7 +12,7 @@ import SearchBar from '../../../components/common/SearchBar'
 import Text from '../../../components/common/Text'
 import Touchable from '../../../components/common/Touchable'
 import { useSlidePosition } from '../../../context/SlidePositionProvider'
-import { FolderItemProps } from 'src/util/HomeDrawer/type'
+import { EditFolderItemProps, FolderItemProps } from 'src/util/HomeDrawer/type'
 import { CollectionReference, DocumentReference, collection, doc, onSnapshot } from 'firebase/firestore'
 import { firestoreDB } from 'firebaseConfig'
 import { useAuthStore } from 'store/authStore'
@@ -163,7 +163,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
         navigation.navigate('GoalSlideShow', { currentId: id, goals: folderItems });
     };
 
-    function handleEdit(goalItem: FolderItemProps) {
+    function handleEdit(goalItem: EditFolderItemProps) {
         navigation.navigate('EditGoalItem', { goalItem });
     }
 
@@ -351,6 +351,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                                     id={item.id}
                                     name={item.description}
                                     image={item.image}
+                                    generationMode={item.generationMode}
                                     active={route.params.isActive && index === activeFolderItemIdx}
                                     onDelete={handleDelete}
                                     onFullscreen={handleFullscreen}

@@ -6,7 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import colors from '../../../colors';
 import { truncateText } from '../../util';
 import Text from '../common/Text';
-import { CloudinaryResponse, FolderItemProps } from 'src/util/HomeDrawer/type';
+import { CloudinaryResponse, EditFolderItemProps, FolderItemProps } from 'src/util/HomeDrawer/type';
 import Animated from 'react-native-reanimated';
 
 //Todo: Re develop this screen to have a dynamic header like the one on home screen
@@ -18,13 +18,14 @@ interface Props {
     active: boolean | undefined
     name: string,
     id: string,
+    generationMode: string,
     onDelete: (itemId: string, imageId: string) => void,
     onFullscreen: (id: string) => void
-    onEdit: (item: FolderItemProps) => void
+    onEdit: (item: EditFolderItemProps) => void
 }
 
 // Define the GoalItem component
-const GoalItem = ({ image, name, id, active, onDelete, onFullscreen, onEdit }: Props) => {
+const GoalItem = ({ image, name, id, active, generationMode, onDelete, onFullscreen, onEdit }: Props) => {
 
     return (
         // The main container for the GoalItem
@@ -44,9 +45,15 @@ const GoalItem = ({ image, name, id, active, onDelete, onFullscreen, onEdit }: P
 
 
                 <View className='flex-row space-x-3'>
-                    {/* <TouchableOpacity onPress={() => onEdit({ id, description: name, imageUrl: image.secure_url })}>
+                    <TouchableOpacity onPress={() => onEdit({
+                        id,
+                        description: name,
+                        image,
+                        generationMode
+
+                    })}>
                         <Entypo name="edit" size={26} color={colors.secondary} />
-                    </TouchableOpacity> */}
+                    </TouchableOpacity>
 
                     <TouchableOpacity onPress={() => onFullscreen(id)}>
                         <MaterialIcons name="fullscreen" size={26} color={colors.secondary} />
