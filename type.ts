@@ -9,7 +9,7 @@ export type HomeStackParamList = {
   AddCollection: { mode: "personal", folder?: FolderPropsWithActive } | { mode: "community", folder?: CustomCommunityFolderProps }
   Goal: { folder: CustomCommunityFolderProps | FolderProps, isActive: boolean }
   GoalSlideShow: { currentId: string, goals: FolderItemProps[] }
-  NewGoalItem: { folder?: { id: string, type: CollectionOptionTypes }, unsplashImage?: UnsplashResult }
+  NewGoalItem: { folder?: { id: string, type: CollectionOptionTypes }, unsplashImage?: UnsplashResult, editFolderItem?: EditFolderItemProps }
   EditGoalItem: { goalItem: EditFolderItemProps }
   UnSplashModal: undefined
 };

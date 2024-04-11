@@ -164,7 +164,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
     };
 
     function handleEdit(goalItem: EditFolderItemProps) {
-        navigation.navigate('EditGoalItem', { goalItem });
+        navigation.navigate('NewGoalItem', {
+            folder: {
+                id: route.params.folder.id,
+                type: route.params.folder.mode
+            },
+            editFolderItem: goalItem
+        })
     }
 
     // FlatList Methods
@@ -352,6 +358,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                                     name={item.description}
                                     image={item.image}
                                     generationMode={item.generationMode}
+                                    aiTitle={item.aiTitle}
                                     active={route.params.isActive && index === activeFolderItemIdx}
                                     onDelete={handleDelete}
                                     onFullscreen={handleFullscreen}

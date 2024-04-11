@@ -14,10 +14,10 @@ import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from '../../../
 import Touchable from '../../../../components/common/Touchable'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
-import { uploadFolderItem, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
+import { deleteImageFromCloudinary, editFirestoreFolderItem, uploadFolderItem, uploadImage } from 'src/util/HomeDrawer/addGoalItem.util'
 import { useAuthStore } from 'store/authStore'
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
-import { AddFolderItemProps, ImageUploadType } from 'src/util/HomeDrawer/type'
+import { AddFolderItemProps, EditFolderItemProps, ImageUploadType } from 'src/util/HomeDrawer/type'
 import { Timestamp, serverTimestamp } from 'firebase/firestore'
 import { successToast } from 'src/util/toast.util'
 
@@ -25,6 +25,12 @@ import { successToast } from 'src/util/toast.util'
 type Props = NativeStackScreenProps<HomeStackParamList, 'NewGoalItem'>
 export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, 'NewGoalItem'>
 export type AddGoalItemModalNavigationProps = NavigationProp<HomeStackParamList, 'NewGoalItem'>
+
+const uploadTypeMap = {
+    'unsplash': 'url',
+    'gallery': 'file',
+    'ai': 'base64'
+};
 
 
 const AddGoalItemModal = ({ navigation, route }: Props) => {
@@ -38,6 +44,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 
     const userId = useAuthStore(state => state.user?.uid)
     const activeFolder = useActiveFolder(userId)
+    const isEditingMode = route.params.editFolderItem !== undefined
 
 
     function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
@@ -52,11 +59,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
         if (imageGenerated && imageGenerated.url) {
             try {
                 // Map the selected mode type to the upload type
-                const uploadTypeMap = {
-                    'unsplash': 'url',
-                    'gallery': 'file',
-                    'ai': 'base64'
-                };
+
 
                 // Get the upload type from the map
                 let uploadType = selectedMode && uploadTypeMap[selectedMode.value as keyof typeof uploadTypeMap] as ImageUploadType
@@ -94,6 +97,59 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
         }
     }
 
+    async function handleEditFolderItem() {
+        const itemId = route.params.editFolderItem?.id
+
+        if (!userId || !itemId) return
+        if (!route.params.folder) return
+        if (!route.params.editFolderItem) return
+
+        const publicId = route.params.editFolderItem?.image.public_id
+
+        // Check if imageGenerated exists and has a uri property
+        if (imageGenerated && imageGenerated.url) {
+            try {
+                // Map the selected mode type to the upload type
+
+                // Get the upload type from the map
+                let uploadType = selectedMode && uploadTypeMap[selectedMode.value as keyof typeof uploadTypeMap] as ImageUploadType
+
+                // If the upload type is not defined, throw an error
+                if (!uploadType) {
+                    throw new Error('Invalid mode type');
+                }
+
+                // Delete the image from Cloudinary
+                await deleteImageFromCloudinary(publicId)
+
+                // Upload another image to Cloudinary
+                const image = await uploadImage(imageGenerated.url, uploadType, "Test");
+
+                // Create the folder item with the image URL and description
+                const folderItem: EditFolderItemProps = {
+                    image,
+                    description,
+                    generationMode: selectedMode?.value,
+                    aiTitle: "Test",
+                    id: itemId
+
+                };
+
+                // Edit the folder item
+                route.params.editFolderItem &&
+                    await editFirestoreFolderItem(userId, route.params.folder.id, itemId, route.params.folder.type, folderItem)
+
+                successToast("Folder Item Edited successfully")
+                navigation.canGoBack() && navigation.goBack()
+
+            } catch (error) {
+                console.error('An Error Occured: ', error);
+            }
+        } else {
+            console.error('No image selected');
+        }
+    }
+
     useEffect(() => {
         // Add functionality to the header right button
         navigation.setOptions({
@@ -101,6 +157,25 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
         })
 
     }, [navigation])
+
+    useEffect(() => {
+        // prefill options based on the editFolderItem
+        if (isEditingMode) {
+            const { editFolderItem } = route.params
+
+            if (editFolderItem) {
+                setDescription(editFolderItem.description)
+
+                setSelectedMode(imageGenerationModes.find(mode => mode.value === editFolderItem.generationMode) as ImageGenerationMethodOptionProps)
+
+                setImageGenerated({
+                    generationMethod: editFolderItem.generationMode,
+                    url: editFolderItem.image.secure_url
+                })
+            }
+        }
+
+    }, [isEditingMode])
 
     return (
         <TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
@@ -126,8 +201,10 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
                         {selectedMode?.value === 'ai' && (
                             <AIImageOption
                                 description={description}
+                                originalDescription={route.params.editFolderItem?.description}
                                 imageGenerated={imageGenerated}
                                 setImageGenerated={setImageGenerated}
+                                isEditingMode={isEditingMode}
                             />
                         )}
 
@@ -146,7 +223,9 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
                     </View>
                 </View>
 
-                <Touchable isText onPress={createFolderItem}>Create</Touchable>
+                <Touchable isText onPress={() => {
+                    isEditingMode ? handleEditFolderItem() : createFolderItem()
+                }}>{isEditingMode ? "Save" : "Create"}</Touchable>
 
             </View>
         </TouchableWithoutFeedback>

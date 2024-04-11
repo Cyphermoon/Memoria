@@ -19,13 +19,14 @@ interface Props {
     name: string,
     id: string,
     generationMode: string,
+    aiTitle: string
     onDelete: (itemId: string, imageId: string) => void,
     onFullscreen: (id: string) => void
     onEdit: (item: EditFolderItemProps) => void
 }
 
 // Define the GoalItem component
-const GoalItem = ({ image, name, id, active, generationMode, onDelete, onFullscreen, onEdit }: Props) => {
+const GoalItem = ({ image, name, id, active, generationMode, aiTitle, onDelete, onFullscreen, onEdit }: Props) => {
 
     return (
         // The main container for the GoalItem
@@ -49,7 +50,8 @@ const GoalItem = ({ image, name, id, active, generationMode, onDelete, onFullscr
                         id,
                         description: name,
                         image,
-                        generationMode
+                        generationMode,
+                        aiTitle
 
                     })}>
                         <Entypo name="edit" size={26} color={colors.secondary} />

@@ -12,6 +12,8 @@ interface Props {
     description: string
     setImageGenerated: (imageGenerated: ImageGeneratedProps) => void
     imageGenerated: ImageGeneratedProps | null
+    isEditingMode?: boolean
+    originalDescription?: string
 }
 
 async function generateAIImage(modelId: string, description: string) {
@@ -33,39 +35,60 @@ async function generateAIImage(modelId: string, description: string) {
 }
 
 
-const AIImageOption = ({ description, setImageGenerated, imageGenerated }: Props) => {
-    const [loading, setLoading] = useState(true)
+const AIImageOption = ({ description, setImageGenerated, imageGenerated, isEditingMode, originalDescription }: Props) => {
+    const [loading, setLoading] = useState(!isEditingMode)
     const debouncedDescription = useDebounce(description, 2000)
     const [triggerReRender, setTriggerReRender] = useState(false)
 
-    useEffect(() => {
-        // If an image is already selected and the generation method is 'AI', do nothing
-        if (imageGenerated?.url && imageGenerated?.generationMethod === 'ai') return
-        if (!description) return
+    // Function to generate an image
+    const generateImage = () => {
+        // Set loading state to true
+        setLoading(true);
 
-
-        setLoading(true)
+        // Call the generateAIImage function with the model and description
         generateAIImage('stabilityai/stable-diffusion-xl-base-1.0', description)
             .then(data => {
+                // Create a new FileReader to read the returned data
                 const reader = new FileReader();
 
+                // When the reader has finished loading...
                 reader.onloadend = function () {
+                    // Get the result as base64 data
                     const base64data = reader.result;
 
-                    // set image to base64
+                    // Set the generated image state with the base64 URL and the generation method
                     setImageGenerated({
                         url: base64data as string,
                         generationMethod: 'ai'
                     })
                 }
-                // read as base64
+
+                // Start reading the data as a base64 URL
                 reader.readAsDataURL(data);
 
-
+                // Set loading state to false
                 setLoading(false);
             })
-            .catch(err => console.error(err))
-            .finally(() => setLoading(false))
+            .catch(err => {
+                // Log any errors
+                console.error(err);
+            })
+            .finally(() => {
+                // Ensure loading state is set to false even if an error occurs
+                setLoading(false);
+            });
+    }
+
+    useEffect(() => {
+        // If an image is already selected and the generation method is 'AI', do nothing
+        if (description.trim().toLowerCase() === originalDescription?.trim().toLowerCase()) return
+        if (imageGenerated?.url && imageGenerated?.generationMethod === 'ai' && !isEditingMode) return
+        if (!description) return
+
+
+        setLoading(true)
+        // generate the image
+        generateImage()
 
         //Clear the image when the component unmounts
         return () => {
@@ -106,7 +129,7 @@ const AIImageOption = ({ description, setImageGenerated, imageGenerated }: Props
                 />
             }
             <Touchable
-                onPress={() => setTriggerReRender(!triggerReRender)}
+                onPress={() => generateImage()}
                 variant='muted'
                 className='w-full bg-primary-300 flex-row justify-center items-center'>
                 <Text className='text-gray-400'>Generate Another</Text>

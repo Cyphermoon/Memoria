@@ -21,6 +21,7 @@ export type EditFolderItemProps = {
   generationMode: string;
   image: CloudinaryResponse;
   id: string;
+  aiTitle: string;
 }
 
 export type CloudinaryResponse = {
