@@ -17,9 +17,7 @@ interface Props {
   fullWidth?: boolean
 }
 
-const Goal = ({ className = "", onPress, selectedFolder, onMoreDetailsPress, active, fullWidth, onLongPress }: Props) => {
-
-  // console.log("active:", active, "Name:", selectedFolder.name, "Items:", selectedFolder.items)
+const Goal = ({ className = "", selectedFolder, active, fullWidth, onLongPress, onPress, onMoreDetailsPress }: Props) => {
 
   return (
     <View

@@ -197,7 +197,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
               <View className="w-1/2 p-2">
                 <Goal
                   selectedFolder={item}
-                  active={item.id === activeFolder?.folderId}
+                  active={activeFolder ? item.id === activeFolder.folderId : false}
                   onPress={handleGoalPress}
                   onMoreDetailsPress={handleMoreDetailsPress}
                   onLongPress={handleLongPress}

@@ -22,6 +22,7 @@ import { editCommunityFolder, editFolder } from 'src/util/HomeDrawer/index.utll'
 import { truncateText } from 'src/util'
 import NewGoal from '@components/Home/NewGoal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -36,6 +37,9 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [folderItems, setFolderItems] = useState<FolderItemProps[]>([]);
     const [filteredFolderItems, setFilteredFolderItems] = useState<FolderItemProps[]>([]);
+
+    const activeFolder = useActiveFolder(userId)
+    const activeFolderItemIdx = activeFolder?.activeFolderItemIdx && activeFolder.activeFolderItemIdx - 1
 
 
     useEffect(() => {
@@ -264,12 +268,13 @@ const GoalScreen = ({ route, navigation }: Props) => {
                         keyExtractor={item => item.id}
                         showsVerticalScrollIndicator={false}
                         ListFooterComponent={() => <View className='h-10' />}
-                        renderItem={({ item }) => (
+                        renderItem={({ item, index }) => (
                             <View className='relative w-full h-56 rounded-2xl'>
                                 <GoalItem
                                     id={item.id}
                                     name={item.description}
                                     image={item.image}
+                                    active={index === activeFolderItemIdx}
                                     onDelete={handleDelete}
                                     onFullscreen={handleFullscreen}
                                     onEdit={handleEdit} />
