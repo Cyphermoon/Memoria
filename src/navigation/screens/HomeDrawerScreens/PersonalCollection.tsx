@@ -32,7 +32,6 @@ type HomeScreenNavigationProp = NavigationProp<
 >;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Personal'>;
 
-type HomeScreenNavigationProps = NavigationProp<HomeStackParamList, "HomeDrawer">
 
 
 //constants

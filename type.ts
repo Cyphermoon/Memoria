@@ -7,7 +7,7 @@ import { FolderItemProps } from "src/util/HomeDrawer/type";
 export type HomeStackParamList = {
   HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
   AddCollection: { mode: "personal", folder?: FolderPropsWithActive } | { mode: "community", folder?: CustomCommunityFolderProps }
-  Goal: { folder: CustomCommunityFolderProps | FolderProps, isActive?: boolean }
+  Goal: { folder: CustomCommunityFolderProps | FolderProps, isActive: boolean }
   GoalSlideShow: { currentId: string, goals: FolderItemProps[] }
   NewGoalItem: { folder?: { id: string, type: CollectionOptionTypes }, unsplashImage?: UnsplashResult }
   EditGoalItem: { goalItem: FolderItemProps }

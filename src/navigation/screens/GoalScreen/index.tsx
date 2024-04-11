@@ -1,7 +1,7 @@
 import { FontAwesome6 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, FlatList, SafeAreaView, View } from 'react-native'
+import { Alert, FlatList, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native'
 import { intervalOptions } from 'settings'
 import colors from 'tailwindcss/colors'
 import { HomeStackParamList } from '../../../../type'
@@ -23,6 +23,10 @@ import { truncateText } from 'src/util'
 import NewGoal from '@components/Home/NewGoal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
+import { AntDesign } from '@expo/vector-icons';
+import customColors from '../../../../colors'
+import { updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from 'src/util/changeWallpaperBackgroundTask/firestore.util'
+import { handleAndroidWallpaperActive } from 'src/util/changeWallpaperBackgroundTask/index.util'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -39,7 +43,147 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const [filteredFolderItems, setFilteredFolderItems] = useState<FolderItemProps[]>([]);
 
     const activeFolder = useActiveFolder(userId)
-    const activeFolderItemIdx = activeFolder?.activeFolderItemIdx && activeFolder.activeFolderItemIdx - 1
+    const activeFolderItemIdx = activeFolder?.activeFolderItemIdx && activeFolder.activeFolderItemIdx
+
+
+
+    const handleIntervalSelected = (interval: IntervalOptionProps) => {
+        // update the interval in the database
+        route.params.folder.mode === 'personal' && userId && editFolder(userId, route.params.folder.id, { interval: interval.value }, null)
+        route.params.folder.mode === 'community' && userId && editCommunityFolder(route.params.folder.id, { interval: interval.value })
+    };
+
+    function movetoNewGoalItem() {
+        navigation.navigate('NewGoalItem', {
+            folder:
+            {
+                id: route.params.folder.id,
+                type: route.params.folder.mode
+            }
+        })
+    }
+
+    async function handlePreviousWallpaper() {
+        if (!userId) return
+
+        if (Platform.OS === "android") {
+            if (route.params.folder.mode === "personal") {
+                // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+                await updateFolderAndActiveFolder(-1, route.params.folder.id)
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+
+            } else if (route.params.folder.mode === "community") {
+                // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
+                await updateUserActiveFolderItemIdx(userId, -1)
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+            }
+        } else if (Platform.OS === "ios") {
+            console.log("IOS functionality is loading .........")
+        }
+
+    }
+
+    async function handleNextWallpaper() {
+        if (!userId) return
+
+        if (Platform.OS === "android") {
+            if (route.params.folder.mode === "personal") {
+                // add the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+                await updateFolderAndActiveFolder(1, route.params.folder.id)
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+            } else if (route.params.folder.mode === "community") {
+                // add the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper
+                await updateUserActiveFolderItemIdx(userId, 1)
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+            }
+        } else if (Platform.OS === "ios") {
+            console.log("IOS functionality is loading .........")
+        }
+    }
+
+    async function syncWallpaper() {
+        if (!userId) return
+
+        if (Platform.OS === "android") {
+            // use the current activeFolderItemIdx to update the user wallpaper without and side effect like updating the activeFolderItemIdx
+            route.params.folder.mode === "personal" &&
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+
+            route.params.folder.mode === "community" &&
+                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+
+        } else if (Platform.OS === "ios") {
+            console.log("IOS functionality is loading .........")
+        }
+    }
+
+    //* Search Actions
+
+    function handleSearchSubmit() {
+        console.log("Search submitted! ", searchQuery)
+    }
+
+
+    // Goal Items Actions
+    function handleDelete(itemId: string, imageId: string) {
+
+        const message = "Are you sure you want to delete this item";
+
+        Alert.alert(
+            "Delete Goal Item", // Alert title
+            message, // Alert message
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: async () => {
+                        try {
+                            if (userId) {
+                                await deleteImageFromCloudinary(imageId)
+                                await deleteFolderItem(userId, route.params.folder.id, itemId, route.params.folder.mode)
+                            } else {
+                                errorToast('User not found')
+                            }
+                        } catch (error) {
+                            throw new Error(`${error}`)
+                        }
+
+                        // Add your delete logic here
+                    }
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    function handleFullscreen(id: string) {
+        navigation.navigate('GoalSlideShow', { currentId: id, goals: folderItems });
+    };
+
+    function handleEdit(goalItem: FolderItemProps) {
+        navigation.navigate('EditGoalItem', { goalItem });
+    }
+
+    // FlatList Methods
+    const getItemLayout = (data: ArrayLike<any> | null | undefined, index: number): {
+        length: number, offset: number, index: number
+    } => {
+        const GOAL_ITEM_HEIGHT = 192
+
+        return { length: GOAL_ITEM_HEIGHT, offset: GOAL_ITEM_HEIGHT * index, index }
+    };
+
+    const onScrollToIndexFailed = (info: { index: number, highestMeasuredFrameIndex: number, averageItemLength: number }) => {
+        const wait = new Promise(resolve => setTimeout(resolve, 500));
+        wait.then(() => {
+            ref.current?.scrollToIndex({ index: info.index, animated: true });
+        });
+
+        console.error("Could not scroll to index", info.index);
+    };
 
 
     useEffect(() => {
@@ -131,90 +275,6 @@ const GoalScreen = ({ route, navigation }: Props) => {
         return () => unsubscribe()
     }, [])
 
-    const handleIntervalSelected = (interval: IntervalOptionProps) => {
-        // update the interval in the database
-        route.params.folder.mode === 'personal' && userId && editFolder(userId, route.params.folder.id, { interval: interval.value }, null)
-        route.params.folder.mode === 'community' && userId && editCommunityFolder(route.params.folder.id, { interval: interval.value })
-    };
-
-    function movetoNewGoalItem() {
-        navigation.navigate('NewGoalItem', {
-            folder:
-            {
-                id: route.params.folder.id,
-                type: route.params.folder.mode
-            }
-        })
-    }
-
-    //* Search Actions
-
-    function handleSearchSubmit() {
-        console.log("Search submitted! ", searchQuery)
-    }
-
-
-    // Goal Items Actions
-    function handleDelete(itemId: string, imageId: string) {
-
-        const message = "Are you sure you want to delete this item";
-
-        Alert.alert(
-            "Delete Goal Item", // Alert title
-            message, // Alert message
-            [
-                {
-                    text: "Cancel",
-                    style: "cancel"
-                },
-                {
-                    text: "OK",
-                    onPress: async () => {
-                        try {
-                            if (userId) {
-                                await deleteImageFromCloudinary(imageId)
-                                await deleteFolderItem(userId, route.params.folder.id, itemId, route.params.folder.mode)
-                            } else {
-                                errorToast('User not found')
-                            }
-                        } catch (error) {
-                            throw new Error(`${error}`)
-                        }
-
-                        // Add your delete logic here
-                    }
-                }
-            ],
-            { cancelable: false }
-        );
-    };
-
-    function handleFullscreen(id: string) {
-        navigation.navigate('GoalSlideShow', { currentId: id, goals: folderItems });
-    };
-
-    function handleEdit(goalItem: FolderItemProps) {
-        navigation.navigate('EditGoalItem', { goalItem });
-    }
-
-    // FlatList Methods
-    const getItemLayout = (data: ArrayLike<any> | null | undefined, index: number): {
-        length: number, offset: number, index: number
-    } => {
-        const GOAL_ITEM_HEIGHT = 192
-
-        return { length: GOAL_ITEM_HEIGHT, offset: GOAL_ITEM_HEIGHT * index, index }
-    };
-
-    const onScrollToIndexFailed = (info: { index: number, highestMeasuredFrameIndex: number, averageItemLength: number }) => {
-        const wait = new Promise(resolve => setTimeout(resolve, 500));
-        wait.then(() => {
-            ref.current?.scrollToIndex({ index: info.index, animated: true });
-        });
-
-        console.error("Could not scroll to index", info.index);
-    };
-
     // useEffect hook to automatically scroll to the current position in a list when 'position' state changes
     useEffect(() => {
         if (ref.current) {
@@ -246,6 +306,21 @@ const GoalScreen = ({ route, navigation }: Props) => {
             {/* Header Section */}
             <View className='flex-row justify-between items-center mb-8 mt-6'>
                 <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
+
+                <View className='flex flex-row items-center space-x-6'>
+                    <TouchableOpacity onPress={handlePreviousWallpaper}>
+                        <AntDesign name="stepbackward" size={24} color={customColors.secondary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={syncWallpaper}>
+                        <AntDesign name="sync" size={24} color={customColors.secondary} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handleNextWallpaper}>
+                        <AntDesign name="stepforward" size={24} color={customColors.secondary} />
+                    </TouchableOpacity>
+
+                </View>
             </View>
 
 

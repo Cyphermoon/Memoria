@@ -181,10 +181,10 @@ export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItem
 
         // Get the active folder of the user
         const activeFolder = await getUserActiveFolder(userId);
-        let activeFolderIdx = activeFolder?.activeFolderItemIdx
+        let activeFolderItemIdx = activeFolder?.activeFolderItemIdx
 
         //Let the user know if there is no active folder
-        if (activeFolder === null || activeFolderIdx === undefined) {
+        if (activeFolder === null || activeFolderItemIdx === undefined) {
             errorToast('No active folder found')
             return null
         }
@@ -197,11 +197,18 @@ export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItem
                 category: activeFolder?.folderCategory,
             }));
 
-        //Make the active FolderIdx the last item it it exceeds the folderItems Length
-        if (activeFolderIdx > folderItems.length - 1) {
-            activeFolderIdx = 0
+        //Make the active FolderIdx the first item it it exceeds the folderItems Length
+        if (activeFolderItemIdx > folderItems.length - 1) {
+            activeFolderItemIdx = 0
             activeFolder.folderCategory === 'personal' && updateFolderAndActiveFolder(0, activeFolder.folderId, 0)
             activeFolder.folderCategory === 'community' && updateUserActiveFolderItemIdx(userId, 0, 0)
+        }
+
+        // Make the the activeFolderItemIdx the last item if it is less than 0
+        if (activeFolderItemIdx < 0) {
+            activeFolderItemIdx = folderItems.length - 1
+            activeFolder.folderCategory === 'personal' && updateFolderAndActiveFolder(0, activeFolder.folderId, folderItems.length - 1)
+            activeFolder.folderCategory === 'community' && updateUserActiveFolderItemIdx(userId, folderItems.length - 1)
         }
 
         if (folderItems.length <= 0) {
@@ -209,13 +216,13 @@ export async function getActiveFolderItemImageURL(): Promise<ActiveFolderAndItem
         }
         // Get the current folder item based on the active folder item index
         const currentFolderItem =
-            folderItems && folderItems[activeFolderIdx];
+            folderItems && folderItems[activeFolderItemIdx];
 
         // Return an object containing the current folder item, the folder category, and the folder index
         return {
             folderItem: currentFolderItem,
             folderCategory: activeFolder?.folderCategory,
-            folderIdx: activeFolderIdx,
+            folderIdx: activeFolderItemIdx,
             folderItemsLength: folderItems.length,
             folderId: activeFolder.folderId
         };

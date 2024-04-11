@@ -160,7 +160,7 @@ export async function stopBackgroundFetch() {
  * If the folder is not active, it prompts the user to make it active.
  * Any errors during the process are caught and logged, and the user is notified.
  */
-export async function handleAndroidWallpaperActive(isActive: boolean, folderId?: string, category: CollectionOptionTypes = 'personal') {
+export async function handleAndroidWallpaperActive(isActive: boolean, folderId?: string, updateIdx: boolean = true, category: CollectionOptionTypes = 'personal') {
 
 	try {
 		if (!isActive) {
@@ -179,8 +179,8 @@ export async function handleAndroidWallpaperActive(isActive: boolean, folderId?:
 			// Update the wallpaper
 			await setWallpaperFromActiveFolder();
 
-			// If the folder has an ID and a user ID, update the folder and the active folder
-			if (folderId && userId) {
+			// If the folder has an ID and a user ID and updateIdx is true, update the folder and the active folder
+			if (folderId && userId && updateIdx) {
 				category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
 				category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
 			}

@@ -7,8 +7,10 @@ import colors from '../../../colors';
 import { truncateText } from '../../util';
 import Text from '../common/Text';
 import { CloudinaryResponse, FolderItemProps } from 'src/util/HomeDrawer/type';
+import Animated from 'react-native-reanimated';
 
-//Todo: Re develop this screen to have a dynamic header like the one on home scren
+//Todo: Re develop this screen to have a dynamic header like the one on home screen
+//Todo: Make the background of the page reflect the dominant color of the current folder item image
 
 // Define the properties for the GoalItem component
 interface Props {
@@ -26,7 +28,7 @@ const GoalItem = ({ image, name, id, active, onDelete, onFullscreen, onEdit }: P
 
     return (
         // The main container for the GoalItem
-        <View
+        <Animated.View
             style={[active && styles.elevate]}
             className='relative w-full h-48 rounded-2xl'
         >
@@ -56,17 +58,16 @@ const GoalItem = ({ image, name, id, active, onDelete, onFullscreen, onEdit }: P
                 </View>
             </BlurView>
 
-        </View>
+        </Animated.View>
     );
 };
 
 const styles = StyleSheet.create({
     elevate: {
-        shadowColor: 'white',
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 6,
-        shadowOpacity: 0.26,
         elevation: 8,
+        borderStyle: 'solid',
+        borderWidth: 4,
+        borderColor: colors.secondary,
     }
 })
 
