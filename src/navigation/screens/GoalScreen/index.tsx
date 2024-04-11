@@ -26,7 +26,7 @@ import { useActiveFolder } from 'src/util/HomeDrawer/index.hook'
 import { AntDesign } from '@expo/vector-icons';
 import customColors from '../../../../colors'
 import { updateFolderAndActiveFolder, updateUserActiveFolderItemIdx } from 'src/util/changeWallpaperBackgroundTask/firestore.util'
-import { handleAndroidWallpaperActive } from 'src/util/changeWallpaperBackgroundTask/index.util'
+import { NonHeadlessAndroidWallpaperUpdateChange } from 'src/util/changeWallpaperBackgroundTask/index.util'
 
 type Props = NativeStackScreenProps<HomeStackParamList, "Goal">
 
@@ -70,12 +70,12 @@ const GoalScreen = ({ route, navigation }: Props) => {
             if (route.params.folder.mode === "personal") {
                 // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
                 await updateFolderAndActiveFolder(-1, route.params.folder.id)
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
 
             } else if (route.params.folder.mode === "community") {
                 // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
                 await updateUserActiveFolderItemIdx(userId, -1)
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
             }
         } else if (Platform.OS === "ios") {
             console.log("IOS functionality is loading .........")
@@ -90,11 +90,11 @@ const GoalScreen = ({ route, navigation }: Props) => {
             if (route.params.folder.mode === "personal") {
                 // add the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
                 await updateFolderAndActiveFolder(1, route.params.folder.id)
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
             } else if (route.params.folder.mode === "community") {
                 // add the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper
                 await updateUserActiveFolderItemIdx(userId, 1)
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
             }
         } else if (Platform.OS === "ios") {
             console.log("IOS functionality is loading .........")
@@ -107,10 +107,10 @@ const GoalScreen = ({ route, navigation }: Props) => {
         if (Platform.OS === "android") {
             // use the current activeFolderItemIdx to update the user wallpaper without and side effect like updating the activeFolderItemIdx
             route.params.folder.mode === "personal" &&
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "personal")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
 
             route.params.folder.mode === "community" &&
-                await handleAndroidWallpaperActive(route.params.isActive, route.params.folder.id, false, "community")
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
 
         } else if (Platform.OS === "ios") {
             console.log("IOS functionality is loading .........")

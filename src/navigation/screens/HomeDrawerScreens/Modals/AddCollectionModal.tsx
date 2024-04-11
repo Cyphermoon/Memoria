@@ -9,7 +9,7 @@ import { Keyboard, Platform, Switch, TextInput, TouchableOpacity, TouchableWitho
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DEFAULT_ACTIVE_FOLDER_ITEM_IDX } from 'settings';
 import { editCommunityFolder, editFolder, uploadCommunityFolder, uploadFolder } from 'src/util/HomeDrawer/index.utll';
-import { configureAndScheduleBackgroundFetch, handleAndroidWallpaperActive, stopBackgroundFetch } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { configureAndScheduleBackgroundFetch, NonHeadlessAndroidWallpaperUpdateChange, stopBackgroundFetch } from 'src/util/changeWallpaperBackgroundTask/index.util';
 import { useAuthStore } from 'store/authStore';
 import colors from 'tailwindcss/colors';
 import customColors from '../../../../../colors';
@@ -131,7 +131,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 
 		if (Platform.OS === 'android') {
 			// change the user wallpaper if the folder is active
-			handleAndroidWallpaperActive(isActive, route.params.folder?.id, "community")
+			NonHeadlessAndroidWallpaperUpdateChange(isActive, route.params.folder?.id, "community")
 		} else {
 			console.log("Shortcut loading on IOS........ on add collection modal community")
 		}

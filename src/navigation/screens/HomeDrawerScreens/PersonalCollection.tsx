@@ -21,7 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 import { deleteFolder } from 'src/util/HomeDrawer/index.utll';
-import { handleAndroidWallpaperActive } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { NonHeadlessAndroidWallpaperUpdateChange } from 'src/util/changeWallpaperBackgroundTask/index.util';
 import { useAuthStore } from 'store/authStore';
 import HeaderContent, { Header } from './HomeDrawerLayout';
 
@@ -152,7 +152,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
   async function handleLongPress(folder: FolderProps) {
     // Set the user's wallpaper to the current folder Item
     if (Platform.OS === 'android') {
-      handleAndroidWallpaperActive(activeFolder?.folderId === folder?.id, folder.id)
+      NonHeadlessAndroidWallpaperUpdateChange(activeFolder?.folderId === folder?.id, folder.id)
     } else {
       console.log("Shortcut loading on IOS On Personal Collection........")
     }

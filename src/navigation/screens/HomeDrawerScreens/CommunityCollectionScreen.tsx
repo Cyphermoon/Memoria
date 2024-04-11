@@ -21,7 +21,7 @@ import HeaderContent, { Header } from './HomeDrawerLayout';
 import { useAuthStore } from 'store/authStore';
 import { activateFolder, deActivateFolder, deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
-import { handleAndroidWallpaperActive } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { NonHeadlessAndroidWallpaperUpdateChange } from 'src/util/changeWallpaperBackgroundTask/index.util';
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, 'HomeDrawer'>;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Community'>;
@@ -146,7 +146,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 			await activateFolder(userId, resFolderId, DEFAULT_ACTIVE_FOLDER_ITEM_IDX, activeFolder);
 
 			if (Platform.OS === 'android') {
-				handleAndroidWallpaperActive(true, resFolderId, 'community')
+				NonHeadlessAndroidWallpaperUpdateChange(true, resFolderId, true, 'community')
 			} else {
 				console.log('iOS not supported yet')
 			}
@@ -165,8 +165,8 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 		handleClosePress();
 	}
 
-	function handleGoalPress(goal: FirestoreCommunityFolderProps) {
-		navigation.navigate('Goal', { folder: (goal as CustomCommunityFolderProps) });
+	function handleGoalPress(goal: FirestoreCommunityFolderProps, isActive: boolean) {
+		navigation.navigate('Goal', { folder: (goal as CustomCommunityFolderProps), isActive });
 	}
 
 	function handleFolderEdit() {

@@ -33,7 +33,7 @@ export async function setWallpaperFromActiveFolder() {
 
 	if (!folderItem) {
 		// If the folder item does not exist, notify the user and return null
-		errorToast('No active folder item found');
+		console.log('No active folder item found');
 		return null;
 	}
 
@@ -47,7 +47,7 @@ export async function setWallpaperFromActiveFolder() {
  * This function retrieves the URL of the active folder and sets it as the Android wallpaper. 
  * It is designed to run as a background task, and handles task timeouts and errors.
  */
-export async function getActiveFolderURLAndSetAndroidWallpaper(event: HeadlessEvent) {
+export async function headlessAndroidWallpaperUpdate(event: HeadlessEvent) {
 	try {
 		// Get the taskId and timeout from the event
 		const taskId = event.taskId;
@@ -72,6 +72,8 @@ export async function getActiveFolderURLAndSetAndroidWallpaper(event: HeadlessEv
 
 			folder.folderCategory === "community" && updateUserActiveFolderItemIdx(folder?.folderId, 1);
 		}
+
+		folder?.folderCategory !== null && setAndroidWallpaperAndUpdateItemIdx(true, folder?.folderCategory)
 
 
 		// Finish the task
@@ -108,7 +110,7 @@ export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'w
 		console.log("[BackgroundFetch] taskId", taskId);
 
 		// Perform the task here
-		await getActiveFolderURLAndSetAndroidWallpaper({ taskId, timeout: false });
+		await headlessAndroidWallpaperUpdate({ taskId, timeout: false });
 
 		// Finish the task
 		BackgroundFetch.finish(taskId);
@@ -116,7 +118,7 @@ export async function configureAndScheduleBackgroundFetch(interval: 'daily' | 'w
 		console.log("[BackgroundFetch] TIMEOUT taskId", taskId);
 
 		// Perform the task here
-		await getActiveFolderURLAndSetAndroidWallpaper({ taskId, timeout: true });
+		await headlessAndroidWallpaperUpdate({ taskId, timeout: true });
 
 		// Finish the task
 		BackgroundFetch.finish(taskId);
@@ -160,7 +162,7 @@ export async function stopBackgroundFetch() {
  * If the folder is not active, it prompts the user to make it active.
  * Any errors during the process are caught and logged, and the user is notified.
  */
-export async function handleAndroidWallpaperActive(isActive: boolean, folderId?: string, updateIdx: boolean = true, category: CollectionOptionTypes = 'personal') {
+export async function NonHeadlessAndroidWallpaperUpdateChange(isActive: boolean, folderId?: string, updateIdx: boolean = true, category: CollectionOptionTypes = 'personal') {
 
 	try {
 		if (!isActive) {
@@ -171,19 +173,12 @@ export async function handleAndroidWallpaperActive(isActive: boolean, folderId?:
 
 		// If the platform is Android and the folder is active
 		if (Platform.OS === 'android' && isActive) {
-			const userId = useAuthStore.getState().user?.uid;
 
 			// Notify the user that the wallpaper is being updated
 			neutralToast('Updating wallpaper')
 
-			// Update the wallpaper
-			await setWallpaperFromActiveFolder();
-
-			// If the folder has an ID and a user ID and updateIdx is true, update the folder and the active folder
-			if (folderId && userId && updateIdx) {
-				category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
-				category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
-			}
+			// update the user's wallpaper and update the item index
+			await setAndroidWallpaperAndUpdateItemIdx(updateIdx, category);
 
 			// Notify the user that the wallpaper has been changed
 			neutralToast('Wallpaper Set Successfully')
@@ -195,6 +190,20 @@ export async function handleAndroidWallpaperActive(isActive: boolean, folderId?:
 		// If an error occurs, log it and notify the user
 		console.error(error);
 		errorToast('An error occurred. Please try again later.');
+	}
+}
+
+async function setAndroidWallpaperAndUpdateItemIdx(updateIdx: boolean = true, category: CollectionOptionTypes = 'personal') {
+
+	// Update the wallpaper
+	const folder = await setWallpaperFromActiveFolder();
+	const folderId = folder?.folderId;
+	const userId = useAuthStore.getState().user?.uid;
+
+	// If the folder has an ID and a user ID and updateIdx is true, update the folder and the active folder
+	if (folderId && userId && updateIdx) {
+		category === 'personal' && await updateFolderAndActiveFolder(1, folderId);
+		category === 'community' && await updateUserActiveFolderItemIdx(userId, 1)
 	}
 }
 

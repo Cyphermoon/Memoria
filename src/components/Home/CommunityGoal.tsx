@@ -11,7 +11,7 @@ import { FirestoreCommunityFolderProps, CustomCommunityFolderProps } from './typ
 
 interface Props {
     className?: string
-    onPress: (folder: FirestoreCommunityFolderProps) => void
+    onPress: (folder: FirestoreCommunityFolderProps, isActive: boolean) => void
     onMoreDetailsPress?: (folder: CustomCommunityFolderProps) => void
     handleLike: (id: string, liked: boolean) => void
     handleActiveFolder: (id: string, isActive: boolean) => void
@@ -36,16 +36,16 @@ const CommunityGoal = ({
                 className={`w-full py-1 px-2 flex-col h-36 relative items-center justify-between rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
             >
                 {onMoreDetailsPress ?
-                <TouchableOpacity
-                    className='self-end'
-                    onPress={() => onMoreDetailsPress({ ...folder, liked, active })}>
-                    <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
-                </TouchableOpacity>:
-                <Text className='text-primary-300'>invincible</Text>
+                    <TouchableOpacity
+                        className='self-end'
+                        onPress={() => onMoreDetailsPress({ ...folder, liked, active })}>
+                        <Entypo name="dots-three-horizontal" size={20} color={active ? customColors.accent : colors.gray[500]} />
+                    </TouchableOpacity> :
+                    <Text className='text-primary-300'>invincible</Text>
                 }
 
                 <TouchableOpacity
-                    onPress={() => onPress(folder)}
+                    onPress={() => onPress(folder, active)}
                     onLongPress={() => onMoreDetailsPress && onMoreDetailsPress({ ...folder, liked, active })}>
                     <Text className={`${active ? 'text-accent' : 'text-secondary'} font-bold text-2xl`} >
                         {folder.name}
