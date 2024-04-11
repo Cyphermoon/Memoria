@@ -51,7 +51,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
         setSelectedMode(mode)
     }
 
-    async function createFolderItem() {
+    async function handleCreateFolderItem() {
         if (!userId) return
         if (!route.params.folder) return
 
@@ -224,7 +224,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
                 </View>
 
                 <Touchable isText onPress={() => {
-                    isEditingMode ? handleEditFolderItem() : createFolderItem()
+                    isEditingMode ? handleEditFolderItem() : handleCreateFolderItem()
                 }}>{isEditingMode ? "Save" : "Create"}</Touchable>
 
             </View>

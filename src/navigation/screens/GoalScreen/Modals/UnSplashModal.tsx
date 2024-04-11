@@ -11,7 +11,7 @@ import { HomeStackParamList } from 'type';
 
 type Props = NativeStackScreenProps<HomeStackParamList, "UnSplashModal">
 
-const UnSplashModal = ({ navigation }: Props) => {
+const UnSplashModal = ({ navigation, route }: Props) => {
     const insets = useSafeAreaInsets()
     const [searchQuery, setSearchQuery] = useState('')
     const debouncedSearchQuery = useDebounce(searchQuery, 1500)
@@ -22,12 +22,13 @@ const UnSplashModal = ({ navigation }: Props) => {
         setSearchQuery(query);
     }
 
+
     function handleSearchSubmit() {
         setSearchQuery(searchQuery)
     }
 
     function handleImagePressed(unsplashImage: UnsplashResult) {
-        navigation.navigate("NewGoalItem", { unsplashImage })
+        navigation.navigate("NewGoalItem", { unsplashImage, editFolderItem: route.params.editFolderItem, folder: route.params.folder })
     }
 
     useEffect(() => {

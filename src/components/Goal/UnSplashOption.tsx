@@ -18,7 +18,7 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
     const isFocused = useIsFocused()
 
     const openUnSplashModal = () => {
-        navigation.navigate('UnSplashModal')
+        navigation.navigate('UnSplashModal', { editFolderItem: route.params.editFolderItem, folder: route.params.folder })
     }
 
     useEffect(() => {

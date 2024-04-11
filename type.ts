@@ -11,7 +11,7 @@ export type HomeStackParamList = {
   GoalSlideShow: { currentId: string, goals: FolderItemProps[] }
   NewGoalItem: { folder?: { id: string, type: CollectionOptionTypes }, unsplashImage?: UnsplashResult, editFolderItem?: EditFolderItemProps }
   EditGoalItem: { goalItem: EditFolderItemProps }
-  UnSplashModal: undefined
+  UnSplashModal: { editFolderItem?: EditFolderItemProps, folder?: { id: string, type: CollectionOptionTypes }, }
 };
 
 export type AuthStackParamList = {
