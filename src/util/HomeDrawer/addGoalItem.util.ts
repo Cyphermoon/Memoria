@@ -163,12 +163,17 @@ export async function editFirestoreFolderItem(userId: string, folderId: string, 
 
 export function applyEffectToCloudinaryImage(image: CloudinaryResponse, text: string) {
     const url = image.secure_url
+    // encode the text to be appropriate in a url
     const transformedText = encodeURI(truncateText(text, 20))
+    // set the text size to 5% of the image height
     const textSize = Math.round(image.height * 0.05);
+    // set the y offset to 1/6 of the image height
     const yOffset = Math.round(image.height / 6)
+    // set the effect to apply to the image
     const effect = `/co_rgb:000000,e_colorize:40/co_rgb:DDD9D9,l_text:georgia_${textSize}_italic_normal_left:${transformedText}/fl_layer_apply,g_north,x_-30,y_${yOffset}`;
+    // get the index of the /upload in the url
     const splitIndex = url.indexOf("/upload") + "/upload".length
-
+    // insert the effect into the url
     return url.slice(0, splitIndex) + `/${effect}` + url.slice(splitIndex)
 
 }

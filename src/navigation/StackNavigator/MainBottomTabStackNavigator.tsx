@@ -1,13 +1,14 @@
 import { Ionicons } from '@expo/vector-icons';
 import { BottomTabScreenProps, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import colors from 'colors';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HomeStackParamList } from 'type';
 import HomeStackNavigator from './HomeStackNavigator';
 import ProfileStackNavigator from './ProfileStackNavigator';
 import GlobalSearchScreen from '@screens/GlobalSearchScreen';
 import { StyleSheet } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 
 export type MainBottomTabNavigatorParamList = {
@@ -19,6 +20,7 @@ export type MainBottomTabNavigatorParamList = {
 // Import your screen components here
 
 const Tab = createBottomTabNavigator<MainBottomTabNavigatorParamList>();
+
 
 const MainBottomTabNavigator = () => {
 
@@ -35,11 +37,14 @@ const MainBottomTabNavigator = () => {
         }
     }
 
+
+
     return (
         <Tab.Navigator screenOptions={({ route }) => ({
             tabBarIcon: ({ focused, color, size }) => {
                 let iconName: 'home' | 'home-outline' | 'person' | 'person-outline' | 'search' | 'search-outline' =
                     getIconName(route.name, focused);
+
 
                 return <Ionicons name={iconName} size={size} color={color} />
             },

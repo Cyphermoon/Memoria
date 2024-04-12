@@ -1,62 +1,65 @@
 {
-  "expo": {
-    "name": "Memoria",
-    "slug": "Memoria",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#030712"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "UIBackgroundModes": [
-          "fetch",
-          "processing"
-        ],
-        "BGTaskSchedulerPermittedIdentifiers": [
-          "com.transistorsoft.fetch",
-          "com.transistorsoft.changeWallpaper"
-        ]
-      },
-      "bundleIdentifier": "com.cyphermoon.Memoria"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#030712"
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.SET_WALLPAPER"
-      ],
-      "package": "com.cyphermoon.Memoria"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-font",
-      "react-native-background-fetch",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
-        }
-      ],
-      "react-native-background-fetch"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "42109613-1056-4323-b910-dc61c043129d"
-      }
-    }
-  }
+	"expo": {
+		"name": "Memoria",
+		"slug": "Memoria",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "dark",
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#030712"
+		},
+		"assetBundlePatterns": ["**/*"],
+		"ios": {
+			"supportsTablet": true,
+			"infoPlist": {
+				"UIBackgroundModes": ["fetch", "processing"],
+				"BGTaskSchedulerPermittedIdentifiers": [
+					"com.transistorsoft.fetch",
+					"com.transistorsoft.changeWallpaper"
+				]
+			},
+			"bundleIdentifier": "com.cyphermoon.Memoria"
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#030712"
+			},
+			"permissions": [
+				"android.permission.RECORD_AUDIO",
+				"android.permission.SET_WALLPAPER"
+			],
+			"package": "com.cyphermoon.Memoria"
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"plugins": [
+			"expo-font",
+			"react-native-background-fetch",
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "The app accesses your photos to let you share them with your friends."
+				}
+			],
+			[
+				"expo-media-library",
+				{
+					"photosPermission": "Allow Memoria to access your photos.",
+					"savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+					"isAccessMediaLocationEnabled": true
+				}
+			],
+			"react-native-background-fetch"
+		],
+		"extra": {
+			"eas": {
+				"projectId": "42109613-1056-4323-b910-dc61c043129d"
+			}
+		}
+	}
 }

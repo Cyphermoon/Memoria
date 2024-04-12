@@ -14,7 +14,7 @@ import tailwindColors from 'tailwindcss/colors';
 export type HomeDrawerParamList = {
     Personal: undefined
     Community: undefined
-    ActiveCollection: undefined
+    ActiveFolderItem: undefined
 }
 
 
@@ -33,7 +33,7 @@ const HomeDrawer = () => {
             }>
             <Drawer.Screen name="Personal" component={HomeScreen} />
             <Drawer.Screen name="Community" component={CommunityCollectionScreen} />
-            <Drawer.Screen name="ActiveCollection" component={ActiveCollectionScreen} />
+            <Drawer.Screen name="ActiveFolderItem" component={ActiveCollectionScreen} />
         </Drawer.Navigator>
 
     );
@@ -52,7 +52,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             // Add more cases as needed for each screen
             case 'Community':
                 return 'folder-open-sharp';
-            case 'Categories':
+            case 'ActiveFolderItem':
                 return 'aperture-outline';
             default:
                 return 'home';
