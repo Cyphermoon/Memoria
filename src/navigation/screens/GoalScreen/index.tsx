@@ -117,6 +117,26 @@ const GoalScreen = ({ route, navigation }: Props) => {
         }
     }
 
+    async function handleSetWallpaper(idx: number) {
+        if (!userId) return
+
+        if (Platform.OS === "android") {
+            if (route.params.folder.mode === "personal") {
+                // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+                await updateFolderAndActiveFolder(0, route.params.folder.id, idx)
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
+
+            } else if (route.params.folder.mode === "community") {
+                // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
+                await updateUserActiveFolderItemIdx(userId, 0, idx)
+                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
+            }
+        } else if (Platform.OS === "ios") {
+            console.log("IOS functionality is loading .........")
+        }
+
+    }
+
     //* Search Actions
 
     function handleSearchSubmit() {
@@ -279,7 +299,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
         })
 
         return () => unsubscribe()
-    }, [])
+    }, [userId])
 
     // useEffect hook to automatically scroll to the current position in a list when 'position' state changes
     useEffect(() => {
@@ -359,6 +379,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
                                     image={item.image}
                                     generationMode={item.generationMode}
                                     aiTitle={item.aiTitle}
+                                    handleSetFolderItem={() => handleSetWallpaper(index)}
                                     active={route.params.isActive && index === activeFolderItemIdx}
                                     onDelete={handleDelete}
                                     onFullscreen={handleFullscreen}

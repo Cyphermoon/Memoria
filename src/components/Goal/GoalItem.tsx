@@ -9,6 +9,7 @@ import Text from '../common/Text';
 import { CloudinaryResponse, EditFolderItemProps, FolderItemProps } from 'src/util/HomeDrawer/type';
 import Animated from 'react-native-reanimated';
 import { applyEffectToCloudinaryImage } from 'src/util/HomeDrawer/addGoalItem.util';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 //Todo: Re develop this screen to have a dynamic header like the one on home screen
 //Todo: Make the background of the page reflect the dominant color of the current folder item image
@@ -21,13 +22,14 @@ interface Props {
     id: string,
     generationMode: string,
     aiTitle: string
+    handleSetFolderItem: () => void
     onDelete: (itemId: string, imageId: string) => void,
     onFullscreen: (id: string) => void
     onEdit: (item: EditFolderItemProps) => void
 }
 
 // Define the GoalItem component
-const GoalItem = ({ image, name, id, active, generationMode, aiTitle, onDelete, onFullscreen, onEdit }: Props) => {
+const GoalItem = ({ image, name, id, active, generationMode, aiTitle, onDelete, onFullscreen, onEdit, handleSetFolderItem }: Props) => {
 
     return (
         // The main container for the GoalItem
@@ -35,7 +37,13 @@ const GoalItem = ({ image, name, id, active, generationMode, aiTitle, onDelete, 
             style={[active && styles.elevate]}
             className='relative w-full h-48 rounded-2xl'
         >
-            <Image source={image.secure_url} className="w-full h-full rounded-2xl" contentFit='cover' />
+            <TouchableWithoutFeedback onPress={handleSetFolderItem}>
+                <Image
+                    source={image.secure_url}
+                    className="w-full h-full rounded-2xl"
+                    contentFit='cover' />
+            </TouchableWithoutFeedback>
+
 
 
             <BlurView intensity={30} tint='dark'
