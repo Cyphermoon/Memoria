@@ -1,7 +1,7 @@
 import ProfileItem from '@components/Profile/ProfileItem'
 import Text from '@components/common/Text'
 import { Image } from 'expo-image'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Linking, Platform, ScrollView, Share, TouchableOpacity, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuthStore } from 'store/authStore'
@@ -61,6 +61,10 @@ const ProfileScreen = () => {
             navigation.navigate('Login')
         }, 1500)
     }
+
+    useEffect(() => {
+        setUserImage(_userImageUrl)
+    }, [_userImageUrl])
 
 
     return (
