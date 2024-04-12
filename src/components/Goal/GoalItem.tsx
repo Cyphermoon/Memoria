@@ -8,6 +8,7 @@ import { truncateText } from '../../util';
 import Text from '../common/Text';
 import { CloudinaryResponse, EditFolderItemProps, FolderItemProps } from 'src/util/HomeDrawer/type';
 import Animated from 'react-native-reanimated';
+import { applyEffectToCloudinaryImage } from 'src/util/HomeDrawer/addGoalItem.util';
 
 //Todo: Re develop this screen to have a dynamic header like the one on home screen
 //Todo: Make the background of the page reflect the dominant color of the current folder item image

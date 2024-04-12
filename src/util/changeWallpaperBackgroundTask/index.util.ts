@@ -6,6 +6,7 @@ import { ActiveFolderProps, useAuthStore } from 'store/authStore';
 import { Platform } from 'react-native';
 import colors from 'colors';
 import { errorToast, neutralToast } from '../toast.util';
+import { applyEffectToCloudinaryImage } from '../HomeDrawer/addGoalItem.util';
 
 
 // This function is used to compute the fetch interval based on the given interval
@@ -38,7 +39,7 @@ export async function setWallpaperFromActiveFolder(userId: string | undefined, a
 	}
 
 	// If the folder item exists, set the Android wallpaper to the folder item image
-	const res = folderItem?.folderItem && await setAndroidWallpaper(folderItem?.folderItem?.image.secure_url);
+	const res = folderItem?.folderItem && await setAndroidWallpaper(applyEffectToCloudinaryImage(folderItem?.folderItem?.image, folderItem.folderItem?.description));
 
 	return folderItem;
 }

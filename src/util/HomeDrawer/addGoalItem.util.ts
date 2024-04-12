@@ -4,6 +4,7 @@ import { successToast } from "../toast.util";
 import { AddFolderItemProps, CloudinaryResponse, EditFolderItemProps, ImageUploadType } from "./type";
 import { CollectionOptionTypes } from "@components/Home/type";
 import SHA1 from 'crypto-js/sha1';
+import { truncateText } from "..";
 
 const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqebv2gce/image';
 
@@ -158,4 +159,16 @@ export async function editFirestoreFolderItem(userId: string, folderId: string, 
         // If there's an error updating the item, log the error.
         console.error('Error updating folder item: ', error);
     }
+}
+
+export function applyEffectToCloudinaryImage(image: CloudinaryResponse, text: string) {
+    const url = image.secure_url
+    const transformedText = encodeURI(truncateText(text, 20))
+    const textSize = Math.round(image.height * 0.05);
+    const yOffset = Math.round(image.height / 6)
+    const effect = `/co_rgb:000000,e_colorize:40/co_rgb:DDD9D9,l_text:georgia_${textSize}_italic_normal_left:${transformedText}/fl_layer_apply,g_north,x_-30,y_${yOffset}`;
+    const splitIndex = url.indexOf("/upload") + "/upload".length
+
+    return url.slice(0, splitIndex) + `/${effect}` + url.slice(splitIndex)
+
 }
