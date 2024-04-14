@@ -104,7 +104,8 @@ const ProfileScreen = () => {
                         url: BASE_URL
                     });
                 }} text='Share with Friends' />
-                {Platform.OS === 'ios' && <ProfileItem onPress={() => { }} text='Wallpaper Automation' />}
+
+                {Platform.OS === 'ios' && <ProfileItem onPress={() => { Linking.openURL('https://www.icloud.com/shortcuts/46969a5b9a284d88ae240e8004b398c1') }} text='Wallpaper Changing Shortcut' />}
 
             </View>
 

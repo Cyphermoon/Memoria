@@ -17,7 +17,7 @@ import { CollectionReference, DocumentReference, collection, doc, onSnapshot } f
 import { firestoreDB } from 'firebaseConfig'
 import { useAuthStore } from 'store/authStore'
 import { deleteFolderItem, deleteImageFromCloudinary } from 'src/util/HomeDrawer/addGoalItem.util'
-import { errorToast } from 'src/util/toast.util'
+import { errorToast, neutralToast } from 'src/util/toast.util'
 import { editCommunityFolder, editFolder } from 'src/util/HomeDrawer/index.utll'
 import { truncateText } from 'src/util'
 import NewGoal from '@components/Home/NewGoal'
@@ -66,19 +66,16 @@ const GoalScreen = ({ route, navigation }: Props) => {
     async function handlePreviousWallpaper() {
         if (!userId) return
 
-        if (Platform.OS === "android") {
-            if (route.params.folder.mode === "personal") {
-                // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
-                await updateFolderAndActiveFolder(-1, route.params.folder.id)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
 
-            } else if (route.params.folder.mode === "community") {
-                // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
-                await updateUserActiveFolderItemIdx(userId, -1)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
-            }
-        } else if (Platform.OS === "ios") {
-            console.log("IOS functionality is loading .........")
+        if (route.params.folder.mode === "personal") {
+            // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+            await updateFolderAndActiveFolder(-1, route.params.folder.id)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
+
+        } else if (route.params.folder.mode === "community") {
+            // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
+            await updateUserActiveFolderItemIdx(userId, -1)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
         }
 
     }
@@ -86,19 +83,17 @@ const GoalScreen = ({ route, navigation }: Props) => {
     async function handleNextWallpaper() {
         if (!userId) return
 
-        if (Platform.OS === "android") {
-            if (route.params.folder.mode === "personal") {
-                // add the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
-                await updateFolderAndActiveFolder(1, route.params.folder.id)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
-            } else if (route.params.folder.mode === "community") {
-                // add the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper
-                await updateUserActiveFolderItemIdx(userId, 1)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
-            }
-        } else if (Platform.OS === "ios") {
-            console.log("IOS functionality is loading .........")
+
+        if (route.params.folder.mode === "personal") {
+            // add the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+            await updateFolderAndActiveFolder(1, route.params.folder.id)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
+        } else if (route.params.folder.mode === "community") {
+            // add the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper
+            await updateUserActiveFolderItemIdx(userId, 1)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
         }
+
     }
 
     async function syncWallpaper() {
@@ -113,27 +108,25 @@ const GoalScreen = ({ route, navigation }: Props) => {
                 await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
 
         } else if (Platform.OS === "ios") {
-            console.log("IOS functionality is loading .........")
+            neutralToast("This functionality is only available on Android")
         }
     }
 
     async function handleSetWallpaper(idx: number) {
         if (!userId) return
 
-        if (Platform.OS === "android") {
-            if (route.params.folder.mode === "personal") {
-                // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
-                await updateFolderAndActiveFolder(0, route.params.folder.id, idx)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
 
-            } else if (route.params.folder.mode === "community") {
-                // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
-                await updateUserActiveFolderItemIdx(userId, 0, idx)
-                await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
-            }
-        } else if (Platform.OS === "ios") {
-            console.log("IOS functionality is loading .........")
+        if (route.params.folder.mode === "personal") {
+            // deduct the activeFolderItemIdx by 1 in personal collection then use the new Idx to get folderItem and update the user wallpaper
+            await updateFolderAndActiveFolder(0, route.params.folder.id, idx)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "personal")
+
+        } else if (route.params.folder.mode === "community") {
+            // deduct the activeFolderItemIdx by 1 in the community collection then use the new Idx to get folderItem and update the user wallpaper 
+            await updateUserActiveFolderItemIdx(userId, 0, idx)
+            Platform.OS === "android" && await NonHeadlessAndroidWallpaperUpdateChange(route.params.isActive, route.params.folder.id, false, "community")
         }
+
 
     }
 
