@@ -1,7 +1,7 @@
 import { NavigationProp, useIsFocused } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View, useWindowDimensions, } from 'react-native'
 import { interpolate } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
@@ -90,6 +90,7 @@ const OnBoardingScreen = ({ navigation }: Props) => {
     );
 
 
+
     return (
         <ProtectedScreen>
             <View
@@ -110,7 +111,7 @@ const OnBoardingScreen = ({ navigation }: Props) => {
                     ref={ref}
                     style={styles.carousel}
                     autoPlay={true}
-                    autoPlayInterval={3000}
+                    autoPlayInterval={4000}
                     data={_slides}
                     customAnimation={animationStyle}
                     onSnapToItem={handleSnapToItem}

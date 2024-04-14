@@ -36,6 +36,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
     const { position } = useSlidePosition()
     const userId = useAuthStore(state => state.user?.uid);
     const inset = useSafeAreaInsets()
+    const isAndroid = Platform.OS === 'android'
 
     const [selectedInterval, setSelectedInterval] = useState<IntervalOptionProps>(intervalOptions[0]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -133,7 +134,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
     //* Search Actions
 
     function handleSearchSubmit() {
-        console.log("Search submitted! ", searchQuery)
+        //pass
     }
 
 
@@ -324,7 +325,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
             {/* Header Section */}
             <View className='flex-row justify-between items-center mb-8 mt-6'>
-                <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, 10)}</Text>
+                <Text className='text-4xl font-semibold'>{truncateText(route.params?.folder.name, isAndroid ? 7 : 10)}</Text>
 
                 {route.params.isActive &&
                     <View className='flex flex-row items-center space-x-6'>

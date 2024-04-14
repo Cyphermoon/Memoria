@@ -1,22 +1,22 @@
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import React from 'react'
 import { Stringifier } from 'postcss';
 
 interface Props {
-    active: boolean;
-    handleActiveChanged: (newState: boolean) => void;
-    text: string
-    
+  active: boolean;
+  handleActiveChanged: (newState: boolean) => void;
+  text: string
+
 }
 
-const FilterTag = ({active, handleActiveChanged, text}: Props) => {
+const FilterTag = ({ active, handleActiveChanged, text }: Props) => {
   return (
     <View>
-         <TouchableOpacity
-            onPress={() => handleActiveChanged && handleActiveChanged(!active)}
-            className={`py-4 px-8 mr-3 rounded-full justify-center items-center  ${active ? "bg-accent text-primary" : "bg-primary-300 text-gray-400"}`}>
-                        <Text className={`${active ? "text-primary" : "text-gray-400"} p-0 text-xs`}>{text}</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => handleActiveChanged && handleActiveChanged(!active)}
+        className={` ${Platform.OS === "android" ? "px-3 py-3" : "py-4 px-8"} mr-3 rounded-full justify-center items-center  ${active ? "bg-accent text-primary" : "bg-primary-300 text-gray-400"}`}>
+        <Text className={`${active ? "text-primary" : "text-gray-400"} p-0 text-xs`}>{text}</Text>
+      </TouchableOpacity>
     </View>
   )
 }

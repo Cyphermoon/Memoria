@@ -73,7 +73,7 @@ const ActiveCollectionScreen = ({ navigation }: Props) => {
                 setActiveFolder(res);
             })
             .catch(err => errorToast(err.message))
-    }, [userId, _activeFolder])
+    }, [userId, _activeFolder, isFocused])
 
     return (
         <View

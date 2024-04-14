@@ -16,7 +16,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { MainBottomTabNavigatorParamList } from 'src/navigation/StackNavigator/MainBottomTabStackNavigator'
 import { AuthStackParamList, HomeStackParamList, RootStackParamList } from 'type'
 
-type AuthNavigationProps = NavigationProp<AuthStackParamList, "Auth">
+type AuthNavigationProps = NavigationProp<RootStackParamList, "HomeNavigator">
 
 const ProfileScreen = () => {
     const insets = useSafeAreaInsets()
@@ -58,7 +58,7 @@ const ProfileScreen = () => {
 
         // Navigate to the login screen after 1.5 seconds
         setTimeout(() => {
-            navigation.navigate('Login')
+            navigation.navigate('AuthNavigator')
         }, 1500)
     }
 

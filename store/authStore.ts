@@ -1,4 +1,4 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { firebaseAuth, firestoreDB } from 'firebaseConfig';
 import { CollectionOptionTypes, FolderProps } from '@components/Home/type';
@@ -25,7 +25,7 @@ onAuthStateChanged(firebaseAuth, (user) => {
         // Set the user's data in the store
         useAuthStore.getState().setUser(firestoreUser);
       } else {
-        console.log("No such document!");
+        console.error("No such document!");
       }
     });
   } else {
@@ -36,17 +36,17 @@ onAuthStateChanged(firebaseAuth, (user) => {
 
 // types
 interface AuthState {
-    user: CustomFireStoreUserProps | null;
-    setUser: (user: CustomFireStoreUserProps | null) => void;
+  user: CustomFireStoreUserProps | null;
+  setUser: (user: CustomFireStoreUserProps | null) => void;
 }
 
 export interface CustomFireStoreUserProps {
-    uid: string;
-    username: string;
-    email: string;
-    image?: CloudinaryResponse;
-    folders: FolderProps[];
-    activeFolder: ActiveFolderProps | null;
+  uid: string;
+  username: string;
+  email: string;
+  image?: CloudinaryResponse;
+  folders: FolderProps[];
+  activeFolder: ActiveFolderProps | null;
 }
 
 export interface ActiveFolderProps {

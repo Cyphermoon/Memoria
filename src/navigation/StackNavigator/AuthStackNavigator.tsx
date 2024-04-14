@@ -34,8 +34,7 @@ const AuthStackNavigator = ({ navigation }: Props) => {
         // clear timeout
         return () => clearTimeout(timeoutRef)
 
-    }, [user]);
-
+    }, [user, isFocused]);
 
 
     if (loading) {
@@ -43,7 +42,7 @@ const AuthStackNavigator = ({ navigation }: Props) => {
     }
 
     return (
-        <AuthStack.Navigator screenOptions={{ headerShown: false }}>
+        <AuthStack.Navigator initialRouteName="onBoarding" screenOptions={{ headerShown: false }}>
             <AuthStack.Screen name="onBoarding" component={OnBoardingScreen} />
             <AuthStack.Screen name="Auth" component={RegisterScreen} />
             <AuthStack.Screen name="Login" component={LoginScreen} />

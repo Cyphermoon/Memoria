@@ -1,7 +1,7 @@
 import { Entypo } from '@expo/vector-icons';
 import customColors from 'colors';
 import React, { useEffect } from 'react';
-import { TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { Platform, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import colors from 'tailwindcss/colors';
 import { plural } from '../../util';
 import Text from '../common/Text';
@@ -21,7 +21,7 @@ const Goal = ({ className = "", selectedFolder, active, fullWidth, onLongPress, 
 
   return (
     <View
-      className={`h-36 ${fullWidth ? 'w-full' : 'w-[185]'} relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
+      className={`h-36 w-full relative items-center justify-center rounded-2xl bg-primary-300 ${active && "border border-accent"} ${className}`}
     >
       {onMoreDetailsPress &&
         <TouchableOpacity

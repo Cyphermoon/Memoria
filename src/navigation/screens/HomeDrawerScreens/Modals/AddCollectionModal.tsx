@@ -16,6 +16,7 @@ import customColors from '../../../../../colors';
 import { HomeStackParamList } from '../../../../../type';
 import Text from '../../../../components/common/Text';
 import Touchable from '../../../../components/common/Touchable';
+import { neutralToast } from 'src/util/toast.util';
 
 type Props = NativeStackScreenProps<HomeStackParamList, 'AddCollection'>;
 
@@ -133,7 +134,7 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 			// change the user wallpaper if the folder is active
 			NonHeadlessAndroidWallpaperUpdateChange(isActive, route.params.folder?.id, true, "community")
 		} else {
-			console.log("Shortcut loading on IOS........ on add collection modal community")
+			neutralToast("Cannot set wallpaper directly on IOS")
 		}
 
 	}

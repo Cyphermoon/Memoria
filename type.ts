@@ -23,6 +23,6 @@ export type AuthStackParamList = {
 
 export type RootStackParamList = {
   HomeNavigator: undefined;
-  AuthNavigator: NativeStackNavigationProp<AuthStackParamList>;
+  AuthNavigator: any;
 }
 

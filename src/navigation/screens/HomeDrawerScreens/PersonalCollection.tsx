@@ -24,6 +24,7 @@ import { deleteFolder } from 'src/util/HomeDrawer/index.utll';
 import { NonHeadlessAndroidWallpaperUpdateChange } from 'src/util/changeWallpaperBackgroundTask/index.util';
 import { useAuthStore } from 'store/authStore';
 import HeaderContent, { Header } from './HomeDrawerLayout';
+import { neutralToast } from 'src/util/toast.util';
 
 // Screen Types
 type HomeScreenNavigationProp = NavigationProp<
@@ -39,6 +40,7 @@ type Props = DrawerScreenProps<HomeDrawerParamList, 'Personal'>;
 const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
   const userId = useAuthStore((state) => state.user?.uid);
   const [folders, setFolders] = useState<FolderProps[] | null>(null);
+  const isAndroid = Platform.OS === 'android';
 
   const navigation = useNavigation<HomeScreenNavigationProp>();
 
@@ -154,7 +156,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
     if (Platform.OS === 'android') {
       NonHeadlessAndroidWallpaperUpdateChange(activeFolder?.folderId === folder?.id, folder.id)
     } else {
-      console.log("Shortcut loading on IOS On Personal Collection........")
+      neutralToast("This feature is only available on Android. Sorry! 🥲")
     }
   }
 
@@ -193,7 +195,7 @@ const HomeScreen = ({ navigation: drawerNavigation }: Props) => {
           )}
           renderItem={({ item }) => {
             return (
-              <View className="w-1/2 p-2">
+              <View className={` ${isAndroid ? "w-[49%]" : "w-1/2"} p-2`}>
                 <Goal
                   selectedFolder={item}
                   active={activeFolder ? item.id === activeFolder.folderId : false}

@@ -155,7 +155,7 @@ export async function updateFolderAndActiveFolder(incrementValue: number, folder
 
     // If the user ID is not found, log an error message and return
     if (!userId) {
-        console.log('User ID not found')
+        console.error('User ID not found')
         return
     }
 

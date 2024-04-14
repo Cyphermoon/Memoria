@@ -2,7 +2,7 @@ import { FontAwesome5 } from '@expo/vector-icons'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
 import React, { useEffect, useRef } from 'react'
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Animated, { SharedValue, interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -36,6 +36,7 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
 
     const ref = useRef<ICarouselInstance>(null)
     const insets = useSafeAreaInsets()
+    const isAndroid = Platform.OS === 'android'
 
     useEffect(() => {
         // Set the current item to the Id provided
@@ -54,7 +55,7 @@ const GoalSlideShowModal = ({ navigation, route }: Props) => {
                 paddingBottom: insets.bottom,
             }}
             className='bg-primary flex-grow flex-col items-center px-4'>
-            <TouchableOpacity className='self-end mt-3 mb-4' onPress={() => navigation.goBack()} >
+            <TouchableOpacity className={`self-end ${isAndroid ? 'my-1.5' : 'mt-3 mb-4'} `} onPress={() => navigation.goBack()} >
                 <FontAwesome5 name="times" size={32} color={colors.secondary} />
             </TouchableOpacity>
 
@@ -120,7 +121,7 @@ const Slide = ({ description, image, id, animationValue }: SlideProps) => {
                 style={styles.imageSlide}
                 source={image.secure_url}
                 contentFit='cover'
-                className='rounded-xl mb-8' />
+                className='rounded-xl mb-6' />
 
             <Text
                 className={`text-base text-center`}>

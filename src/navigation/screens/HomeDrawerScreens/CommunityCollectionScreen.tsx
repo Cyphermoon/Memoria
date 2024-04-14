@@ -22,6 +22,7 @@ import { useAuthStore } from 'store/authStore';
 import { activateFolder, deActivateFolder, deleteCommunityFolder, handleSortChanged, likeFolder, unLikeFolder } from 'src/util/HomeDrawer/index.utll';
 import { useActiveFolder } from 'src/util/HomeDrawer/index.hook';
 import { NonHeadlessAndroidWallpaperUpdateChange } from 'src/util/changeWallpaperBackgroundTask/index.util';
+import { neutralToast } from 'src/util/toast.util';
 
 type HomeScreenNavigationProp = NavigationProp<HomeStackParamList, 'HomeDrawer'>;
 type Props = DrawerScreenProps<HomeDrawerParamList, 'Community'>;
@@ -148,7 +149,7 @@ const CommunityCollectionScreen = ({ navigation: drawerNavigation }: Props) => {
 			if (Platform.OS === 'android') {
 				NonHeadlessAndroidWallpaperUpdateChange(true, resFolderId, true, 'community')
 			} else {
-				console.log('iOS not supported yet')
+				neutralToast('This functionality only works on anroid')
 			}
 		}
 	}

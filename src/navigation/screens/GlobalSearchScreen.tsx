@@ -78,7 +78,7 @@ const GlobalSearchScreen = () => {
 
                 setPersonalFolders(folders)
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
 
     }, [activeFilter])
 
@@ -178,7 +178,7 @@ const GlobalSearchScreen = () => {
                 paddingTop: insets.top,
                 paddingBottom: insets.bottom + bottomTabHeight,
             }}
-            className='bg-primary px-4 flex-grow'
+            className='bg-primary px-2.5 flex-grow'
         >
 
             <View className='mt-4 flex-grow h-96'>
@@ -191,7 +191,7 @@ const GlobalSearchScreen = () => {
                         setSearchQuery={setSearchQuery} />
 
                     {/* Filter Sections */}
-                    <View className='flex-row justify-between mt-4'>
+                    <View className='flex-row flex-wrap overscroll-y-auto w-full justify-between mt-4'>
                         <View className='flex-row justify-between items-center'>
                             <FilterTag text='Personal' active={activeFilter === 'personal'} handleActiveChanged={() => setActiveFilter('personal')} />
                             <FilterTag text='Community' active={activeFilter === 'community'} handleActiveChanged={() => setActiveFilter('community')} />
