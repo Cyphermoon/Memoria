@@ -86,10 +86,10 @@ const AddCollectionModal = ({ navigation, route }: Props) => {
 		// Update the background wallpaper on Android if the folder is active
 		if (Platform.OS === 'android') {
 			// Stop any running background fetch tasks
-			stopBackgroundFetch();
+			await stopBackgroundFetch();
 
 			// Schedule a new background fetch task to run daily
-			configureAndScheduleBackgroundFetch('daily');
+			await configureAndScheduleBackgroundFetch('daily');
 		} else {
 			console.log("Shortcut loading on IOS........ on Add collection modal personal")
 		}
