@@ -237,7 +237,7 @@ const GlobalSearchScreen = () => {
                                         {
                                             item.uid &&
                                             <View className='flex-row space-x-3 items-center bg-primary-300  p-5 rounded-md'>
-                                                <UserAvatar username={item.username} imageUrl={item.image.secure_url} />
+                                                <UserAvatar username={item.username} imageUrl={item.image?.secure_url} />
                                                 <Text className='text-base'>{item.username}</Text>
                                             </View>
                                         }
