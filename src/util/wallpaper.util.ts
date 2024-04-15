@@ -12,7 +12,7 @@ export async function setAndroidWallpaper(
         ...options,
       },
     },
-    type // Sets the wallpaper on Lock Screen only
+    type // Sets the wallpaper on Lock Screen and Home Screen
   );
 
   return wallpaper;
