@@ -26,8 +26,8 @@ const PERSISTENCE_KEY = 'NAVIGATION_STATE_V1';
 
 export default function App() {
 	const [isReady, setIsReady] = useState(__DEV__ ? false : true);
-	const [initialState, setInitialState] = useState();
-
+	const [initialState, setInitialState] =
+		useState();
 	useEffect(() => {
 		const restoreState = async () => {
 			try {

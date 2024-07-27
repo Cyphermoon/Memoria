@@ -1,9 +1,8 @@
-import { View, Text } from 'react-native'
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
+import SplashScreen from '@screens/SplashScreen'
 import React, { useEffect, useState } from 'react'
 import { useAuthStore } from 'store/authStore'
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
-import { HomeStackParamList, RootStackParamList } from 'type'
-import SplashScreen from '@screens/SplashScreen'
+import { RootStackParamList } from 'type'
 
 interface Props {
     children: React.ReactNode

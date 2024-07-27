@@ -210,5 +210,3 @@ async function setAndroidWallpaperAndUpdateItemIdx(updateIdx: boolean = true) {
 	}
 
 }
-
-
