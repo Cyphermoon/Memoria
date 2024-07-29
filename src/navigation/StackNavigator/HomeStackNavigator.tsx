@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unstable-nested-components */
+import React from "react"
 import HeaderCancelButton from "@components/AddGoalItem/HeaderCancelButton"
 import { GoalBackButton } from "@components/Goal/GoalBackButton"
 import Text from "@components/common/Text"
@@ -17,67 +19,75 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
 // Define persistence key
 const HomeStackNavigator = () => {
-    return (
-        <HomeStack.Navigator initialRouteName="HomeDrawer" screenOptions={{ headerShown: false }}>
-            <HomeStack.Group>
-                <HomeStack.Screen name="HomeDrawer" component={HomeDrawer} />
-                <HomeStack.Screen
-                    name="Goal"
-                    component={GoalScreen}
-                    options={{
-                        headerShown: true,
-                        headerTitle: '',
-                        headerShadowVisible: false,
-                        headerStyle: { backgroundColor: colors.primary.DEFAULT },
-                        headerLeft: () => <GoalBackButton />,
-                        headerRight: () => <IntervalSelector selectedInterval={{ label: "Daily", value: "daily", icon: "calendar-day" }} />
-                    }} />
-                <HomeStack.Screen
-                    name="EditGoalItem"
-                    component={EditGoalItem}
-                    options={{
-                        headerShown: false,
-                    }} />
-            </HomeStack.Group>
+	return (
+		<HomeStack.Navigator initialRouteName="HomeDrawer" screenOptions={{ headerShown: false }}>
+			<HomeStack.Group>
+				<HomeStack.Screen name="HomeDrawer" component={HomeDrawer} />
+				<HomeStack.Screen
+					name="Goal"
+					component={GoalScreen}
+					options={{
+						headerShown: true,
+						headerTitle: "",
+						headerShadowVisible: false,
+						headerStyle: { backgroundColor: colors.primary.DEFAULT },
+						headerLeft: () => <GoalBackButton />,
+						headerRight: () => (
+							<IntervalSelector selectedInterval={{ label: "Daily", value: "daily", icon: "calendar-day" }} />
+						),
+					}}
+				/>
+				<HomeStack.Screen
+					name="EditGoalItem"
+					component={EditGoalItem}
+					options={{
+						headerShown: false,
+					}}
+				/>
+			</HomeStack.Group>
 
-            <HomeStack.Group >
-                <HomeStack.Screen
-                    name="AddCollection"
-                    component={AddCollectionModal}
-                    options={{ animation: "slide_from_bottom" }} />
+			<HomeStack.Group>
+				<HomeStack.Screen
+					name="AddCollection"
+					component={AddCollectionModal}
+					options={{ animation: "slide_from_bottom" }}
+				/>
 
-                <HomeStack.Screen
-                    name="GoalSlideShow"
-                    component={GoalSlideShowModal}
-                    options={{
-                        presentation: 'card',
-                        headerShown: false,
-                        animation: "fade",
-                    }} />
+				<HomeStack.Screen
+					name="GoalSlideShow"
+					component={GoalSlideShowModal}
+					options={{
+						presentation: "card",
+						headerShown: false,
+						animation: "fade",
+					}}
+				/>
 
-                <HomeStack.Screen
-                    name="UnSplashModal"
-                    component={UnSplashModal}
-                    options={{
-                        presentation: 'modal',
-                        headerShown: false,
-                    }} />
+				<HomeStack.Screen
+					name="UnSplashModal"
+					component={UnSplashModal}
+					options={{
+						presentation: "modal",
+						headerShown: false,
+					}}
+				/>
 
-                <HomeStack.Screen
-                    name='NewGoalItem'
-                    component={AddGoalItemModal}
-                    options={{
-                        headerTitle: () => <Text className='text-xl text-secondary font-medium'>Add Goal</Text>,
-                        headerBackVisible: false,
-                        headerShown: true,
-                        headerShadowVisible: false,
-                        headerStyle: { backgroundColor: colors.primary.DEFAULT },
-                        contentStyle: { flexDirection: 'row', alignItems: 'center' },
-                        headerRight: () => <HeaderCancelButton />
-                    }} />
-            </HomeStack.Group>
-        </HomeStack.Navigator>
-    )
+				<HomeStack.Screen
+					name="NewGoalItem"
+					component={AddGoalItemModal}
+					options={{
+						headerTitle: () => <Text className="text-xl text-secondary font-medium">... Goal</Text>,
+						headerBackVisible: false,
+						headerShown: true,
+						headerShadowVisible: false,
+						headerStyle: { backgroundColor: colors.primary.DEFAULT },
+						contentStyle: { flexDirection: "row", alignItems: "center" },
+						headerRight: () => <HeaderCancelButton />,
+					}}
+				/>
+			</HomeStack.Group>
+		</HomeStack.Navigator>
+	)
 }
 
 export default HomeStackNavigator

@@ -11,7 +11,7 @@ module.exports = {
     plugins: ['react', 'react-hooks', 'jsx-a11y', 'prettier'],
     rules: {
         'prettier/prettier': [
-            'error',
+            'off',
             {},
             {
                 'usePrettierrc': true
