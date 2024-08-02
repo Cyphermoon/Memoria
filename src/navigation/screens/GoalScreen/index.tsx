@@ -1,15 +1,9 @@
 import NewGoal from "@components/Home/NewGoal"
 import { AntDesign } from "@expo/vector-icons"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
-import {
-	CollectionReference,
-	DocumentReference,
-	collection,
-	doc,
-	onSnapshot,
-} from "firebase/firestore"
+import { CollectionReference, DocumentReference, collection, doc, onSnapshot } from "firebase/firestore"
 import { firestoreDB } from "firebaseConfig"
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Alert, FlatList, Platform, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { intervalOptions } from "settings"
@@ -51,15 +45,18 @@ const GoalScreen = ({ route, navigation }: Props) => {
 	const activeFolder = useActiveFolder(userId)
 	const activeFolderItemIdx = activeFolder?.activeFolderItemIdx && activeFolder.activeFolderItemIdx
 
-	const handleIntervalSelected = (interval: IntervalOptionProps) => {
-		// update the interval in the database
-		route.params.folder.mode === "personal" &&
-			userId &&
-			editFolder(userId, route.params.folder.id, { interval: interval.value }, null)
-		route.params.folder.mode === "community" &&
-			userId &&
-			editCommunityFolder(route.params.folder.id, { interval: interval.value })
-	}
+	const handleIntervalSelected = useCallback(
+		(interval: IntervalOptionProps) => {
+			// update the interval in the database
+			route.params.folder.mode === "personal" &&
+				userId &&
+				editFolder(userId, route.params.folder.id, { interval: interval.value }, null)
+			route.params.folder.mode === "community" &&
+				userId &&
+				editCommunityFolder(route.params.folder.id, { interval: interval.value })
+		},
+		[route.params.folder.id, route.params.folder.mode, userId]
+	)
 
 	function movetoNewGoalItem() {
 		navigation.navigate("NewGoalItem", {
@@ -197,12 +194,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 						try {
 							if (userId) {
 								await deleteImageFromCloudinary(imageId)
-								await deleteFolderItem(
-									userId,
-									route.params.folder.id,
-									itemId,
-									route.params.folder.mode
-								)
+								await deleteFolderItem(userId, route.params.folder.id, itemId, route.params.folder.mode)
 							} else {
 								errorToast("User not found")
 							}
@@ -294,7 +286,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 		})
 
 		return () => unsubscribe()
-	}, [])
+	}, [route.params.folder.id, route.params.folder.mode, selectedInterval.value, userId])
 
 	useEffect(() => {
 		// Convert the search query to lower case for case-insensitive search
@@ -324,14 +316,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
 		// update the folderItem reference based on the folder mode
 		if (route.params.folder.mode === "personal") {
-			folderItemRef = collection(
-				firestoreDB,
-				"users",
-				userId,
-				"folders",
-				route.params.folder.id,
-				"items"
-			)
+			folderItemRef = collection(firestoreDB, "users", userId, "folders", route.params.folder.id, "items")
 		} else if (route.params.folder.mode === "community") {
 			folderItemRef = collection(firestoreDB, "community", route.params.folder.id, "items")
 		}
@@ -361,7 +346,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 		})
 
 		return () => unsubscribe()
-	}, [userId])
+	}, [route.params.folder.id, route.params.folder.mode, userId])
 
 	// useEffect hook to automatically scroll to the current position in a list when 'position' state changes
 	useEffect(() => {
@@ -372,15 +357,15 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
 	// side effect to update the header right component to an interval selector. It is the replacement of the initial placeholder for the HomeStackNavigator
 	useEffect(() => {
+		if (!isAndroid) return
+
 		navigation.setOptions({
+			// eslint-disable-next-line react/no-unstable-nested-components
 			headerRight: () => (
-				<IntervalSelector
-					selectedInterval={selectedInterval}
-					handleIntervalSelected={handleIntervalSelected}
-				/>
+				<IntervalSelector selectedInterval={selectedInterval} handleIntervalSelected={handleIntervalSelected} />
 			),
 		})
-	}, [selectedInterval])
+	}, [selectedInterval, isAndroid, navigation, handleIntervalSelected])
 
 	return (
 		<View
@@ -391,9 +376,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 		>
 			{/* Header Section */}
 			<View className="flex-row justify-between items-center mb-8 mt-6">
-				<Text className="text-4xl font-semibold">
-					{truncateText(route.params?.folder.name, isAndroid ? 7 : 10)}
-				</Text>
+				<Text className="text-4xl font-semibold">{truncateText(route.params?.folder.name, isAndroid ? 7 : 10)}</Text>
 
 				{route.params.isActive && (
 					<View className="flex flex-row items-center space-x-6">
@@ -414,11 +397,7 @@ const GoalScreen = ({ route, navigation }: Props) => {
 
 			{/* Search Bar */}
 			<View className="mb-10">
-				<SearchBar
-					searchQuery={searchQuery}
-					setSearchQuery={setSearchQuery}
-					handleSearchSubmit={handleSearchSubmit}
-				/>
+				<SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearchSubmit={handleSearchSubmit} />
 			</View>
 
 			<NewGoal onPress={movetoNewGoalItem} />

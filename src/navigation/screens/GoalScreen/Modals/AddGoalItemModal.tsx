@@ -192,7 +192,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
 			<View
-				className="px-4 pt-6 flex-grow bg-primary "
+				className="px-4 pt-6 flex-grow bg-primary"
 				style={{
 					paddingBottom: insets.bottom + bottomTabBarHeight,
 				}}

@@ -114,11 +114,6 @@ const AIImageOption = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedDescription])
 
-	useEffect(() => {
-		console.log("Image Generated object", imageGenerated)
-		console.log("Description: ", description)
-	})
-
 	return (
 		<View className="space-y-4 flex-grow justify-between items-center">
 			{!description && !imageGenerated?.url && (

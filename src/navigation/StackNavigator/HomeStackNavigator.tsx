@@ -14,6 +14,7 @@ import colors from "colors"
 import { HomeStackParamList } from "type"
 import HomeDrawer from "../HomeDrawer"
 import IntervalSelector from "@components/Goal/IntervalSelector"
+import { Platform } from "react-native"
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
@@ -32,9 +33,10 @@ const HomeStackNavigator = () => {
 						headerShadowVisible: false,
 						headerStyle: { backgroundColor: colors.primary.DEFAULT },
 						headerLeft: () => <GoalBackButton />,
-						headerRight: () => (
-							<IntervalSelector selectedInterval={{ label: "Daily", value: "daily", icon: "calendar-day" }} />
-						),
+						headerRight: () =>
+							Platform.OS !== "ios" ? (
+								<IntervalSelector selectedInterval={{ label: "Daily", value: "daily", icon: "calendar-day" }} />
+							) : null,
 					}}
 				/>
 				<HomeStack.Screen
