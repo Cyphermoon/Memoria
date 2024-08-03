@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from "firebase/firestore";
+import { getVertexAI, getGenerativeModel } from "firebase/vertexai-preview"
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,6 +20,14 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+
+// Initialize Vertex AI
+export const vertexAI = getVertexAI(app)
+
+export const model = getGenerativeModel(vertexAI, { model: 'gemini-1.5-flash' })
+
+
+
 const auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage)
 })

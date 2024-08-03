@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
 import { blurHash } from "settings"
 import { useDebounce } from "src/util/debounce.hook"
+import { getGeminiResponse } from "src/util/vertexai"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import { ImageGeneratedProps } from "./type"
@@ -100,8 +101,10 @@ const AIImageOption = ({
 			return
 		}
 
-		// generate the image
-		generateImage(description)
+		getGeminiResponse(description).then(text => {
+			// generate the image
+			generateImage(text)
+		})
 
 		// Clear the image when the component unmounts
 		return () => {
