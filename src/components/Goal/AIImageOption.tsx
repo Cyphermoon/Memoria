@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
 import { blurHash } from "settings"
 import { useDebounce } from "src/util/debounce.hook"
-import { getGeminiResponse } from "src/util/vertexai"
+import { getAIClarifiedTextDescription, getAIImageDescription } from "src/util/ai_prompts"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import { ImageGeneratedProps } from "./type"
@@ -101,7 +101,11 @@ const AIImageOption = ({
 			return
 		}
 
-		getGeminiResponse(description).then(text => {
+		getAIClarifiedTextDescription(description).then(clarifiedDescription => {
+			console.log("Clarified Description: ", clarifiedDescription)
+		})
+
+		getAIImageDescription(description).then(text => {
 			// generate the image
 			generateImage(text)
 		})
