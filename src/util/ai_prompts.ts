@@ -22,9 +22,12 @@ export async function getAIImageDescription(prompt: string) {
 }
 
 export async function getAIClarifiedTextDescription(prompt: string) {
-	const instructions = `Re-write the sentence to be as short, clear and concise as possible. 
-		Return just the response for the prompt to make it easier to consume the response.`
+	if (!prompt) return null
 
+	const instructions = `Re-write the following sentence to be clear, short and concise. I would like three possible options in a javascript array data structure.
+
+	The response to this prompt should only be a javascript array to facilitate easier consumption programmatically.
+	`
 	const description = await getGeminiResponse(`${instructions} "${prompt}"`)
 
 	return description

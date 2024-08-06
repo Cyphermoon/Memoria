@@ -15,7 +15,7 @@ const DescriptionInput = ({ description, setDescription, focused, setFocused }: 
 
 	return (
 		<TouchableWithoutFeedback onPress={() => focused && setFocused(false)}>
-			<View className="space-y-3">
+			<View className="space-y-3 mb-6">
 				<Text className="font-medium">Description</Text>
 
 				<TextInput

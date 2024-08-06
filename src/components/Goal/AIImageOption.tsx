@@ -3,8 +3,7 @@ import { Image } from "expo-image"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
 import { blurHash } from "settings"
-import { useDebounce } from "src/util/debounce.hook"
-import { getAIClarifiedTextDescription, getAIImageDescription } from "src/util/ai_prompts"
+import { getAIImageDescription } from "src/util/ai_prompts"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import { ImageGeneratedProps } from "./type"
@@ -15,6 +14,7 @@ interface Props {
 	imageGenerated: ImageGeneratedProps | null
 	isEditingMode?: boolean
 	originalDescription?: string
+	debouncedDescription: string
 }
 
 async function generateAIImage(modelId: string, description: string) {
@@ -41,9 +41,9 @@ const AIImageOption = ({
 	imageGenerated,
 	isEditingMode,
 	originalDescription,
+	debouncedDescription,
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
-	const debouncedDescription = useDebounce(description, 2000)
 
 	// Function to generate an image
 	const generateImage = (imageDescription: string) => {
@@ -100,10 +100,6 @@ const AIImageOption = ({
 			})
 			return
 		}
-
-		getAIClarifiedTextDescription(description).then(clarifiedDescription => {
-			console.log("Clarified Description: ", clarifiedDescription)
-		})
 
 		getAIImageDescription(description).then(text => {
 			// generate the image

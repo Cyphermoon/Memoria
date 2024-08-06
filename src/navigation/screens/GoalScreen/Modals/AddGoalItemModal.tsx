@@ -26,6 +26,10 @@ import UnSplashOption from "../../../../components/Goal/UnSplashOption"
 import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from "../../../../components/Goal/type"
 import Touchable from "../../../../components/common/Touchable"
 import Text from "@components/common/Text"
+import AIClarifiedDescription from "@components/Goal/AIClarifiedDescription"
+import { useDebounce } from "src/util/debounce.hook"
+import { getAIClarifiedTextDescription } from "src/util/ai_prompts"
+import { extractArray } from "src/util"
 
 type Props = NativeStackScreenProps<HomeStackParamList, "NewGoalItem">
 export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, "NewGoalItem">
@@ -43,8 +47,12 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps>(imageGenerationModes[0])
-	const [description, setDescription] = useState("")
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
+
+	const [description, setDescription] = useState("")
+	const debouncedDescription = useDebounce(description, 2000)
+	const [suggestions, setSuggestions] = useState<string[]>()
+	const [suggestionsLoading, setSuggestionsLoading] = useState(false)
 
 	const userId = useAuthStore(state => state.user?.uid)
 	// const activeFolder = useActiveFolder(userId)
@@ -156,6 +164,14 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		}
 	}
 
+	function handleSuggestionClicked(suggestionIdx: number) {
+		/* Set the description field to the suggestion clicked by the user */
+		if (!suggestions) return
+		const suggestion = suggestions[suggestionIdx]
+
+		setDescription(suggestion)
+	}
+
 	useEffect(() => {
 		// Configure the screen options on load
 		navigation.setOptions({
@@ -189,15 +205,33 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		}
 	}, [isEditingMode, route.params])
 
+	// Get suggestions on better sentence from AI and present them to the user
+	useEffect(() => {
+		setSuggestionsLoading(true)
+		getAIClarifiedTextDescription(debouncedDescription as string)
+			.then(clarifiedDescription => {
+				if (!clarifiedDescription) {
+					setSuggestions([])
+					return null
+				}
+
+				// get and set the extracted array from the AI's response
+				const extractedSuggestions = extractArray(clarifiedDescription)
+				if (extractedSuggestions) setSuggestions(extractedSuggestions)
+			})
+			.catch(err => console.error("Error Occurred: ", err))
+			.finally(() => setSuggestionsLoading(false))
+	}, [debouncedDescription])
+
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
 			<View
-				className="px-4 pt-6 flex-grow bg-primary"
+				className="px-4 pt-2 flex-grow bg-primary"
 				style={{
 					paddingBottom: insets.bottom + bottomTabBarHeight,
 				}}
 			>
-				<View className="space-y-10 mb-6 flex-grow">
+				<View className="mb-6 flex-grow">
 					<ImageGenerationSelector handleImageSelected={handleImageSelected} selectedMode={selectedMode} />
 
 					<DescriptionInput
@@ -207,7 +241,14 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 						setFocused={setDescriptionFocused}
 					/>
 
-					<View className="border-2 border-gray-700 rounded-lg p-4 flex-grow">
+					<AIClarifiedDescription
+						suggestionsLoading={suggestionsLoading}
+						description={description}
+						suggestions={suggestions}
+						handleSuggestionClicked={handleSuggestionClicked}
+					/>
+
+					<View className="border-2 border-gray-700 rounded-lg p-2 flex-grow">
 						{selectedMode?.value === "ai" && (
 							<AIImageOption
 								description={description}
@@ -215,6 +256,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 								imageGenerated={imageGenerated}
 								setImageGenerated={setImageGenerated}
 								isEditingMode={isEditingMode}
+								debouncedDescription={debouncedDescription as string}
 							/>
 						)}
 
