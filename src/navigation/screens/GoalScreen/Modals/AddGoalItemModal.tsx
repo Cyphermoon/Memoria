@@ -1,11 +1,14 @@
 /* eslint-disable react/no-unstable-nested-components */
+import AIClarifiedDescription from "@components/Goal/AIClarifiedDescription"
+import Text from "@components/common/Text"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
-import { NavigationProp, RouteProp } from "@react-navigation/native"
+import { NavigationProp, RouteProp, useIsFocused } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { serverTimestamp } from "firebase/firestore"
 import React, { useEffect, useState } from "react"
 import { Keyboard, TouchableWithoutFeedback, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { extractArray } from "src/util"
 import {
 	deleteImageFromCloudinary,
 	editFirestoreFolderItem,
@@ -13,6 +16,8 @@ import {
 	uploadImage,
 } from "src/util/HomeDrawer/addGoalItem.util"
 import { AddFolderItemProps, EditFolderItemProps, ImageUploadType } from "src/util/HomeDrawer/type"
+import { getAIClarifiedTextDescription } from "src/util/ai_prompts"
+import { useDebounce } from "src/util/debounce.hook"
 import { successToast } from "src/util/toast.util"
 import { useAuthStore } from "store/authStore"
 import { imageGenerationModes } from "../../../../../settings"
@@ -25,11 +30,6 @@ import ImageGenerationSelector from "../../../../components/Goal/ImageGeneration
 import UnSplashOption from "../../../../components/Goal/UnSplashOption"
 import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from "../../../../components/Goal/type"
 import Touchable from "../../../../components/common/Touchable"
-import Text from "@components/common/Text"
-import AIClarifiedDescription from "@components/Goal/AIClarifiedDescription"
-import { useDebounce } from "src/util/debounce.hook"
-import { getAIClarifiedTextDescription } from "src/util/ai_prompts"
-import { extractArray } from "src/util"
 
 type Props = NativeStackScreenProps<HomeStackParamList, "NewGoalItem">
 export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, "NewGoalItem">
@@ -45,6 +45,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const insets = useSafeAreaInsets()
 	const bottomTabBarHeight = useBottomTabBarHeight()
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
+	const isFocused = useIsFocused()
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps>(imageGenerationModes[0])
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
@@ -173,9 +174,29 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	}
 
 	useEffect(() => {
+		navigation.getParent()?.setOptions({
+			tabBarStyle: {
+				display: "none",
+			},
+		})
+	}, [navigation, isFocused])
+
+	useEffect(() => {
 		// Configure the screen options on load
 		navigation.setOptions({
-			headerRight: () => <HeaderCancelButton onPress={() => navigation.goBack()} />,
+			headerRight: () => (
+				<HeaderCancelButton
+					onPress={() => {
+						navigation.getParent()?.setOptions({
+							tabBarStyle: {
+								position: "absolute",
+								borderTopWidth: 0,
+							},
+						})
+						navigation.goBack()
+					}}
+				/>
+			),
 			headerTitle: () => (
 				<Text className="text-xl text-secondary font-medium">{isEditingMode ? "Edit Goal" : "Add Goal"}</Text>
 			),

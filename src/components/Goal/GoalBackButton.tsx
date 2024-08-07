@@ -1,20 +1,18 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import React from "react"
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native"
 
-import { BackButton } from "../common/BackButton";
-import { HomeStackParamList, RootStackParamList } from "type";
+import { HomeStackParamList } from "type"
+import { BackButton } from "../common/BackButton"
 
 interface Props {
-    title?: string
+	title?: string
 }
 
-
-type GoalScreenRouteProps = RouteProp<HomeStackParamList, 'Goal'>;
+type GoalScreenRouteProps = RouteProp<HomeStackParamList, "Goal">
 
 export const GoalBackButton = ({ title }: Props) => {
-    const navigation = useNavigation();
-    const route = useRoute<GoalScreenRouteProps>();
+	const navigation = useNavigation()
+	const route = useRoute<GoalScreenRouteProps>()
 
-    return (
-        <BackButton title={title ? title : route.params.folder.name} goBack={() => navigation.goBack()} />
-    );
-};
+	return <BackButton title={title ? title : route.params.folder.name} goBack={() => navigation.goBack()} />
+}

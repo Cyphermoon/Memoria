@@ -1,5 +1,5 @@
 import Text from "@components/common/Text"
-import React, { useEffect } from "react"
+import React from "react"
 import { View } from "react-native"
 import { TouchableOpacity } from "react-native-gesture-handler"
 
@@ -11,13 +11,6 @@ interface Props {
 }
 
 const AIClarifiedDescription = ({ suggestions, suggestionsLoading, handleSuggestionClicked, description }: Props) => {
-	useEffect(() => {
-		console.dir({
-			suggestions,
-			suggestionsLoading,
-			description,
-		})
-	})
 	return (
 		<View className="mb-6 h-[155]">
 			<Text className="font-medium mb-2">Suggestions</Text>

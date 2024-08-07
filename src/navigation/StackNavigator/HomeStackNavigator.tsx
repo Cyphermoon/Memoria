@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from "react"
 import HeaderCancelButton from "@components/AddGoalItem/HeaderCancelButton"
 import { GoalBackButton } from "@components/Goal/GoalBackButton"
+import IntervalSelector from "@components/Goal/IntervalSelector"
 import Text from "@components/common/Text"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import EditGoalItem from "@screens/EditGoalItem"
@@ -11,10 +11,10 @@ import GoalSlideShowModal from "@screens/GoalScreen/Modals/GoalSlideShowModal"
 import UnSplashModal from "@screens/GoalScreen/Modals/UnSplashModal"
 import AddCollectionModal from "@screens/HomeDrawerScreens/Modals/AddCollectionModal"
 import colors from "colors"
+import React from "react"
+import { Platform } from "react-native"
 import { HomeStackParamList } from "type"
 import HomeDrawer from "../HomeDrawer"
-import IntervalSelector from "@components/Goal/IntervalSelector"
-import { Platform } from "react-native"
 
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 
