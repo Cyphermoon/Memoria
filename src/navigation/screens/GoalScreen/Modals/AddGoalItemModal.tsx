@@ -2,7 +2,7 @@
 import AIClarifiedDescription from "@components/Goal/AIClarifiedDescription"
 import Text from "@components/common/Text"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
-import { NavigationProp, RouteProp, useIsFocused } from "@react-navigation/native"
+import { NavigationProp, RouteProp } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { serverTimestamp } from "firebase/firestore"
 import React, { useEffect, useState } from "react"
@@ -45,7 +45,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const insets = useSafeAreaInsets()
 	const bottomTabBarHeight = useBottomTabBarHeight()
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
-	const isFocused = useIsFocused()
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps>(imageGenerationModes[0])
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
@@ -174,25 +173,11 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	}
 
 	useEffect(() => {
-		navigation.getParent()?.setOptions({
-			tabBarStyle: {
-				display: "none",
-			},
-		})
-	}, [navigation, isFocused])
-
-	useEffect(() => {
 		// Configure the screen options on load
 		navigation.setOptions({
 			headerRight: () => (
 				<HeaderCancelButton
 					onPress={() => {
-						navigation.getParent()?.setOptions({
-							tabBarStyle: {
-								position: "absolute",
-								borderTopWidth: 0,
-							},
-						})
 						navigation.goBack()
 					}}
 				/>
