@@ -1,9 +1,8 @@
-// I honestly don't remember why I created this interface
-// interface UnsplashResponse {
-// 	total: number
-// 	total_pages: number
-// 	results: UnsplashResult[]
-// }
+export interface UnsplashResponse {
+	total: number
+	total_pages: number
+	results: UnsplashResult[]
+}
 
 export interface UnsplashResult {
 	id: string

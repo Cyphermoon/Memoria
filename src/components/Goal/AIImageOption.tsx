@@ -87,8 +87,10 @@ const AIImageOption = ({
 	useEffect(() => {
 		/* This useEffect uses a single dependency because the following code is to be executed only when the debounced description changes. No other dependencies are considered */
 
-		// Do nothing if description has not changed
-		if (description.trim().toLowerCase() === originalDescription?.trim().toLowerCase()) return
+		// Do nothing if description has not changed and image url is not empty.
+		const _originalDescription = originalDescription?.trim().toLowerCase()
+		const _dynamicDescription = description.trim().toLowerCase()
+		if (_dynamicDescription === _originalDescription && imageGenerated?.url !== "") return
 
 		// If an image is already selected and the generation method is 'AI', do nothing
 		if (imageGenerated?.url && imageGenerated?.generationMethod === "ai" && !isEditingMode) return
