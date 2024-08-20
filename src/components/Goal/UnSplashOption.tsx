@@ -36,28 +36,25 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 		const unsubscribe = navigation.addListener("focus", () => {
 			// Check if there's any new data passed from the UnSplashModal screen Otherwise use the original image
 			const originalImageURL = route.params.editFolderItem?.image.secure_url
+			const originalGenerationMethod = route.params.editFolderItem?.generationMode
 
 			if (!route.params?.unsplashImage) {
 				setImageGenerated({
-					url: originalImageURL!,
+					url: originalGenerationMethod === "unsplash" ? originalImageURL! : "",
+					generationMethod: originalGenerationMethod === "unsplash" ? "unsplash" : "",
+				})
+			} else {
+				setImageGenerated({
+					url: route?.params.unsplashImage?.urls?.full,
 					generationMethod: "unsplash",
 				})
-				return
 			}
-
-			setImageGenerated({
-				url: route?.params.unsplashImage?.urls?.full,
-				generationMethod: "unsplash",
-			})
 		})
 
 		return () => {
+			console.log("UnsplashOption Unmounting")
 			unsubscribe()
 			// I might need this code when unsplash mode is giving me unexpected issue
-			setImageGenerated({
-				url: "",
-				generationMethod: "",
-			})
 		}
 	}, [navigation, route.params, setImageGenerated])
 

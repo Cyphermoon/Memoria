@@ -88,35 +88,42 @@ const AIImageOption = ({
 	useEffect(() => {
 		/* This useEffect uses a single dependency because the following code is to be executed only when the debounced description changes. No other dependencies are considered */
 
+		let shouldRequestImage = true
+
 		// Do nothing if description has not changed and image url is not empty.
 		const _originalDescription = originalDescription?.trim().toLowerCase()
 		const _dynamicDescription = debouncedDescription.trim().toLowerCase()
+
+		if (!_dynamicDescription) return
+
 		if (
 			_dynamicDescription === _originalDescription &&
 			imageGenerated?.url !== "" &&
 			imageGenerated?.generationMethod === "ai"
-		)
-			return
+		) {
+			shouldRequestImage = false
+		}
 
 		// If an image is already selected and the generation method is 'AI', do nothing
-		if (imageGenerated?.url && imageGenerated?.generationMethod === "ai" && !isEditingMode) return
+		// if (imageGenerated?.url && imageGenerated?.generationMethod === "ai" && !isEditingMode) {
+		// 	shouldRequestImage = false
+		// }
 
 		if (description === "") {
 			setImageGenerated({
 				url: "",
-				generationMethod: "ai",
+				generationMethod: "",
 			})
-			return
+			shouldRequestImage = false
 		}
 
-		handleImageRequest(description)
+		if (shouldRequestImage) {
+			handleImageRequest(description)
+		}
 
 		// Clear the image when the component unmounts
 		return () => {
-			setImageGenerated({
-				url: "",
-				generationMethod: "",
-			})
+			console.log("AIImageOption Unmounting")
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps

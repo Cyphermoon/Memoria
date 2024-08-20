@@ -46,11 +46,11 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const bottomTabBarHeight = useBottomTabBarHeight()
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
 
-	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps>(imageGenerationModes[0])
+	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(null)
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
 
 	const [description, setDescription] = useState("")
-	const debouncedDescription = useDebounce(description, 2000)
+	const debouncedDescription = useDebounce(description, 1000)
 	const [suggestions, setSuggestions] = useState<string[]>()
 	const [suggestionsLoading, setSuggestionsLoading] = useState(false)
 
@@ -63,6 +63,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	}
 
 	async function handleCreateFolderItem() {
+		if (!selectedMode?.value) return
 		if (!userId) return
 		if (!route.params.folder) return
 
@@ -118,6 +119,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		if (!userId || !itemId) return
 		if (!route.params.folder) return
 		if (!route.params.editFolderItem) return
+		if (!selectedMode?.value) return
 
 		const publicId = route.params.editFolderItem?.image.public_id
 
@@ -195,11 +197,14 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	useEffect(() => {
 		// prefill options based on the editFolderItem
 		if (isEditingMode) {
-			const { editFolderItem } = route.params
+			const { editFolderItem, unsplashImage } = route.params
+
+			if (unsplashImage) return
 
 			// Change the header text to indicate editing
 			if (editFolderItem) {
 				setDescription(editFolderItem.description)
+				console.log("This should be running once")
 
 				setSelectedMode(
 					imageGenerationModes.find(
@@ -212,6 +217,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					url: editFolderItem.image.secure_url,
 				})
 			}
+		} else {
+			setSelectedMode(imageGenerationModes[0])
 		}
 	}, [isEditingMode, route.params])
 
@@ -236,6 +243,16 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	useEffect(() => {
 		console.log("Image Generated: ", imageGenerated)
 	}, [imageGenerated])
+
+	useEffect(() => {
+		if (!selectedMode) return
+		if (route.params.editFolderItem?.generationMode === selectedMode.value) return
+
+		setImageGenerated({
+			url: "",
+			generationMethod: "",
+		})
+	}, [route.params.editFolderItem?.generationMode, selectedMode])
 
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
