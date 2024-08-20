@@ -172,6 +172,10 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		setDescription(suggestion)
 	}
 
+	function isButtonDisabled() {
+		return description === "" || imageGenerated === null
+	}
+
 	useEffect(() => {
 		// Configure the screen options on load
 		navigation.setOptions({
@@ -229,6 +233,10 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 			.finally(() => setSuggestionsLoading(false))
 	}, [debouncedDescription])
 
+	useEffect(() => {
+		console.log("Image Generated: ", imageGenerated)
+	}, [imageGenerated])
+
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
 			<View
@@ -277,7 +285,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 				</View>
 
 				<Touchable
-					disabled={description === ""}
+					disabled={isButtonDisabled()}
 					isText
 					onPress={() => {
 						isEditingMode ? handleEditFolderItem() : handleCreateFolderItem()

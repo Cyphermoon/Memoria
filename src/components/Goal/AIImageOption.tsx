@@ -18,21 +18,39 @@ interface Props {
 }
 
 async function generateAIImage(modelId: string, description: string) {
-	const BASE_URL = "https://api-inference.huggingface.co/models"
-	const url = `${BASE_URL}/${modelId}`
+	try {
+		const BASE_URL = "https://api-inference.huggingface.co/models"
+		const url = `${BASE_URL}/${modelId}`
 
-	const requestData = JSON.stringify({ inputs: description })
+		const requestData = JSON.stringify({ inputs: description })
 
-	const res = await fetch(url, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${process.env.EXPO_PUBLIC_HUGGING_FACE_API_KEY}`,
-		},
-		body: requestData,
-	})
+		const res = await fetch(url, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${process.env.EXPO_PUBLIC_HUGGING_FACE_API_KEY}`,
+			},
+			body: requestData,
+		})
 
-	const data = res.blob()
-	return data
+		// Get the image in binary format
+		const blob = await res.blob()
+
+		// Convert blob to base64 using a promise to wait for FileReader to complete
+		const base64Data = new Promise<string>((resolve, reject) => {
+			const reader = new FileReader()
+
+			// resolve to base64 when reading is complete. Otherwise send an error to the consumer
+			reader.onloadend = () => resolve(reader.result as string)
+			reader.onerror = reject
+
+			// Start reading as base64
+			reader.readAsDataURL(blob)
+		})
+
+		return base64Data
+	} catch (error) {
+		throw new Error(String(error))
+	}
 }
 
 const AIImageOption = ({
@@ -45,43 +63,26 @@ const AIImageOption = ({
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
 
-	// Function to generate an image
-	const generateImage = (imageDescription: string) => {
+	// This function Coordinate operations between getting more descriptive image prompt and using it to generate an image
+	const handleImageRequest = async (imageDescription: string) => {
 		// Set loading state to true
 		setLoading(true)
 
-		// Call the generateAIImage function with the model and description
-		generateAIImage("stabilityai/stable-diffusion-xl-base-1.0", imageDescription)
-			.then(data => {
-				// Create a new FileReader to read the returned data
-				const reader = new FileReader()
+		try {
+			const aiImageDescription = await getAIImageDescription(imageDescription)
 
-				// When the reader has finished loading...
-				reader.onloadend = function () {
-					// Get the result as base64 data
-					const base64data = reader.result
+			// Call the generateAIImage function with the model and description
+			const imageURL = await generateAIImage("stabilityai/stable-diffusion-xl-base-1.0", aiImageDescription)
 
-					// Set the generated image state with the base64 URL and the generation method
-					setImageGenerated({
-						url: base64data as string,
-						generationMethod: "ai",
-					})
-				}
-
-				// Start reading the data as a base64 URL
-				reader.readAsDataURL(data)
-
-				// Set loading state to false
-				setLoading(false)
+			setImageGenerated({
+				url: imageURL,
+				generationMethod: "ai",
 			})
-			.catch(err => {
-				// Log any errors
-				console.error(err)
-			})
-			.finally(() => {
-				// Ensure loading state is set to false even if an error occurs
-				setLoading(false)
-			})
+		} catch (error) {
+			console.error(error)
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	useEffect(() => {
@@ -89,8 +90,13 @@ const AIImageOption = ({
 
 		// Do nothing if description has not changed and image url is not empty.
 		const _originalDescription = originalDescription?.trim().toLowerCase()
-		const _dynamicDescription = description.trim().toLowerCase()
-		if (_dynamicDescription === _originalDescription && imageGenerated?.url !== "") return
+		const _dynamicDescription = debouncedDescription.trim().toLowerCase()
+		if (
+			_dynamicDescription === _originalDescription &&
+			imageGenerated?.url !== "" &&
+			imageGenerated?.generationMethod === "ai"
+		)
+			return
 
 		// If an image is already selected and the generation method is 'AI', do nothing
 		if (imageGenerated?.url && imageGenerated?.generationMethod === "ai" && !isEditingMode) return
@@ -103,10 +109,7 @@ const AIImageOption = ({
 			return
 		}
 
-		getAIImageDescription(description).then(text => {
-			// generate the image
-			generateImage(text)
-		})
+		handleImageRequest(description)
 
 		// Clear the image when the component unmounts
 		return () => {
@@ -144,7 +147,7 @@ const AIImageOption = ({
 				/>
 			)}
 			<Touchable
-				onPress={() => generateImage(description)}
+				onPress={() => handleImageRequest(description)}
 				variant="muted"
 				className="w-full bg-primary-300 flex-row justify-center items-center"
 			>
