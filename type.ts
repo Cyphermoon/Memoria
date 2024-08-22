@@ -7,7 +7,6 @@ import {
 	FolderProps,
 	FolderPropsWithActive,
 } from "./src/components/Home/type"
-import { UnsplashResult } from "@components/Goal/unsplash.type"
 
 export type HomeStackParamList = {
 	HomeDrawer: DrawerNavigationProp<HomeDrawerParamList>
@@ -18,7 +17,6 @@ export type HomeStackParamList = {
 	GoalSlideShow: { currentId: string; goals: FolderItemProps[] }
 	NewGoalItem: {
 		folder?: { id: string; type: CollectionOptionTypes }
-		unsplashImage?: UnsplashResult
 		editFolderItem?: EditFolderItemProps
 	}
 	EditGoalItem: { goalItem: EditFolderItemProps }

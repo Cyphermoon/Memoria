@@ -197,14 +197,11 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	useEffect(() => {
 		// prefill options based on the editFolderItem
 		if (isEditingMode) {
-			const { editFolderItem, unsplashImage } = route.params
-
-			if (unsplashImage) return
+			const editFolderItem = route.params.editFolderItem
 
 			// Change the header text to indicate editing
 			if (editFolderItem) {
 				setDescription(editFolderItem.description)
-				console.log("This should be running once")
 
 				setSelectedMode(
 					imageGenerationModes.find(
@@ -220,7 +217,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		} else {
 			setSelectedMode(imageGenerationModes[0])
 		}
-	}, [isEditingMode, route.params])
+	}, [isEditingMode, route.params.editFolderItem])
 
 	// Get suggestions on better sentence from AI and present them to the user
 	useEffect(() => {
@@ -239,10 +236,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 			.catch(err => console.error("Error Occurred: ", err))
 			.finally(() => setSuggestionsLoading(false))
 	}, [debouncedDescription])
-
-	useEffect(() => {
-		console.log("Image Generated: ", imageGenerated)
-	}, [imageGenerated])
 
 	useEffect(() => {
 		if (!selectedMode) return

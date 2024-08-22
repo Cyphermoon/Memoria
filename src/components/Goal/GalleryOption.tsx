@@ -37,11 +37,6 @@ const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
 
 		// Otherwise, pick an image
 		pickImage()
-
-		// When the component unmounts, clear the image
-		return () => {
-			console.log("GalleryOption Unmounting")
-		}
 	}, [])
 
 	return (

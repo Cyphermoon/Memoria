@@ -121,11 +121,6 @@ const AIImageOption = ({
 			handleImageRequest(description)
 		}
 
-		// Clear the image when the component unmounts
-		return () => {
-			console.log("AIImageOption Unmounting")
-		}
-
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedDescription])
 

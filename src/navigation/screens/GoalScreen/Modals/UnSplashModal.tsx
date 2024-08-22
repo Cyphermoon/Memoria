@@ -9,15 +9,17 @@ import { FlatList, TouchableOpacity, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { blurHash } from "settings"
 import { useDebounce } from "src/util/debounce.hook"
+import { useUnSplashImageStore } from "store/unsplashImage"
 import { HomeStackParamList } from "type"
 
 type Props = NativeStackScreenProps<HomeStackParamList, "UnSplashModal">
 
-const UnSplashModal = ({ navigation, route }: Props) => {
+const UnSplashModal = ({ navigation }: Props) => {
 	const insets = useSafeAreaInsets()
 	const [searchQuery, setSearchQuery] = useState("")
 	const debouncedSearchQuery = useDebounce(searchQuery, 1500)
 	const [images, setImages] = useState<UnsplashResult[]>([])
+	const updateUnSplashImage = useUnSplashImageStore(state => state.updateUnSplashImage)
 
 	//* Search Actions
 	const handleSearchQueryChanged = (query: string) => {
@@ -29,11 +31,8 @@ const UnSplashModal = ({ navigation, route }: Props) => {
 	}
 
 	function handleImagePressed(unsplashImage: UnsplashResult) {
-		navigation.navigate("NewGoalItem", {
-			unsplashImage,
-			editFolderItem: route.params.editFolderItem,
-			folder: route.params.folder,
-		})
+		updateUnSplashImage(unsplashImage)
+		navigation.goBack()
 	}
 
 	useEffect(() => {

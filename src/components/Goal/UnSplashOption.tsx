@@ -8,6 +8,7 @@ import {
 	AddGoalItemModalRouteProps,
 } from "src/navigation/screens/GoalScreen/Modals/AddGoalItemModal"
 import { ImageGeneratedProps } from "./type"
+import { useUnSplashImageStore } from "store/unsplashImage"
 
 interface Props {
 	imageGenerated: ImageGeneratedProps | null
@@ -17,6 +18,8 @@ interface Props {
 const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 	const route = useRoute<AddGoalItemModalRouteProps>()
 	const navigation = useNavigation<AddGoalItemModalNavigationProps>()
+	const unSplashImage = useUnSplashImageStore(state => state.image)
+	const updateUnSplashImage = useUnSplashImageStore(state => state.updateUnSplashImage)
 
 	const openUnSplashModal = useCallback(() => {
 		navigation.navigate("UnSplashModal", {
@@ -33,30 +36,16 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 	}, [imageGenerated?.generationMethod, imageGenerated?.url, openUnSplashModal])
 
 	useEffect(() => {
-		const unsubscribe = navigation.addListener("focus", () => {
-			// Check if there's any new data passed from the UnSplashModal screen Otherwise use the original image
-			const originalImageURL = route.params.editFolderItem?.image.secure_url
-			const originalGenerationMethod = route.params.editFolderItem?.generationMode
+		// Check if there's any new data passed from the UnSplashModal screen Otherwise do nothing
+		if (!unSplashImage) return
 
-			if (!route.params?.unsplashImage) {
-				setImageGenerated({
-					url: originalGenerationMethod === "unsplash" ? originalImageURL! : "",
-					generationMethod: originalGenerationMethod === "unsplash" ? "unsplash" : "",
-				})
-			} else {
-				setImageGenerated({
-					url: route?.params.unsplashImage?.urls?.full,
-					generationMethod: "unsplash",
-				})
-			}
+		setImageGenerated({
+			url: unSplashImage?.urls?.full,
+			generationMethod: "unsplash",
 		})
 
-		return () => {
-			console.log("UnsplashOption Unmounting")
-			unsubscribe()
-			// I might need this code when unsplash mode is giving me unexpected issue
-		}
-	}, [navigation, route.params, setImageGenerated])
+		updateUnSplashImage(null)
+	}, [setImageGenerated, unSplashImage, updateUnSplashImage])
 
 	return (
 		<View className="flex-grow justify-between items-center space-y-5">
