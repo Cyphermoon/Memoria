@@ -1,9 +1,9 @@
+import * as ImagePicker from "expo-image-picker"
 import React, { useCallback, useEffect } from "react"
+import { View } from "react-native"
 import Text from "../common/Text"
 import Touchable from "../common/Touchable"
-import { View } from "react-native"
-import * as ImagePicker from "expo-image-picker"
-import { Image } from "expo-image"
+import GenerationOptionImage from "./GenerationOptionImage"
 import { ImageGeneratedProps } from "./type"
 
 // Define the props for the GalleryOption component
@@ -42,9 +42,7 @@ const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
 	return (
 		<View className="flex-grow justify-between items-center space-y-5">
 			{/* If an image is selected, display it */}
-			{imageGenerated?.url && (
-				<Image source={imageGenerated.url} contentFit="cover" className="w-full flex-grow rounded-lg" />
-			)}
+			{imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} />}
 
 			{!imageGenerated?.url && <Text className="text-gray-400 text-center">No image selected</Text>}
 

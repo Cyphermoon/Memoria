@@ -175,7 +175,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	}
 
 	function isButtonDisabled() {
-		return description === "" || imageGenerated === null
+		if (description === "") return true
+		if (imageGenerated === null || imageGenerated.url === "" || imageGenerated.generationMethod === "") return true
 	}
 
 	useEffect(() => {
@@ -250,12 +251,12 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
 			<View
-				className="px-4 pt-2 flex-grow bg-primary"
+				className="px-4 pt-5 flex-grow bg-primary"
 				style={{
 					paddingBottom: insets.bottom + bottomTabBarHeight,
 				}}
 			>
-				<View className="mb-6 flex-grow">
+				<View className="mb-3 flex-grow">
 					<ImageGenerationSelector handleImageSelected={handleImageSelected} selectedMode={selectedMode} />
 
 					<DescriptionInput
@@ -272,7 +273,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 						handleSuggestionClicked={handleSuggestionClicked}
 					/>
 
-					<View className="border-2 border-gray-700 rounded-lg p-2 flex-grow">
+					<View className="border-2 border-gray-700 rounded-lg p-2 w-full h-[250]">
 						{selectedMode?.value === "ai" && (
 							<AIImageOption
 								description={description}

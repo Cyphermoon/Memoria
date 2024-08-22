@@ -1,11 +1,10 @@
 import Touchable from "@components/common/Touchable"
-import { Image } from "expo-image"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
-import { blurHash } from "settings"
 import { getAIImageDescription } from "src/util/ai_prompts"
 import customColors from "../../../colors"
 import Text from "../common/Text"
+import GenerationOptionImage from "./GenerationOptionImage"
 import { ImageGeneratedProps } from "./type"
 
 interface Props {
@@ -125,7 +124,7 @@ const AIImageOption = ({
 	}, [debouncedDescription])
 
 	return (
-		<View className="space-y-4 flex-grow justify-between items-center">
+		<View className="space-y-2 flex-grow justify-between items-center">
 			{!description && !imageGenerated?.url && (
 				<Text className="text-center">
 					Enter a goal, inspiration or anything you to visualize and we generate an image for you
@@ -139,17 +138,10 @@ const AIImageOption = ({
 				</View>
 			)}
 
-			{!loading && imageGenerated?.url && (
-				<Image
-					source={imageGenerated.url}
-					className="flex-grow w-full"
-					contentFit="cover"
-					placeholder={blurHash}
-					transition={200}
-				/>
-			)}
+			{!loading && imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} />}
 			<Touchable
 				onPress={() => handleImageRequest(description)}
+				disabled={description === "" || loading}
 				variant="muted"
 				className="w-full bg-primary-300 flex-row justify-center items-center"
 			>
