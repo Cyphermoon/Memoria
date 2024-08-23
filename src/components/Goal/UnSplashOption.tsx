@@ -29,14 +29,6 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 		})
 	}, [navigation, route.params.editFolderItem, route.params.folder])
 
-	const handleLoadEnd = () => {
-		setLoading(false)
-	}
-
-	const handleLoadStart = () => {
-		setLoading(true)
-	}
-
 	useEffect(() => {
 		// If an image is already selected and the generation method is 'unsplash', do nothing
 		if (imageGenerated?.url && imageGenerated?.generationMethod === "unsplash") return
@@ -61,11 +53,10 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 			<GenerationOptionImage
 				loading={loading}
 				source={imageGenerated?.url || ""}
-				onLoadStart={handleLoadStart}
-				onLoad={handleLoadEnd}
+				onLoadStart={() => setLoading(true)}
+				onLoad={() => setLoading(false)}
 			/>
 
-			{!imageGenerated?.url && <Text className="text-gray-400 text-center">No image selected</Text>}
 			<Touchable
 				onPress={openUnSplashModal}
 				variant="muted"

@@ -1,5 +1,5 @@
 import * as ImagePicker from "expo-image-picker"
-import React, { useCallback, useEffect } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { View } from "react-native"
 import Text from "../common/Text"
 import Touchable from "../common/Touchable"
@@ -13,6 +13,8 @@ interface Props {
 }
 
 const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
+	const [loading, setLoading] = useState(false)
+
 	const pickImage = useCallback(async () => {
 		// Launch the image picker
 		const result = await ImagePicker.launchImageLibraryAsync({
@@ -42,9 +44,13 @@ const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
 	return (
 		<View className="flex-grow justify-between items-center space-y-5">
 			{/* If an image is selected, display it */}
-			{imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} />}
 
-			{!imageGenerated?.url && <Text className="text-gray-400 text-center">No image selected</Text>}
+			<GenerationOptionImage
+				loading={loading}
+				source={imageGenerated?.url || ""}
+				onLoadStart={() => setLoading(true)}
+				onLoad={() => setLoading(false)}
+			/>
 
 			{/* Button to pick another image */}
 			<Touchable

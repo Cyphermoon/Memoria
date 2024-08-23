@@ -8,9 +8,10 @@ interface Props extends ImageProps {
 	source: string
 	className?: string
 	loading?: boolean
+	emptyImageMessage?: string
 }
 
-const GenerationOptionImage = ({ source, className, loading, ...rest }: Props) => {
+const GenerationOptionImage = ({ source, className, loading, emptyImageMessage, ...rest }: Props) => {
 	return (
 		<View className="w-full flex-grow relative">
 			<Image
@@ -22,11 +23,19 @@ const GenerationOptionImage = ({ source, className, loading, ...rest }: Props) =
 				{...rest}
 			/>
 
-			<View
-				className={`flex-grow justify-center items-center rounded-sm shadow-md bg-primary-300 absolute w-full h-full ${loading ? "opacity-100" : "opacity-0"}`}
-			>
-				<Text className="text-slate-300">Fetching Image...</Text>
-			</View>
+			{source ? (
+				<View
+					className={`flex-grow justify-center items-center rounded-sm shadow-md bg-primary-300 absolute w-full h-full ${loading ? "opacity-100" : "opacity-0"}`}
+				>
+					<Text className="text-slate-300">Fetching Image...</Text>
+				</View>
+			) : (
+				<View
+					className={`flex-grow justify-center items-center rounded-sm shadow-md bg-primary-300 absolute w-full h-full ${loading ? "opacity-100" : "opacity-0"}`}
+				>
+					<Text className="text-slate-300">{emptyImageMessage ? emptyImageMessage : "No Image Selected"}</Text>
+				</View>
+			)}
 		</View>
 	)
 }
