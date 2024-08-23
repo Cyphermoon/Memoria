@@ -50,7 +50,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
 
 	const [description, setDescription] = useState("")
-	const debouncedDescription = useDebounce(description, 1000)
+	const [debouncedDescription, debounceValueReady] = useDebounce(description, 1000)
 	const [suggestions, setSuggestions] = useState<string[]>()
 	const [suggestionsLoading, setSuggestionsLoading] = useState(false)
 
@@ -276,6 +276,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					<View className="border-2 border-gray-700 rounded-lg p-2 w-full h-[250]">
 						{selectedMode?.value === "ai" && (
 							<AIImageOption
+								debounceValueReady={debounceValueReady as boolean}
 								description={description}
 								originalDescription={route.params.editFolderItem?.description}
 								imageGenerated={imageGenerated}

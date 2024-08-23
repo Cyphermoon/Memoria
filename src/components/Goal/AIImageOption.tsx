@@ -14,10 +14,13 @@ interface Props {
 	isEditingMode?: boolean
 	originalDescription?: string
 	debouncedDescription: string
+	debounceValueReady: boolean
 }
 
-async function generateAIImage(modelId: string, description: string) {
+async function generateAIImage(modelId: string, description: string, controller: AbortController) {
 	try {
+		const signal = controller.signal
+
 		const BASE_URL = "https://api-inference.huggingface.co/models"
 		const url = `${BASE_URL}/${modelId}`
 
@@ -29,6 +32,7 @@ async function generateAIImage(modelId: string, description: string) {
 				Authorization: `Bearer ${process.env.EXPO_PUBLIC_HUGGING_FACE_API_KEY}`,
 			},
 			body: requestData,
+			signal,
 		})
 
 		// Get the image in binary format
@@ -59,8 +63,10 @@ const AIImageOption = ({
 	isEditingMode,
 	originalDescription,
 	debouncedDescription,
+	debounceValueReady,
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
+	const imageGenerationController = new AbortController()
 
 	// This function Coordinate operations between getting more descriptive image prompt and using it to generate an image
 	const handleImageRequest = async (imageDescription: string) => {
@@ -71,7 +77,11 @@ const AIImageOption = ({
 			const aiImageDescription = await getAIImageDescription(imageDescription)
 
 			// Call the generateAIImage function with the model and description
-			const imageURL = await generateAIImage("stabilityai/stable-diffusion-xl-base-1.0", aiImageDescription)
+			const imageURL = await generateAIImage(
+				"stabilityai/stable-diffusion-xl-base-1.0",
+				aiImageDescription,
+				imageGenerationController
+			)
 
 			setImageGenerated({
 				url: imageURL,
@@ -93,7 +103,7 @@ const AIImageOption = ({
 		const _originalDescription = originalDescription?.trim().toLowerCase()
 		const _dynamicDescription = debouncedDescription.trim().toLowerCase()
 
-		if (!_dynamicDescription) return
+		if (!debounceValueReady) return
 
 		if (
 			_dynamicDescription === _originalDescription &&
@@ -108,12 +118,14 @@ const AIImageOption = ({
 		// 	shouldRequestImage = false
 		// }
 
-		if (description === "") {
+		if (_dynamicDescription === "") {
 			setImageGenerated({
 				url: "",
 				generationMethod: "",
 			})
+
 			shouldRequestImage = false
+			imageGenerationController.abort("Description is empty, so cancel any attempt to create an image")
 		}
 
 		if (shouldRequestImage) {
@@ -121,7 +133,7 @@ const AIImageOption = ({
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedDescription])
+	}, [debouncedDescription, debounceValueReady])
 
 	return (
 		<View className="space-y-2 flex-grow justify-between items-center">
@@ -138,7 +150,13 @@ const AIImageOption = ({
 				</View>
 			)}
 
-			{!loading && imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} />}
+			{!loading && imageGenerated?.url && (
+				<GenerationOptionImage
+					source={imageGenerated.url}
+					showFeedBack={false}
+					emptyImageMessage="Enter a goal, inspiration or anything you to visualize and we generate an image for you"
+				/>
+			)}
 			<Touchable
 				onPress={() => handleImageRequest(description)}
 				disabled={description === "" || loading}

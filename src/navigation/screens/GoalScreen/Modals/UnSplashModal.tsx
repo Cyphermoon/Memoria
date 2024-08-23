@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<HomeStackParamList, "UnSplashModal">
 const UnSplashModal = ({ navigation }: Props) => {
 	const insets = useSafeAreaInsets()
 	const [searchQuery, setSearchQuery] = useState("")
-	const debouncedSearchQuery = useDebounce(searchQuery, 1500)
+	const [debouncedSearchQuery] = useDebounce(searchQuery, 1500)
 	const [images, setImages] = useState<UnsplashResult[]>([])
 	const updateUnSplashImage = useUnSplashImageStore(state => state.updateUnSplashImage)
 

@@ -9,9 +9,17 @@ interface Props extends ImageProps {
 	className?: string
 	loading?: boolean
 	emptyImageMessage?: string
+	showFeedBack?: boolean
 }
 
-const GenerationOptionImage = ({ source, className, loading, emptyImageMessage, ...rest }: Props) => {
+const GenerationOptionImage = ({
+	source,
+	className,
+	loading,
+	showFeedBack = true,
+	emptyImageMessage,
+	...rest
+}: Props) => {
 	return (
 		<View className="w-full flex-grow relative">
 			<Image
@@ -23,7 +31,7 @@ const GenerationOptionImage = ({ source, className, loading, emptyImageMessage, 
 				{...rest}
 			/>
 
-			{source ? (
+			{showFeedBack && source ? (
 				<View
 					className={`flex-grow justify-center items-center rounded-sm shadow-md bg-primary-300 absolute w-full h-full ${loading ? "opacity-100" : "opacity-0"}`}
 				>
