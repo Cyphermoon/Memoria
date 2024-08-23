@@ -5,7 +5,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { NavigationProp, RouteProp } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { serverTimestamp } from "firebase/firestore"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Keyboard, TouchableWithoutFeedback, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { extractArray } from "src/util"
@@ -48,9 +48,11 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(null)
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
+	const [previousImage, setPreviousImage] = useState<ImageGeneratedProps | null>()
 
 	const [description, setDescription] = useState("")
 	const [debouncedDescription, debounceValueReady] = useDebounce(description, 1000)
+
 	const [suggestions, setSuggestions] = useState<string[]>()
 	const [suggestionsLoading, setSuggestionsLoading] = useState(false)
 
@@ -60,6 +62,21 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 
 	function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
 		setSelectedMode(mode)
+	}
+
+	const changeImageGenerated = useCallback((image: ImageGeneratedProps) => {
+		setImageGenerated(currentImage => {
+			// set previous image if it is not empty
+			currentImage?.url && setPreviousImage(currentImage)
+			return image
+		})
+	}, [])
+
+	function clearImageGenerated() {
+		changeImageGenerated({
+			url: "",
+			generationMethod: "",
+		})
 	}
 
 	async function handleCreateFolderItem() {
@@ -210,7 +227,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					) as ImageGenerationMethodOptionProps
 				)
 
-				setImageGenerated({
+				changeImageGenerated({
 					generationMethod: editFolderItem.generationMode,
 					url: editFolderItem.image.secure_url,
 				})
@@ -218,7 +235,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		} else {
 			setSelectedMode(imageGenerationModes[0])
 		}
-	}, [isEditingMode, route.params.editFolderItem])
+	}, [changeImageGenerated, isEditingMode, route.params.editFolderItem])
 
 	// Get suggestions on better sentence from AI and present them to the user
 	useEffect(() => {
@@ -240,13 +257,15 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 
 	useEffect(() => {
 		if (!selectedMode) return
-		if (route.params.editFolderItem?.generationMode === selectedMode.value) return
+		if (route.params.editFolderItem?.generationMode === selectedMode.value && !previousImage) return
 
-		setImageGenerated({
-			url: "",
-			generationMethod: "",
-		})
+		clearImageGenerated()
 	}, [route.params.editFolderItem?.generationMode, selectedMode])
+
+	// useEffect(() => {
+	// 	console.log("Previous Image: ", previousImage)
+	// 	console.log("Image Generated: ", imageGenerated)
+	// }, [imageGenerated, previousImage])
 
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
@@ -280,18 +299,18 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 								description={description}
 								originalDescription={route.params.editFolderItem?.description}
 								imageGenerated={imageGenerated}
-								setImageGenerated={setImageGenerated}
+								changeImageGenerated={changeImageGenerated}
 								isEditingMode={isEditingMode}
 								debouncedDescription={debouncedDescription as string}
 							/>
 						)}
 
 						{selectedMode?.value === "gallery" && (
-							<GalleryOption imageGenerated={imageGenerated} setImageGenerated={setImageGenerated} />
+							<GalleryOption imageGenerated={imageGenerated} changeImageGenerated={changeImageGenerated} />
 						)}
 
 						{selectedMode?.value === "unsplash" && (
-							<UnSplashOption imageGenerated={imageGenerated} setImageGenerated={setImageGenerated} />
+							<UnSplashOption imageGenerated={imageGenerated} changeImageGenerated={changeImageGenerated} />
 						)}
 					</View>
 				</View>

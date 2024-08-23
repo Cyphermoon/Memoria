@@ -9,7 +9,7 @@ import { ImageGeneratedProps } from "./type"
 
 interface Props {
 	description: string
-	setImageGenerated: (imageGenerated: ImageGeneratedProps) => void
+	changeImageGenerated: (imageGenerated: ImageGeneratedProps) => void
 	imageGenerated: ImageGeneratedProps | null
 	isEditingMode?: boolean
 	originalDescription?: string
@@ -58,7 +58,7 @@ async function generateAIImage(modelId: string, description: string, controller:
 
 const AIImageOption = ({
 	description,
-	setImageGenerated,
+	changeImageGenerated,
 	imageGenerated,
 	isEditingMode,
 	originalDescription,
@@ -83,7 +83,7 @@ const AIImageOption = ({
 				imageGenerationController
 			)
 
-			setImageGenerated({
+			changeImageGenerated({
 				url: imageURL,
 				generationMethod: "ai",
 			})
@@ -119,11 +119,10 @@ const AIImageOption = ({
 		// }
 
 		if (_dynamicDescription === "") {
-			setImageGenerated({
+			changeImageGenerated({
 				url: "",
 				generationMethod: "",
 			})
-
 			shouldRequestImage = false
 			imageGenerationController.abort("Description is empty, so cancel any attempt to create an image")
 		}

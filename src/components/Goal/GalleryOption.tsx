@@ -8,11 +8,11 @@ import { ImageGeneratedProps } from "./type"
 
 // Define the props for the GalleryOption component
 interface Props {
-	setImageGenerated: (description: ImageGeneratedProps) => void
+	changeImageGenerated: (imageGenerated: ImageGeneratedProps) => void
 	imageGenerated: ImageGeneratedProps | null
 }
 
-const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
+const GalleryOption = ({ changeImageGenerated, imageGenerated }: Props) => {
 	const [loading, setLoading] = useState(false)
 
 	const pickImage = useCallback(async () => {
@@ -26,12 +26,12 @@ const GalleryOption = ({ setImageGenerated, imageGenerated }: Props) => {
 
 		// If the user didn't cancel the picker, set the image
 		if (!result.canceled) {
-			setImageGenerated({
+			changeImageGenerated({
 				url: result.assets[0].uri,
 				generationMethod: "gallery",
 			})
 		}
-	}, [setImageGenerated])
+	}, [changeImageGenerated])
 
 	useEffect(() => {
 		// If an image is already selected and the generation method is 'gallery', do nothing

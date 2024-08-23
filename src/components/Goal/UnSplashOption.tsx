@@ -12,10 +12,10 @@ import { ImageGeneratedProps } from "./type"
 
 interface Props {
 	imageGenerated: ImageGeneratedProps | null
-	setImageGenerated: (imageGenerated: ImageGeneratedProps) => void
+	changeImageGenerated: (imageGenerated: ImageGeneratedProps) => void
 }
 
-const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
+const UnSplashOption = ({ imageGenerated, changeImageGenerated }: Props) => {
 	const route = useRoute<AddGoalItemModalRouteProps>()
 	const navigation = useNavigation<AddGoalItemModalNavigationProps>()
 	const unSplashImage = useUnSplashImageStore(state => state.image)
@@ -40,13 +40,13 @@ const UnSplashOption = ({ imageGenerated, setImageGenerated }: Props) => {
 		// Check if there's any new data passed from the UnSplashModal screen Otherwise do nothing
 		if (!unSplashImage) return
 
-		setImageGenerated({
+		changeImageGenerated({
 			url: unSplashImage?.urls?.full,
 			generationMethod: "unsplash",
 		})
 
 		updateUnSplashImage(null)
-	}, [setImageGenerated, unSplashImage, updateUnSplashImage])
+	}, [changeImageGenerated, unSplashImage, updateUnSplashImage])
 
 	return (
 		<View className="flex-grow justify-between items-center space-y-2">
