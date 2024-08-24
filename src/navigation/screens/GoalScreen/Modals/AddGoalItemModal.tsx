@@ -60,10 +60,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	// const activeFolder = useActiveFolder(userId)
 	const isEditingMode = route.params.editFolderItem !== undefined
 
-	function handleImageSelected(mode: ImageGenerationMethodOptionProps) {
-		setSelectedMode(mode)
-	}
-
 	const changeImageGenerated = useCallback((image: ImageGeneratedProps) => {
 		setImageGenerated(currentImage => {
 			// set previous image if it is not empty
@@ -72,12 +68,22 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		})
 	}, [])
 
-	function clearImageGenerated() {
+	const clearImageGenerated = useCallback(() => {
 		changeImageGenerated({
 			url: "",
 			generationMethod: "",
 		})
-	}
+	}, [changeImageGenerated])
+
+	const handleModeSelected = useCallback(
+		(mode: ImageGenerationMethodOptionProps) => {
+			setSelectedMode(mode)
+			// Do nothing if the selected mode is the original mode. Otherwise clear the imageGenerated before switching to another mode
+			if (route.params.editFolderItem?.generationMode === mode.value && !previousImage) return
+			clearImageGenerated()
+		},
+		[clearImageGenerated, previousImage, route.params.editFolderItem?.generationMode]
+	)
 
 	async function handleCreateFolderItem() {
 		if (!selectedMode?.value) return
@@ -255,13 +261,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 			.finally(() => setSuggestionsLoading(false))
 	}, [debouncedDescription])
 
-	useEffect(() => {
-		if (!selectedMode) return
-		if (route.params.editFolderItem?.generationMode === selectedMode.value && !previousImage) return
-
-		clearImageGenerated()
-	}, [route.params.editFolderItem?.generationMode, selectedMode])
-
 	// useEffect(() => {
 	// 	console.log("Previous Image: ", previousImage)
 	// 	console.log("Image Generated: ", imageGenerated)
@@ -276,7 +275,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 				}}
 			>
 				<View className="mb-3 flex-grow">
-					<ImageGenerationSelector handleImageSelected={handleImageSelected} selectedMode={selectedMode} />
+					<ImageGenerationSelector handleImageSelected={handleModeSelected} selectedMode={selectedMode} />
 
 					<DescriptionInput
 						description={description}
