@@ -76,16 +76,19 @@ const AIImageOption = ({
 	// This function Coordinate operations between getting more descriptive image prompt and using it to generate an image
 	const handleImageRequest = useCallback(
 		async (imageDescription: string) => {
-			// Set loading state to true
-			setLoading(true)
-
 			if (sentimentLoading) return
+
 			if (!isPositiveSentiment) {
 				errorToast("Inappropriate description is not acceptable for AI generation")
+				changeImageGenerated({
+					url: "",
+					generationMethod: "",
+				})
 				return
 			}
 
 			try {
+				setLoading(true)
 				const aiImageDescription = await getAIImageDescription(imageDescription)
 
 				// Call the generateAIImage function with the model and description
@@ -100,7 +103,7 @@ const AIImageOption = ({
 					generationMethod: "ai",
 				})
 			} catch (error) {
-				console.error(error)
+				console.error("An error occurred while generating an image for you: ", error)
 			} finally {
 				setLoading(false)
 			}
@@ -142,6 +145,7 @@ const AIImageOption = ({
 		}
 
 		if (shouldRequestImage) {
+			console.log("Running image function ")
 			handleImageRequest(description)
 		}
 

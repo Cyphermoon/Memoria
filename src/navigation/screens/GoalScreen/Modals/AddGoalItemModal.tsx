@@ -284,6 +284,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 				console.error("An error occurred while loading your suggestions: ", err)
 			} finally {
 				setSentimentLoading(false)
+				setDescriptionSentiment(null)
 				setSuggestionsLoading(false)
 			}
 		}
@@ -291,40 +292,11 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		handleSentimentAnalysis()
 	}, [debounceValueReady, debouncedDescription])
 
-	// // Get suggestions on better sentence from AI and present them to the user
-	// useEffect(() => {
-	// 	// Ensure that suggestions load even when the descriptionSentiment is null, indicating that it is disabled for that mode.
-	// 	if (sentimentLoading) return
-	// 	if (!debouncedDescription) return
-	// 	if (!descriptionSentiment?.type || descriptionSentiment.type === "negative") return
-
-	// 	console.log("Getting  Suggestions")
-
-	// 	setSuggestionsLoading(true)
-	// 	getAIClarifiedTextDescription(debouncedDescription as string)
-	// 		.then(clarifiedDescription => {
-	// 			if (!clarifiedDescription) {
-	// 				setSuggestions([])
-	// 				return null
-	// 			}
-
-	// 			// get and set the extracted array from the AI's response
-	// 			const extractedSuggestions = extractArray(clarifiedDescription)
-	// 			if (extractedSuggestions) setSuggestions(extractedSuggestions)
-	// 		})
-	// 		.catch(err => console.error("Error Occurred: ", err))
-	// 		.finally(() => setSuggestionsLoading(false))
-	// }, [debouncedDescription, descriptionSentiment, sentimentLoading])
-
-	// useEffect(() => {
-	// 	console.log("Previous Image: ", previousImage)
-	// 	console.log("Image Generated: ", imageGenerated)
-	// }, [imageGenerated, previousImage])
-
 	useEffect(() => {
 		console.log("Sentiment: ", descriptionSentiment)
 		console.log("isSentiment positive: ", isPositiveSentiment)
-	}, [descriptionSentiment, isPositiveSentiment])
+		console.log("Sentiment Loading: ", sentimentLoading)
+	}, [descriptionSentiment, isPositiveSentiment, sentimentLoading])
 
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
