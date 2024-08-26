@@ -1,3 +1,4 @@
+import { SentimentAnalysisSchema } from "./type"
 import { UnsplashResponse } from "./unsplash.type"
 
 interface UnSplashOtherOptionsProps {
@@ -43,4 +44,30 @@ export async function getUnsplashPhotos(_url: string, options: UnSplashOtherOpti
 	const data = await res.json()
 
 	return data
+}
+
+export async function getSentimentAnalysis(text: string): Promise<SentimentAnalysisSchema | null> {
+	const rapidKey = process.env.EXPO_PUBLIC_RAPID_API_KEY
+
+	if (!rapidKey) return null
+	if (!text.trim()) return null
+
+	const encodedText = encodeURIComponent(text)
+	const url = `https://twinword-sentiment-analysis.p.rapidapi.com/analyze/?text=${encodedText}`
+
+	try {
+		const response = await fetch(url, {
+			method: "GET",
+			headers: {
+				"x-rapidapi-key": rapidKey,
+				"x-rapidapi-host": "twinword-sentiment-analysis.p.rapidapi.com",
+				"Content-Type": "application/json",
+			},
+		})
+		const sentimentAnalysis = response.json()
+		return sentimentAnalysis
+	} catch (err) {
+		console.error(err)
+		throw new Error(String(err))
+	}
 }

@@ -28,8 +28,13 @@ import DescriptionInput from "../../../../components/Goal/DescriptionInput"
 import GalleryOption from "../../../../components/Goal/GalleryOption"
 import ImageGenerationSelector from "../../../../components/Goal/ImageGenerationSelector"
 import UnSplashOption from "../../../../components/Goal/UnSplashOption"
-import { ImageGeneratedProps, ImageGenerationMethodOptionProps } from "../../../../components/Goal/type"
+import {
+	ImageGeneratedProps,
+	ImageGenerationMethodOptionProps,
+	SentimentAnalysisSchema,
+} from "../../../../components/Goal/type"
 import Touchable from "../../../../components/common/Touchable"
+import { getSentimentAnalysis } from "@components/Goal/request.util"
 
 type Props = NativeStackScreenProps<HomeStackParamList, "NewGoalItem">
 export type AddGoalItemModalRouteProps = RouteProp<HomeStackParamList, "NewGoalItem">
@@ -44,7 +49,11 @@ const uploadTypeMap = {
 const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const insets = useSafeAreaInsets()
 	const bottomTabBarHeight = useBottomTabBarHeight()
+
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
+	const [descriptionSentiment, setDescriptionSentiment] = useState<SentimentAnalysisSchema | null>(null)
+	const [sentimentLoading, setSentimentLoading] = useState(true)
+	const isPositiveSentiment = descriptionSentiment?.type === "positive" ?? null
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(null)
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
@@ -57,7 +66,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const [suggestionsLoading, setSuggestionsLoading] = useState(false)
 
 	const userId = useAuthStore(state => state.user?.uid)
-	// const activeFolder = useActiveFolder(userId)
 	const isEditingMode = route.params.editFolderItem !== undefined
 
 	const changeImageGenerated = useCallback((image: ImageGeneratedProps) => {
@@ -243,28 +251,80 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		}
 	}, [changeImageGenerated, isEditingMode, route.params.editFolderItem])
 
-	// Get suggestions on better sentence from AI and present them to the user
+	//Get sentiment analysis for description in AI Mode
 	useEffect(() => {
-		setSuggestionsLoading(true)
-		getAIClarifiedTextDescription(debouncedDescription as string)
-			.then(clarifiedDescription => {
+		async function handleSentimentAnalysis() {
+			if (!debounceValueReady) return
+			if (!debouncedDescription) return
+
+			try {
+				// Analyze the sentiment of the current message
+				setSentimentLoading(true)
+				const sentiment = await getSentimentAnalysis(debouncedDescription as string)
+				setDescriptionSentiment(sentiment)
+
+				// Make suggestion empty if sentiment is negative
+				if (!sentiment || sentiment.type === "negative") {
+					setSuggestions([])
+					return
+				}
+
+				// Get AI Suggestions if the sentiment is positive
+				setSuggestionsLoading(true)
+				const clarifiedDescription = await getAIClarifiedTextDescription(debouncedDescription as string)
 				if (!clarifiedDescription) {
 					setSuggestions([])
-					return null
+					return
 				}
 
 				// get and set the extracted array from the AI's response
 				const extractedSuggestions = extractArray(clarifiedDescription)
 				if (extractedSuggestions) setSuggestions(extractedSuggestions)
-			})
-			.catch(err => console.error("Error Occurred: ", err))
-			.finally(() => setSuggestionsLoading(false))
-	}, [debouncedDescription])
+			} catch (err) {
+				console.error("An error occurred while loading your suggestions: ", err)
+			} finally {
+				setSentimentLoading(false)
+				setSuggestionsLoading(false)
+			}
+		}
+
+		handleSentimentAnalysis()
+	}, [debounceValueReady, debouncedDescription])
+
+	// // Get suggestions on better sentence from AI and present them to the user
+	// useEffect(() => {
+	// 	// Ensure that suggestions load even when the descriptionSentiment is null, indicating that it is disabled for that mode.
+	// 	if (sentimentLoading) return
+	// 	if (!debouncedDescription) return
+	// 	if (!descriptionSentiment?.type || descriptionSentiment.type === "negative") return
+
+	// 	console.log("Getting  Suggestions")
+
+	// 	setSuggestionsLoading(true)
+	// 	getAIClarifiedTextDescription(debouncedDescription as string)
+	// 		.then(clarifiedDescription => {
+	// 			if (!clarifiedDescription) {
+	// 				setSuggestions([])
+	// 				return null
+	// 			}
+
+	// 			// get and set the extracted array from the AI's response
+	// 			const extractedSuggestions = extractArray(clarifiedDescription)
+	// 			if (extractedSuggestions) setSuggestions(extractedSuggestions)
+	// 		})
+	// 		.catch(err => console.error("Error Occurred: ", err))
+	// 		.finally(() => setSuggestionsLoading(false))
+	// }, [debouncedDescription, descriptionSentiment, sentimentLoading])
 
 	// useEffect(() => {
 	// 	console.log("Previous Image: ", previousImage)
 	// 	console.log("Image Generated: ", imageGenerated)
 	// }, [imageGenerated, previousImage])
+
+	useEffect(() => {
+		console.log("Sentiment: ", descriptionSentiment)
+		console.log("isSentiment positive: ", isPositiveSentiment)
+	}, [descriptionSentiment, isPositiveSentiment])
 
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
@@ -296,6 +356,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 							<AIImageOption
 								debounceValueReady={debounceValueReady as boolean}
 								description={description}
+								isPositiveSentiment={descriptionSentiment !== null && descriptionSentiment?.type === "positive"}
+								sentimentLoading={sentimentLoading === true}
 								originalDescription={route.params.editFolderItem?.description}
 								imageGenerated={imageGenerated}
 								changeImageGenerated={changeImageGenerated}

@@ -1,11 +1,12 @@
 import Touchable from "@components/common/Touchable"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, View } from "react-native"
 import { getAIImageDescription } from "src/util/ai_prompts"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import GenerationOptionImage from "./GenerationOptionImage"
 import { ImageGeneratedProps } from "./type"
+import { errorToast } from "src/util/toast.util"
 
 interface Props {
 	description: string
@@ -15,6 +16,8 @@ interface Props {
 	originalDescription?: string
 	debouncedDescription: string
 	debounceValueReady: boolean
+	isPositiveSentiment: boolean
+	sentimentLoading: boolean | null
 }
 
 async function generateAIImage(modelId: string, description: string, controller: AbortController) {
@@ -64,35 +67,46 @@ const AIImageOption = ({
 	originalDescription,
 	debouncedDescription,
 	debounceValueReady,
+	isPositiveSentiment,
+	sentimentLoading,
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
-	const imageGenerationController = new AbortController()
+	const imageGenerationController = useMemo(() => new AbortController(), [])
 
 	// This function Coordinate operations between getting more descriptive image prompt and using it to generate an image
-	const handleImageRequest = async (imageDescription: string) => {
-		// Set loading state to true
-		setLoading(true)
+	const handleImageRequest = useCallback(
+		async (imageDescription: string) => {
+			// Set loading state to true
+			setLoading(true)
 
-		try {
-			const aiImageDescription = await getAIImageDescription(imageDescription)
+			if (sentimentLoading) return
+			if (!isPositiveSentiment) {
+				errorToast("Inappropriate description is not acceptable for AI generation")
+				return
+			}
 
-			// Call the generateAIImage function with the model and description
-			const imageURL = await generateAIImage(
-				"stabilityai/stable-diffusion-xl-base-1.0",
-				aiImageDescription,
-				imageGenerationController
-			)
+			try {
+				const aiImageDescription = await getAIImageDescription(imageDescription)
 
-			changeImageGenerated({
-				url: imageURL,
-				generationMethod: "ai",
-			})
-		} catch (error) {
-			console.error(error)
-		} finally {
-			setLoading(false)
-		}
-	}
+				// Call the generateAIImage function with the model and description
+				const imageURL = await generateAIImage(
+					"stabilityai/stable-diffusion-xl-base-1.0",
+					aiImageDescription,
+					imageGenerationController
+				)
+
+				changeImageGenerated({
+					url: imageURL,
+					generationMethod: "ai",
+				})
+			} catch (error) {
+				console.error(error)
+			} finally {
+				setLoading(false)
+			}
+		},
+		[changeImageGenerated, imageGenerationController, isPositiveSentiment, sentimentLoading]
+	)
 
 	useEffect(() => {
 		/* This useEffect uses a single dependency because the following code is to be executed only when the debounced description changes. No other dependencies are considered */
@@ -132,7 +146,7 @@ const AIImageOption = ({
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedDescription, debounceValueReady])
+	}, [debouncedDescription, debounceValueReady, handleImageRequest])
 
 	return (
 		<View className="space-y-2 flex-grow justify-between items-center">
