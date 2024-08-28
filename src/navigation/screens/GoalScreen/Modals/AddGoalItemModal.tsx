@@ -53,7 +53,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
 	const [descriptionSentiment, setDescriptionSentiment] = useState<SentimentAnalysisSchema | null>(null)
 	const [sentimentLoading, setSentimentLoading] = useState(true)
-	const isPositiveSentiment = descriptionSentiment?.type === "positive" ?? null
+	const isPositiveSentiment = descriptionSentiment === null ? false : descriptionSentiment?.type === "positive"
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(null)
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
@@ -255,7 +255,10 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	useEffect(() => {
 		async function handleSentimentAnalysis() {
 			if (!debounceValueReady) return
-			if (!debouncedDescription) return
+			if (!debouncedDescription) {
+				setSuggestions([])
+				return
+			}
 
 			try {
 				// Analyze the sentiment of the current message
@@ -263,7 +266,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 				const sentiment = await getSentimentAnalysis(debouncedDescription as string)
 				setDescriptionSentiment(sentiment)
 
-				// Make suggestion empty if sentiment is negative
+				// Make suggestion list empty if sentiment is negative
 				if (!sentiment || sentiment.type === "negative") {
 					setSuggestions([])
 					return
@@ -284,7 +287,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 				console.error("An error occurred while loading your suggestions: ", err)
 			} finally {
 				setSentimentLoading(false)
-				setDescriptionSentiment(null)
 				setSuggestionsLoading(false)
 			}
 		}
@@ -293,9 +295,9 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	}, [debounceValueReady, debouncedDescription])
 
 	useEffect(() => {
-		console.log("Sentiment: ", descriptionSentiment)
-		console.log("isSentiment positive: ", isPositiveSentiment)
+		console.log("Description Sentiment: ", descriptionSentiment)
 		console.log("Sentiment Loading: ", sentimentLoading)
+		console.log("isPositiveSentiment: ", isPositiveSentiment)
 	}, [descriptionSentiment, isPositiveSentiment, sentimentLoading])
 
 	return (
@@ -328,7 +330,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 							<AIImageOption
 								debounceValueReady={debounceValueReady as boolean}
 								description={description}
-								isPositiveSentiment={descriptionSentiment !== null && descriptionSentiment?.type === "positive"}
+								isPositiveSentiment={isPositiveSentiment}
 								sentimentLoading={sentimentLoading === true}
 								originalDescription={route.params.editFolderItem?.description}
 								imageGenerated={imageGenerated}

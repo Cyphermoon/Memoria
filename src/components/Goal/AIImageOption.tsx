@@ -20,6 +20,11 @@ interface Props {
 	sentimentLoading: boolean | null
 }
 
+interface UserMessageProps {
+	message: string
+	type: "error" | "success" | "neutral"
+}
+
 async function generateAIImage(modelId: string, description: string, controller: AbortController) {
 	try {
 		const signal = controller.signal
@@ -72,6 +77,7 @@ const AIImageOption = ({
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
 	const imageGenerationController = useMemo(() => new AbortController(), [])
+	const [userMessage, setUserMessage] = useState<UserMessageProps | null>(null)
 
 	// This function Coordinate operations between getting more descriptive image prompt and using it to generate an image
 	const handleImageRequest = useCallback(
@@ -87,26 +93,28 @@ const AIImageOption = ({
 				return
 			}
 
-			try {
-				setLoading(true)
-				const aiImageDescription = await getAIImageDescription(imageDescription)
+			console.log("Generating Image.....")
 
-				// Call the generateAIImage function with the model and description
-				const imageURL = await generateAIImage(
-					"stabilityai/stable-diffusion-xl-base-1.0",
-					aiImageDescription,
-					imageGenerationController
-				)
+			// try {
+			// 	setLoading(true)
+			// 	const aiImageDescription = await getAIImageDescription(imageDescription)
 
-				changeImageGenerated({
-					url: imageURL,
-					generationMethod: "ai",
-				})
-			} catch (error) {
-				console.error("An error occurred while generating an image for you: ", error)
-			} finally {
-				setLoading(false)
-			}
+			// 	// Call the generateAIImage function with the model and description
+			// 	const imageURL = await generateAIImage(
+			// 		"stabilityai/stable-diffusion-xl-base-1.0",
+			// 		aiImageDescription,
+			// 		imageGenerationController
+			// 	)
+
+			// 	changeImageGenerated({
+			// 		url: imageURL,
+			// 		generationMethod: "ai",
+			// 	})
+			// } catch (error) {
+			// 	console.error("An error occurred while generating an image for you: ", error)
+			// } finally {
+			// 	setLoading(false)
+			// }
 		},
 		[changeImageGenerated, imageGenerationController, isPositiveSentiment, sentimentLoading]
 	)
@@ -130,11 +138,6 @@ const AIImageOption = ({
 			shouldRequestImage = false
 		}
 
-		// If an image is already selected and the generation method is 'AI', do nothing
-		// if (imageGenerated?.url && imageGenerated?.generationMethod === "ai" && !isEditingMode) {
-		// 	shouldRequestImage = false
-		// }
-
 		if (_dynamicDescription === "") {
 			changeImageGenerated({
 				url: "",
@@ -145,20 +148,31 @@ const AIImageOption = ({
 		}
 
 		if (shouldRequestImage) {
-			console.log("Running image function ")
 			handleImageRequest(description)
 		}
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedDescription, debounceValueReady, handleImageRequest])
 
+	useEffect(() => {
+		if (!description && !imageGenerated?.url) {
+			setUserMessage({
+				message: "Enter a goal, inspiration or anything you to visualize and we generate an image for you",
+				type: "neutral",
+			})
+		} else if (!sentimentLoading && !isPositiveSentiment) {
+			setUserMessage({
+				message: "AI cannot generate inappropriate image",
+				type: "error",
+			})
+		} else {
+			setUserMessage(null)
+		}
+	}, [description, imageGenerated?.url, isPositiveSentiment, sentimentLoading])
+
 	return (
 		<View className="space-y-2 flex-grow justify-between items-center">
-			{!description && !imageGenerated?.url && (
-				<Text className="text-center">
-					Enter a goal, inspiration or anything you to visualize and we generate an image for you
-				</Text>
-			)}
+			{userMessage && <Text className="text-center">{userMessage.message}</Text>}
 
 			{description && loading && (
 				<View className="flex-grow justify-center">
@@ -167,13 +181,7 @@ const AIImageOption = ({
 				</View>
 			)}
 
-			{!loading && imageGenerated?.url && (
-				<GenerationOptionImage
-					source={imageGenerated.url}
-					showFeedBack={false}
-					emptyImageMessage="Enter a goal, inspiration or anything you to visualize and we generate an image for you"
-				/>
-			)}
+			{!loading && imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} showFeedBack={false} />}
 			<Touchable
 				onPress={() => handleImageRequest(description)}
 				disabled={description === "" || loading}
