@@ -36,4 +36,5 @@ export interface SentimentAnalysisSchema {
 	score: number
 	type: string
 	version: string
+	id: number
 }

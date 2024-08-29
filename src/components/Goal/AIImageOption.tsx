@@ -16,8 +16,8 @@ interface Props {
 	originalDescription?: string
 	debouncedDescription: string
 	debounceValueReady: boolean
-	isPositiveSentiment: boolean
-	sentimentLoading: boolean | null
+	isNegativeSentiment: boolean | null
+	sentimentLoading: boolean
 }
 
 interface UserMessageProps {
@@ -72,7 +72,7 @@ const AIImageOption = ({
 	originalDescription,
 	debouncedDescription,
 	debounceValueReady,
-	isPositiveSentiment,
+	isNegativeSentiment,
 	sentimentLoading,
 }: Props) => {
 	const [loading, setLoading] = useState(!isEditingMode)
@@ -83,8 +83,11 @@ const AIImageOption = ({
 	const handleImageRequest = useCallback(
 		async (imageDescription: string) => {
 			if (sentimentLoading) return
+			// This variable is null when the current user description sentiment analysis has changed and a new sentiment analysis is about to be generated
+			if (isNegativeSentiment === null) return
 
-			if (!isPositiveSentiment) {
+			// Show an error message if the current description sentiment is negative
+			if (isNegativeSentiment) {
 				errorToast("Inappropriate description is not acceptable for AI generation")
 				changeImageGenerated({
 					url: "",
@@ -93,30 +96,28 @@ const AIImageOption = ({
 				return
 			}
 
-			console.log("Generating Image.....")
+			try {
+				setLoading(true)
+				const aiImageDescription = await getAIImageDescription(imageDescription)
 
-			// try {
-			// 	setLoading(true)
-			// 	const aiImageDescription = await getAIImageDescription(imageDescription)
+				// Call the generateAIImage function with the model and description
+				const imageURL = await generateAIImage(
+					"stabilityai/stable-diffusion-xl-base-1.0",
+					aiImageDescription,
+					imageGenerationController
+				)
 
-			// 	// Call the generateAIImage function with the model and description
-			// 	const imageURL = await generateAIImage(
-			// 		"stabilityai/stable-diffusion-xl-base-1.0",
-			// 		aiImageDescription,
-			// 		imageGenerationController
-			// 	)
-
-			// 	changeImageGenerated({
-			// 		url: imageURL,
-			// 		generationMethod: "ai",
-			// 	})
-			// } catch (error) {
-			// 	console.error("An error occurred while generating an image for you: ", error)
-			// } finally {
-			// 	setLoading(false)
-			// }
+				changeImageGenerated({
+					url: imageURL,
+					generationMethod: "ai",
+				})
+			} catch (error) {
+				console.error("An error occurred while generating an image for you: ", error)
+			} finally {
+				setLoading(false)
+			}
 		},
-		[changeImageGenerated, imageGenerationController, isPositiveSentiment, sentimentLoading]
+		[changeImageGenerated, imageGenerationController, isNegativeSentiment, sentimentLoading]
 	)
 
 	useEffect(() => {
@@ -160,7 +161,7 @@ const AIImageOption = ({
 				message: "Enter a goal, inspiration or anything you to visualize and we generate an image for you",
 				type: "neutral",
 			})
-		} else if (!sentimentLoading && !isPositiveSentiment) {
+		} else if (!sentimentLoading && isNegativeSentiment !== null && isNegativeSentiment) {
 			setUserMessage({
 				message: "AI cannot generate inappropriate image",
 				type: "error",
@@ -168,7 +169,7 @@ const AIImageOption = ({
 		} else {
 			setUserMessage(null)
 		}
-	}, [description, imageGenerated?.url, isPositiveSentiment, sentimentLoading])
+	}, [description, imageGenerated?.url, isNegativeSentiment, sentimentLoading])
 
 	return (
 		<View className="space-y-2 flex-grow justify-between items-center">

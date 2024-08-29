@@ -53,7 +53,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
 	const [descriptionSentiment, setDescriptionSentiment] = useState<SentimentAnalysisSchema | null>(null)
 	const [sentimentLoading, setSentimentLoading] = useState(true)
-	const isPositiveSentiment = descriptionSentiment === null ? false : descriptionSentiment?.type === "positive"
+	const isNegativeSentiment = descriptionSentiment === null ? null : descriptionSentiment?.type === "negative"
 
 	const [selectedMode, setSelectedMode] = useState<ImageGenerationMethodOptionProps | null>(null)
 	const [imageGenerated, setImageGenerated] = useState<ImageGeneratedProps | null>(null)
@@ -254,7 +254,6 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 	//Get sentiment analysis for description in AI Mode
 	useEffect(() => {
 		async function handleSentimentAnalysis() {
-			if (!debounceValueReady) return
 			if (!debouncedDescription) {
 				setSuggestions([])
 				return
@@ -263,6 +262,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 			try {
 				// Analyze the sentiment of the current message
 				setSentimentLoading(true)
+
 				const sentiment = await getSentimentAnalysis(debouncedDescription as string)
 				setDescriptionSentiment(sentiment)
 
@@ -292,13 +292,16 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 		}
 
 		handleSentimentAnalysis()
-	}, [debounceValueReady, debouncedDescription])
 
-	useEffect(() => {
-		console.log("Description Sentiment: ", descriptionSentiment)
-		console.log("Sentiment Loading: ", sentimentLoading)
-		console.log("isPositiveSentiment: ", isPositiveSentiment)
-	}, [descriptionSentiment, isPositiveSentiment, sentimentLoading])
+		return () => {
+			setDescriptionSentiment(null)
+		}
+	}, [debouncedDescription])
+
+	// useEffect(() => {
+	// 	console.log("Description Sentiment: ", descriptionSentiment)
+	// 	console.log("Sentiment Loading: ", sentimentLoading)
+	// }, [descriptionSentiment, sentimentLoading])
 
 	return (
 		<TouchableWithoutFeedback onPress={() => descriptionFocused && Keyboard.dismiss()}>
@@ -330,8 +333,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 							<AIImageOption
 								debounceValueReady={debounceValueReady as boolean}
 								description={description}
-								isPositiveSentiment={isPositiveSentiment}
-								sentimentLoading={sentimentLoading === true}
+								isNegativeSentiment={isNegativeSentiment}
+								sentimentLoading={sentimentLoading}
 								originalDescription={route.params.editFolderItem?.description}
 								imageGenerated={imageGenerated}
 								changeImageGenerated={changeImageGenerated}
