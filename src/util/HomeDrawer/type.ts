@@ -10,6 +10,8 @@ export type AddFolderItemProps = {
 	aiTitle?: string
 	aiActionWord?: string
 	image: CloudinaryResponse
+	device_created_width: number
+	device_created_height: number
 }
 
 export type FolderItemProps = AddFolderItemProps & {
@@ -22,6 +24,8 @@ export type EditFolderItemProps = {
 	image: CloudinaryResponse
 	id: string
 	aiTitle: string
+	device_created_width?: number
+	device_created_height?: number
 }
 
 export type CloudinaryResponse = {

@@ -6,7 +6,7 @@ import { NavigationProp, RouteProp } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { serverTimestamp } from "firebase/firestore"
 import React, { useCallback, useEffect, useState } from "react"
-import { Keyboard, TouchableWithoutFeedback, View } from "react-native"
+import { Keyboard, TouchableWithoutFeedback, View, useWindowDimensions } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { extractArray } from "src/util"
 import {
@@ -49,6 +49,7 @@ const uploadTypeMap = {
 const AddGoalItemModal = ({ navigation, route }: Props) => {
 	const insets = useSafeAreaInsets()
 	const bottomTabBarHeight = useBottomTabBarHeight()
+	const { width, height } = useWindowDimensions()
 
 	const [descriptionFocused, setDescriptionFocused] = useState(false)
 	const [descriptionSentiment, setDescriptionSentiment] = useState<SentimentAnalysisSchema | null>(null)
@@ -122,6 +123,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					generationMode: selectedMode?.value,
 					aiTitle: "Test",
 					dateCreated: serverTimestamp(),
+					device_created_width: width,
+					device_created_height: height,
 				}
 
 				//Upload the folder item
@@ -181,6 +184,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					generationMode: selectedMode?.value,
 					aiTitle: "Test",
 					id: itemId,
+					device_created_height: height,
+					device_created_width: width,
 				}
 
 				// Edit the folder item

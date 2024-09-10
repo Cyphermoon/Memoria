@@ -173,7 +173,12 @@ export async function editFirestoreFolderItem(
 	}
 }
 
-export function applyEffectToCloudinaryImage(image: CloudinaryResponse, text: string) {
+export function applyEffectToCloudinaryImage(
+	image: CloudinaryResponse,
+	text: string,
+	device_width = 700,
+	device_height = 900
+) {
 	const url = image.secure_url
 	// encode the text to be appropriate in a url
 	const transformedText = encodeURI(truncateText(text, 20))
@@ -181,8 +186,10 @@ export function applyEffectToCloudinaryImage(image: CloudinaryResponse, text: st
 	const textSize = Math.round(image.height * 0.05)
 	// set the y offset to 1/6 of the image height
 	const yOffset = Math.round(image.height / 6)
+	// set the dimension of the image
+	const dimension = `/w_${device_width},h_${device_height},c_fill,g_auto`
 	// set the effect to apply to the image
-	const effect = `/co_rgb:000000,e_colorize:40/co_rgb:DDD9D9,l_text:georgia_${textSize}_italic_normal_left:${transformedText}/fl_layer_apply,g_north,x_-30,y_${yOffset}`
+	const effect = `/co_rgb:000000,e_colorize:40/co_rgb:DDD9D9,l_text:georgia_${textSize}_italic_normal_left:${transformedText}/fl_layer_apply,g_north,x_-30,y_${yOffset}${dimension}`
 	// get the index of the /upload in the url
 	const splitIndex = url.indexOf("/upload") + "/upload".length
 	// insert the effect into the url
