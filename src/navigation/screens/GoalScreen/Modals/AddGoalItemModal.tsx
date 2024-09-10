@@ -20,7 +20,7 @@ import { getAIClarifiedTextDescription } from "src/util/ai_prompts"
 import { useDebounce } from "src/util/debounce.hook"
 import { successToast } from "src/util/toast.util"
 import { useAuthStore } from "store/authStore"
-import { imageGenerationModes } from "../../../../../settings"
+import { IMAGE_GENERATION_BOX_HEIGHT, imageGenerationModes } from "../../../../../settings"
 import { HomeStackParamList } from "../../../../../type"
 import HeaderCancelButton from "../../../../components/AddGoalItem/HeaderCancelButton"
 import AIImageOption from "../../../../components/Goal/AIImageOption"
@@ -328,7 +328,9 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 						handleSuggestionClicked={handleSuggestionClicked}
 					/>
 
-					<View className="border-2 border-gray-700 rounded-lg p-2 w-full h-[250]">
+					<View
+						className={`${selectedMode?.value !== "ai" && `border-2 border-gray-700 rounded-lg p-2 w-full h-[${IMAGE_GENERATION_BOX_HEIGHT}]`}`}
+					>
 						{selectedMode?.value === "ai" && (
 							<AIImageOption
 								debounceValueReady={debounceValueReady as boolean}

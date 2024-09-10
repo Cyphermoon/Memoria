@@ -1,12 +1,14 @@
 import Touchable from "@components/common/Touchable"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, View } from "react-native"
+import { ActivityIndicator, StyleSheet, View } from "react-native"
 import { getAIImageDescription } from "src/util/ai_prompts"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import GenerationOptionImage from "./GenerationOptionImage"
 import { ImageGeneratedProps } from "./type"
 import { errorToast } from "src/util/toast.util"
+import { IMAGE_GENERATION_BOX_HEIGHT } from "settings"
+import colors from "tailwindcss/colors"
 
 interface Props {
 	description: string
@@ -155,6 +157,7 @@ const AIImageOption = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedDescription, debounceValueReady, handleImageRequest])
 
+	// Set appropriate user message to communicate current operations to user
 	useEffect(() => {
 		if (!description && !imageGenerated?.url) {
 			setUserMessage({
@@ -172,27 +175,40 @@ const AIImageOption = ({
 	}, [description, imageGenerated?.url, isNegativeSentiment, sentimentLoading])
 
 	return (
-		<View className="space-y-2 flex-grow justify-between items-center">
-			{userMessage && <Text className="text-center">{userMessage.message}</Text>}
+		<View
+			className={`space-y-2 flex-grow justify-between items-center border-2 ${userMessage?.type !== "error" ? "border-gray-700" : "border-red-500"} rounded-lg p-2 w-full h-[${IMAGE_GENERATION_BOX_HEIGHT}]`}
+		>
+			{userMessage && (
+				<Text style={[userMessage?.type === "error" && styles.textError]} className="text-center">
+					{userMessage.message}
+				</Text>
+			)}
 
 			{description && loading && (
 				<View className="flex-grow justify-center">
 					<ActivityIndicator size="large" color={customColors.secondary} />
-					<Text>Generating Image...</Text>
 				</View>
 			)}
 
 			{!loading && imageGenerated?.url && <GenerationOptionImage source={imageGenerated.url} showFeedBack={false} />}
-			<Touchable
-				onPress={() => handleImageRequest(description)}
-				disabled={description === "" || loading}
-				variant="muted"
-				className="w-full bg-primary-300 flex-row justify-center items-center"
-			>
-				<Text className="text-gray-400">Generate Another</Text>
-			</Touchable>
+
+			{userMessage?.type !== "error" && (
+				<Touchable
+					onPress={() => handleImageRequest(description)}
+					disabled={description === "" || loading}
+					className="w-full bg-primary-300 flex-row justify-center items-center"
+				>
+					<Text className="text-gray-400">Generate Another</Text>
+				</Touchable>
+			)}
 		</View>
 	)
 }
 
 export default AIImageOption
+
+const styles = StyleSheet.create({
+	textError: {
+		color: colors.red["500"],
+	},
+})
