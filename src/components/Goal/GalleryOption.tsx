@@ -44,7 +44,6 @@ const GalleryOption = ({ changeImageGenerated, imageGenerated }: Props) => {
 	return (
 		<View className="flex-grow justify-between items-center space-y-5">
 			{/* If an image is selected, display it */}
-
 			<GenerationOptionImage
 				loading={loading}
 				source={imageGenerated?.url || ""}

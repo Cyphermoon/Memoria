@@ -6,7 +6,7 @@ import { NavigationProp, RouteProp } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { serverTimestamp } from "firebase/firestore"
 import React, { useCallback, useEffect, useState } from "react"
-import { Keyboard, TouchableWithoutFeedback, View, useWindowDimensions } from "react-native"
+import { Keyboard, StyleSheet, TouchableWithoutFeedback, View, useWindowDimensions } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { extractArray } from "src/util"
 import {
@@ -212,6 +212,7 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 
 	function isButtonDisabled() {
 		if (description === "") return true
+		if (description === route.params.editFolderItem?.description) return true
 		if (imageGenerated === null || imageGenerated.url === "" || imageGenerated.generationMethod === "") return true
 	}
 
@@ -334,7 +335,8 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 					/>
 
 					<View
-						className={`${selectedMode?.value !== "ai" && `border-2 border-gray-700 rounded-lg p-2 w-full h-[${IMAGE_GENERATION_BOX_HEIGHT}]`}`}
+						style={imageBoxStyle.imageBox}
+						className={`${selectedMode?.value !== "ai" && `border-2 border-gray-700 rounded-lg p-2 w-full `}`}
 					>
 						{selectedMode?.value === "ai" && (
 							<AIImageOption
@@ -375,3 +377,9 @@ const AddGoalItemModal = ({ navigation, route }: Props) => {
 }
 
 export default AddGoalItemModal
+
+export const imageBoxStyle = StyleSheet.create({
+	imageBox: {
+		height: IMAGE_GENERATION_BOX_HEIGHT,
+	},
+})

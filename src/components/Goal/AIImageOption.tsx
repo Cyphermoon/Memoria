@@ -1,14 +1,14 @@
 import Touchable from "@components/common/Touchable"
+import { imageBoxStyle } from "@screens/GoalScreen/Modals/AddGoalItemModal"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, StyleSheet, View } from "react-native"
 import { getAIImageDescription } from "src/util/ai_prompts"
+import { errorToast } from "src/util/toast.util"
+import colors from "tailwindcss/colors"
 import customColors from "../../../colors"
 import Text from "../common/Text"
 import GenerationOptionImage from "./GenerationOptionImage"
 import { ImageGeneratedProps } from "./type"
-import { errorToast } from "src/util/toast.util"
-import { IMAGE_GENERATION_BOX_HEIGHT } from "settings"
-import colors from "tailwindcss/colors"
 
 interface Props {
 	description: string
@@ -176,7 +176,8 @@ const AIImageOption = ({
 
 	return (
 		<View
-			className={`space-y-2 flex-grow justify-between items-center border-2 ${userMessage?.type !== "error" ? "border-gray-700" : "border-red-500"} rounded-lg p-2 w-full h-[${IMAGE_GENERATION_BOX_HEIGHT}]`}
+			style={imageBoxStyle.imageBox}
+			className={`space-y-2 justify-between items-center border-2 rounded-lg p-2 w-full ${userMessage?.type !== "error" ? "border-gray-700" : "border-red-500"}`}
 		>
 			{userMessage && (
 				<Text style={[userMessage?.type === "error" && styles.textError]} className="text-center">
